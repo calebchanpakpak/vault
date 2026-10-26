@@ -1,0 +1,2 @@
+Vault V3 —— 呢三個 icon（icon-192.png、icon-512.png、apple-touch-icon.png）係臨時 placeholder：深綠底白色「V」+「PLACEHOLDER」字。
+換 icon：用同一個檔名、同一個尺寸（192×192、512×512、180×180，PNG、唔好透明底）覆蓋，然後將 sw.js 入面 CACHE 嘅 r 數字加 1（vault-v3-shell-r1 → vault-v3-shell-r2）。

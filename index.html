@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Vault</title>
+<!-- Vault V3（離線優先）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vault">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root{
+  --bg:#f4f5f7; --card:#fff; --ink:#1d1f23; --sub:#6b7280; --line:#e6e8eb;
+  --brand:#0f766e; --inc:#16a34a; --brand2:#14b8a6; --warn:#dc2626; --amber:#d97706;
+  --r:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","PingFang TC","Noto Sans CJK TC","Noto Sans TC",sans-serif;
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button,input,select{font:inherit;color:inherit}
+#app{display:flex;flex-direction:column;height:100%}
+header{padding:14px 18px 10px;background:var(--bg)}
+header h1 .en{font-size:14px;font-weight:600;color:var(--sub);margin-left:6px;letter-spacing:0}
+header h1{margin:0;font-size:23px;font-weight:700;letter-spacing:.5px}
+header .sub{color:var(--sub);font-size:13px;margin-top:2px}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px 20px}
+.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.label{font-size:12px;color:var(--sub);margin:0 0 8px}
+.en{font-size:.82em;opacity:.8}
+/* tab bar */
+nav{display:flex;background:rgba(255,255,255,.96);border-top:1px solid var(--line);
+  padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;border:0;background:none;padding:4px 0;color:#9ca3af;font-size:10.5px;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .i{font-size:22px;line-height:1;filter:grayscale(1);opacity:.6}
+nav button.on{color:var(--brand);font-weight:600}
+nav button.on .i{filter:none;opacity:1}
+.view{display:none}.view.on{display:block}
+/* month strip */
+.mini{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
+.mini b{font-size:19px}.mini small{opacity:.85;font-size:12px}
+/* amount */
+.amt{display:flex;align-items:center;gap:6px;border-bottom:2px solid var(--line);padding:4px 2px 8px}
+.amt span{font-size:26px;color:var(--sub);font-weight:600;white-space:nowrap}
+.amt input{border:0;outline:0;font-size:40px;font-weight:700;width:100%;background:none;padding:0}
+.amt:focus-within{border-color:var(--brand)}
+.curs{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px}
+.cur{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:5px 0 4px;text-align:center;line-height:1.15}
+.cur b{display:block;font-size:13px;font-weight:700}
+.cur small{display:block;font-size:10px;color:var(--sub)}
+.cur.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.cur.on small{color:#d1fae5}
+.fxline{font-size:12px;color:var(--sub);margin-top:8px;min-height:16px}
+.fxline.err{color:var(--warn)}
+/* 支出 / 收入 */
+.seg{display:grid;grid-template-columns:1fr 1fr;background:#eef0f2;border-radius:12px;padding:3px;margin-bottom:12px}
+.seg button{border:0;background:none;border-radius:10px;padding:8px 0;font-size:14px;font-weight:600;color:var(--sub)}
+.seg button.on{background:#fff;color:var(--warn);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.seg button.on[data-type="收入"]{color:var(--inc)}
+.inc{color:var(--inc)!important}
+.netrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.netrow div{border-radius:12px;padding:8px 10px;background:var(--bg)}
+.netrow small{display:block;font-size:11px;color:var(--sub)}.netrow b{font-size:16px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.modal.on{display:flex}
+.modal .box{background:var(--bg);border-radius:18px;padding:16px 14px;width:100%;max-width:360px}
+.modal h3{margin:0 0 10px;text-align:center;font-size:17px}
+.emojis{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.emojis button{border:1.5px solid var(--line);background:#fff;border-radius:10px;width:38px;height:38px;font-size:19px;padding:0}
+.emojis button.on{border-color:var(--brand);background:#ecfdf9}
+/* 匯率提示 */
+.notice{margin:0 14px 10px;border-radius:12px;padding:9px 34px 9px 12px;font-size:12px;line-height:1.45;position:relative;background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.notice.perm{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.notice b{display:block;font-size:13px;margin-bottom:2px}
+.notice button{position:absolute;right:6px;top:6px;border:0;background:none;font-size:16px;color:inherit;opacity:.7;padding:2px 6px}
+.fxline.est{color:var(--amber)}
+.esttag{color:var(--amber)}
+/* chips */
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:6px 2px 5px;text-align:center;font-size:12px;line-height:1.15;min-height:62px}
+.chip small{display:block;font-size:9.5px;color:var(--sub);margin-top:1px;word-break:break-word}
+.chip.on small{color:var(--brand)}
+.chip.add{border-style:dashed;color:var(--brand)}
+.chip .e{display:block;font-size:20px;margin-bottom:2px}
+.chip.on{border-color:var(--brand);background:#ecfdf9;color:var(--brand);font-weight:600}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;white-space:nowrap}
+.pill.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;margin-top:12px}
+.field label{font-size:12px;color:var(--sub)}
+.field input{border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;width:100%;min-height:46px;-webkit-appearance:none;appearance:none}
+.field input:focus{outline:0;border-color:var(--brand)}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;background:var(--brand);color:#fff;margin-top:14px}
+.btn:disabled{opacity:.5}
+#saveBtn,#edSave{position:sticky;bottom:10px;box-shadow:0 6px 18px rgba(15,118,110,.35);z-index:5}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);font-weight:600}
+.btn.danger{background:#fff;color:var(--warn);border:1.5px solid #fecaca}
+/* summary */
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.monthbar button{border:0;background:#fff;border-radius:10px;width:38px;height:38px;font-size:18px}
+.monthbar b{font-size:17px}
+.big{font-size:34px;font-weight:800;margin:2px 0}
+.prog{height:12px;background:#eef0f2;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.prog i{display:block;height:100%;background:var(--brand2);border-radius:99px}
+.prog.warn i{background:var(--amber)}.prog.over i{background:var(--warn)}
+.kv{display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.stats div{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
+.stats b{display:block;font-size:15px}.stats small{font-size:10.5px;color:var(--sub);white-space:nowrap}
+.catrow{display:grid;grid-template-columns:22px 92px 1fr 92px;align-items:center;gap:8px;padding:5px 0;font-size:13px;line-height:1.2}
+.catrow .bar{height:10px;background:#eef0f2;border-radius:99px;overflow:hidden}
+.catrow .bar i{display:block;height:100%;border-radius:99px}
+.catrow .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.days{display:flex;align-items:flex-end;gap:2px;height:90px;margin-top:6px}
+.days i{flex:1;background:#99f6e4;border-radius:3px 3px 0 0;min-height:2px}
+.days i.t{background:var(--brand)}
+.link{border:0;background:none;color:var(--brand);font-size:13px;padding:0}
+.setrow{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.setrow small{color:var(--sub);font-size:11px}
+.link.del{color:var(--warn)}
+.tick{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--sub);margin:8px 0}
+select{width:100%;padding:9px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
+.hint{font-size:11.5px;color:var(--sub);margin:4px 2px 10px}
+/* list */
+.day{font-size:13px;color:var(--sub);margin:14px 4px 6px;display:flex;justify-content:space-between}
+.item{display:flex;align-items:center;gap:12px;background:#fff;padding:11px 12px;border-bottom:1px solid var(--line)}
+.group{border-radius:var(--r);overflow:hidden}
+.group .item:last-child{border-bottom:0}
+.item .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.item .t{flex:1;min-width:0}
+.item .t b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .t small{display:block;color:var(--sub);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .a{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.item .a small{display:block;font-weight:400;font-size:11px;color:#9ca3af;margin-top:1px}
+.tag{display:inline-block;font-size:10px;background:#fef3c7;color:#92400e;border-radius:6px;padding:1px 5px;margin-left:4px;vertical-align:1px}
+.filter{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;margin:0 -14px;padding-left:14px;padding-right:14px}
+.empty{text-align:center;color:var(--sub);padding:40px 0}
+/* sheet */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:20}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 14px calc(20px + env(safe-area-inset-bottom));z-index:21;
+  transform:translateY(105%);transition:transform .25s ease;max-height:92%;overflow-y:auto}
+.sheet.on{transform:none}.mask.on{display:block}
+.sheet h3{margin:0 0 10px;text-align:center}
+.toast{position:fixed;left:50%;top:18px;text-align:center;line-height:1.4;transform:translateX(-50%) translateY(-120px);background:#111827;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:50;transition:transform .25s;max-width:90%}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:40;color:var(--sub);flex-direction:column;gap:10px}
+.spin{width:28px;height:28px;border:3px solid #d1d5db;border-top-color:var(--brand);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+/* PWA：網絡狀態、排隊、更新 */
+header{padding-top:calc(14px + env(safe-area-inset-top))}
+.netbar{margin:0 14px 10px;border-radius:12px;padding:8px 12px;font-size:12px;line-height:1.45;background:#e0f2fe;color:#075985;border:1px solid #bae6fd;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.netbar.off{background:#f3f4f6;color:#374151;border-color:#e5e7eb}
+.netbar.bad{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.netbar button{border:0;background:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--brand);white-space:nowrap}
+.tag.pend{background:#e0f2fe;color:#075985}
+.item.pend{background:#f8fafc}
+/* V3：同步狀態 */
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.syncpill{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap;margin-top:2px;max-width:56vw;overflow:hidden;text-overflow:ellipsis}
+.syncpill.ok{color:var(--inc);border-color:#bbf7d0}
+.syncpill.pend{color:#075985;border-color:#bae6fd;background:#f0f9ff}
+.syncpill.off{color:#374151;background:#f3f4f6}
+.syncpill.bad{color:var(--warn);border-color:#fecaca;background:#fef2f2}
+.syncpill.busy{color:var(--brand)}
+.syncpill small{font-weight:400;opacity:.8}
+.loading.boot{background:var(--bg);font-size:13px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header><div><h1 id="title">記一筆</h1><div class="sub" id="subtitle"></div></div>
+    <button class="syncpill" id="syncpill" type="button" aria-label="同步狀態，撳一下即刻同步">…</button></header>
+  <div id="updbar"></div>
+  <div id="netbar"></div>
+  <div id="notice"></div>
+  <main>
+    <!-- 記一筆 -->
+    <section class="view on" id="v-add">
+      <div class="mini" id="mini"></div>
+      <div id="formHost"></div>
+    </section>
+    <!-- 總覽 -->
+    <section class="view" id="v-sum">
+      <div class="monthbar"><button onclick="shiftMonth(-1)">‹</button><b id="mLabel"></b><button onclick="shiftMonth(1)">›</button></div>
+      <div class="card" id="sumCard"></div>
+      <div class="card"><p class="label">各類支出 Expenses by category</p><div id="cats"></div></div>
+      <div class="card" id="incCard"><p class="label">收入來源 Income by category</p><div id="incCats"></div></div>
+      <div class="card"><p class="label">每日支出 Daily spending</p><div class="days" id="days"></div><div class="kv" id="daysAxis"></div></div>
+      <button class="btn ghost" onclick="openSettings()">⚙️ 設定 Settings（貨幣、付款方式、預設值、同步）</button>
+    </section>
+    <!-- 記錄 -->
+    <section class="view" id="v-list">
+      <div class="pills filter" id="filter"></div>
+      <div id="list"></div>
+    </section>
+  </main>
+  <nav>
+    <button data-v="add" class="on"><span class="i">✏️</span>記一筆<span class="en">Add</span></button>
+    <button data-v="sum"><span class="i">📊</span>總覽<span class="en">Summary</span></button>
+    <button data-v="list"><span class="i">🧾</span>記錄<span class="en">Records</span></button>
+  </nav>
+</div>
+
+<div class="mask" id="mask" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"></div>
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+<!-- 只係 IndexedDB 開緊嗰幾十毫秒；唔等網絡、冇 spinner -->
+<div class="loading boot" id="loading">Vault</div>
+
+<script src="idb.js"></script>
+<script src="sync.js"></script>
+<script>
+/* Vault V3：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
+const PERF = window.__vaultPerf = { taps: [], boot: {} };
+const TITLES = {add:['記一筆','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
+const TYPE_EN = {支出:'Expense', 收入:'Income'};
+const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
+const payEn = p => ((D.payInfo||[]).find(x => x.name === p) || {}).en || '';
+const RATES = {HKD:{rate:1}};   // 預覽用（真正換算喺伺服器同步時做）
+const EMOJI_CHOICES = ['🏷️','💰','🎁','☕','🍰','🐶','🎮','🎵','📱','💻','🚕','🏥','💄','🧴','🎓','⚽','🏦','💼','🪙','🎉'];
+let D = {rows:[], budget:0, currencies:['HKD'], curInfo:[], categories:[], payments:[], payInfo:[], settings:{}, today:''};
+let viewMonth = '', listFilter = '全部', editing = null;
+
+/* ---------- 連線（Apps Script /exec）---------- */
+// 可以直接喺度填 /exec 網址（私人 host 先好咁做）；留空就第一次開 App 時喺「連線設定」填，存喺呢部機（IndexedDB）。
+const APPS_SCRIPT_URL = '';
+const API_TOKEN = '';                      // 同 Api.gs 嘅 API_TOKEN 一樣；留空就用「連線設定」填嘅
+const qs = new URLSearchParams(location.search);
+// 自動同步間隔：預設 10 分鐘；測試可以用 ?syncMs=2000 或 localStorage 'vault.syncIntervalMs'
+const SYNC_MS = Math.max(1000, Number(qs.get('syncMs') || localStorage.getItem('vault.syncIntervalMs')) || 600000);
+let V = null;                              // VaultSync 引擎（boot 時建立）
+let renderedVer = -1;
+const call = (fn, ...args) => V.api(fn, args);
+
+function recompute(){
+  const c = V.viewConfig();
+  D = Object.assign({}, c, { rows: V.viewRows() });
+  renderedVer = V.ver;
+}
+const fmtHM = ts => {
+  if (!ts) return '未同步過';
+  const f = o => new Intl.DateTimeFormat('zh-HK', Object.assign({timeZone:'Europe/Helsinki', hour12:false}, o)).format(new Date(ts));
+  const sameDay = f({year:'numeric',month:'numeric',day:'numeric'}) === new Intl.DateTimeFormat('zh-HK',{timeZone:'Europe/Helsinki',year:'numeric',month:'numeric',day:'numeric'}).format(new Date());
+  return (sameDay ? '' : f({month:'numeric', day:'numeric'}) + ' ') + f({hour:'2-digit', minute:'2-digit'});
+};
+function agoTxt(ts){ return ts ? fmtHM(ts) + '（赫爾辛基時間）' : '未同步過'; }
+
+/* ---------- 同步狀態掣（✓ 已同步 / ⏳ N 待同步 / 📴 離線 / 🔄 同步緊 / ⚠️ 失敗）---------- */
+function renderPill(){
+  const el = $('syncpill'); if (!el || !V) return;
+  const s = V.status(), last = s.syncedAt ? ` <small>· ${fmtHM(s.syncedAt)}</small>` : '';
+  const off = s.state === 'offline' || navigator.onLine === false;
+  let cls = 'ok', txt;
+  if (!s.configured) { cls = 'bad'; txt = '🔗 未連線 Connect'; }
+  else if (s.failed) { cls = 'bad'; txt = `⚠️ ${s.failed} 筆失敗`; }
+  else if (s.state === 'syncing') { cls = 'busy'; txt = `🔄 同步緊${s.pending ? ' ' + s.pending : ''}`; }
+  else if (off) { cls = 'off'; txt = `📴 離線${s.pending ? ' · ' + s.pending + ' 待同步' : ''}` + last; }
+  else if (s.state === 'error') { cls = 'bad'; txt = '⚠️ 同步出錯' + (s.pending ? ' · ' + s.pending + ' 待同步' : ''); }
+  else if (s.pending) { cls = 'pend'; txt = `⏳ ${s.pending} 待同步` + last; }
+  else txt = '✓ 已同步' + last;
+  el.className = 'syncpill ' + cls; el.innerHTML = txt;
+  el.title = '上次同步 Last sync：' + agoTxt(s.syncedAt) + (s.lastError ? '\n' + s.lastError : '') + '\n撳一下即刻同步 Tap to sync now';
+}
+function onPillTap(){
+  if (!V) return;
+  const s = V.status();
+  if (!s.configured) return openConn();
+  if (s.failed) return openFailed();
+  bgSync('manual');
+}
+/** 背景同步：唔會 await 喺任何掣入面；結果只會更新畫面同 toast */
+function bgSync(trigger){
+  if (!V || !V.cfg.url) { renderPill(); return Promise.resolve(); }
+  const manual = trigger === 'manual';
+  if (trigger === 'online') V.resetBackoff();
+  return V.syncAll({ trigger, manual }).then(r => {
+    if (!r) return;
+    if (r.failed && r.failed.length) toast(`⚠️ ${r.failed.length} 筆同步失敗，撳右上角睇`, 4000);
+    else if (manual && r.error) toast((r.network ? '📴 連唔到伺服器，改動已安全存喺部機，遲啲自動再試' : '同步失敗：' + r.error), 4000);
+    else if (manual && !r.skipped) toast(r.sent ? `已同步 ${r.sent} 筆 ✓` : '已經係最新 ✓');
+  });
+}
+let renderQueued = false;
+function onEngineChange(){
+  renderPill();
+  if (renderQueued || !started) return;
+  renderQueued = true;
+  requestAnimationFrame(() => { renderQueued = false;       // 背景同步完：一幀之內補畫（唔會阻輸入）
+    if (V.ver === renderedVer) return;
+    const cfgSig = configSig();
+    recompute(); renderAll(true);
+    if (cfgSig !== lastCfgSig) { lastCfgSig = cfgSig; refreshAddFormIfIdle(); }
+  });
+}
+let lastCfgSig = '';
+const configSig = () => JSON.stringify([D.categories.map(c => c.type + c.name + c.icon), D.currencies, D.payments, D.settings]);
+function refreshAddFormIfIdle(){
+  const a = $('a_amount'), active = document.activeElement;
+  if (a && !a.value && !(active && $('formHost').contains(active)) && !$('sheet').classList.contains('on')) renderAdd();
+}
+function registerBgSync(){
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  navigator.serviceWorker.ready.then(r => r.sync && r.sync.register('vault-sync')).catch(() => {});   // 只係 Chrome/Android；iOS 冇
+}
+/** 每次寫入後：唔等，背景送 */
+function afterWrite(){ registerBgSync(); setTimeout(() => bgSync('write'), 0); }
+const isOff = () => navigator.onLine === false || (V && V.status().state === 'offline') || !(V && V.cfg.url);
+function perfMark(kind, t0){
+  const done = () => PERF.taps.push({ kind, ms: Math.round((performance.now() - t0) * 10) / 10 });
+  requestAnimationFrame(() => setTimeout(done, 0));            // 計到瀏覽器畫完嗰一幀
+}
+
+/* ---------- utils ---------- */
+const $ = id => document.getElementById(id);
+const fmtNum = (n, dec) => (Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:dec, maximumFractionDigits:dec});
+const hkd = n => (n < 0 ? '-' : '') + 'HK$' + fmtNum(Math.abs(n), 2);
+const origTxt = (cur, n) => cur + ' ' + fmtNum(n, curInfo(cur).dec===0 && Math.round(n)===n ? 0 : 2);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const bi = (zh, en) => en ? `${zh} <span class="en">${en}</span>` : zh;
+function todayHel(){ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Helsinki'}).format(new Date()); }
+function monthOf(d){ return d.slice(0,7); }
+function monthLabel(m){ const [y,mm] = m.split('-'); return `${y}年${Number(mm)}月`; }
+function daysIn(m){ const [y,mm] = m.split('-').map(Number); return new Date(y, mm, 0).getDate(); }
+function wk(d){ return ['日','一','二','三','四','五','六'][new Date(d+'T12:00:00').getDay()]; }
+function toast(msg, ms){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'), ms||1800); }
+function rowsOf(m){ return D.rows.filter(r => monthOf(r.date) === m); }
+const isInc = r => r.type === '收入';
+function sum(rs){ return rs.reduce((a,r)=>a+r.amount,0); }
+function spent(rs){ return sum(rs.filter(r => !isInc(r))); }
+function earned(rs){ return sum(rs.filter(isInc)); }
+function catsOf(type){ return D.categories.filter(c => c.type === type); }
+function catMeta(name, type){
+  return D.categories.find(c => c.name === name && (!type || c.type === type)) ||
+         D.categories.find(c => c.name === name) || {name, en:'', icon: type==='收入'?'💰':'📦', color:'#9ca3af'};
+}
+const blurActive = () => { try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(x){} };
+/* ---------- 表格（新增 / 修改共用） ---------- */
+function formHTML(prefix, e){
+  const cur = e.cur || 'HKD', type = e.type || '支出';
+  const curs = D.currencies.concat(D.currencies.includes(cur) ? [] : [cur]).map(c => `<button type="button" class="cur${c===cur?' on':''}" data-cur="${c}"><b>${c}</b><small>${esc(curInfo(c).name)}</small></button>`).join('');
+  const pays = D.payments.map(p => `<button type="button" class="pill${p===e.pay?' on':''}" data-pay="${p}">${bi(esc(p), esc(payEn(p)))}</button>`).join('');
+  return `
+  <div class="seg" id="${prefix}type">${['支出','收入'].map(t => `<button type="button" data-type="${t}" class="${t===type?'on':''}">${t} ${TYPE_EN[t]}</button>`).join('')}</div>
+  <div class="card">
+    <p class="label">貨幣 Currency</p>
+    <div class="curs" id="${prefix}curs">${curs}</div>
+    <div class="amt"><span id="${prefix}sym">${esc(curInfo(cur).sym)}</span><input id="${prefix}amount" inputmode="decimal" placeholder="${curInfo(cur).dec===0?'0':'0.00'}" value="${e.orig||''}" autocomplete="off"></div>
+    <div class="fxline" id="${prefix}fx"></div>
+  </div>
+  <div class="card"><p class="label">類別 Category</p><div class="chips" id="${prefix}cats"></div></div>
+  <div class="card">
+    <div class="field" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" placeholder="例如：K-Market 買餸" value="${esc(e.item||'')}"></div>
+    <div class="row2">
+      <div class="field"><label>日期 Date</label><input id="${prefix}date" type="date" value="${e.date}"></div>
+      <div class="field"><label>備註 Note</label><input id="${prefix}note" placeholder="（可以唔填）" value="${esc(e.note||'')}"></div>
+    </div>
+    <div class="field"><label>付款方式 Payment</label><div class="pills" id="${prefix}pays">${pays}</div></div>
+  </div>`;
+}
+function renderCats(prefix, state){
+  $(prefix+'cats').innerHTML = catsOf(state.type).map(c =>
+    `<button type="button" class="chip${c.name===state.cat?' on':''}" data-cat="${esc(c.name)}"><span class="e">${c.icon}</span>${esc(c.name)}<small>${esc(c.en)}</small></button>`).join('') +
+    `<button type="button" class="chip add" data-addcat="1"><span class="e">＋</span>加類別<small>Add category</small></button>`;
+}
+function fxHint(prefix, state){
+  const el = $(prefix+'fx'); if(!el) return;
+  const c = state.cur, a = parseFloat(String($(prefix+'amount').value).replace(',', '.'));
+  el.classList.remove('err');
+  if (c === 'HKD') { el.textContent = ''; return; }
+  const r = RATES[c];
+  if (!r) { el.textContent = '攞緊 ' + c + ' 匯率… Getting rate…'; return; }
+  el.classList.remove('est');
+  if (r.err) { el.classList.add('err'); el.textContent = '⚠️ 暫時攞唔到 ' + c + ' 匯率，儲存時會再試'; return; }
+  if (r.offline) { el.classList.add('est');
+    el.textContent = `📴 離線估計 1 ${c} ≈ HK$${Number(r.rate).toFixed(r.rate<0.1?5:4)}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') + (r.date ? `（${r.date} 匯率）` : '') + '，同步時伺服器會重新計'; return; }
+  if (r.est) { el.classList.add(r.perm ? 'err' : 'est');
+    el.textContent = `⚠️ 估計匯率 1 ${c} ≈ HK$${r.rate}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') +
+      (r.perm ? '（未授權：請喺 Apps Script 執行 authorize → 允許）' : '（匯率網站暫時連唔到）'); return; }
+  el.textContent = `1 ${c} ≈ HK$${r.rate.toFixed(r.rate<0.1?5:4)}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') + (r.date ? `（${r.date} 匯率）` : '');
+}
+function loadRate(prefix, state){
+  const c = state.cur;
+  if (RATES[c] && !RATES[c].err && !RATES[c].est) return fxHint(prefix, state);
+  const offlineRate = () => { const g = V.rateGuess(c), k = V.cachedRate(c);
+    return g > 0 ? {cur:c, rate:g, est:true, offline:true, date: k ? k.date : ''} : {err:true}; };
+  RATES[c] = offlineRate(); fxHint(prefix, state);        // 即刻用部機記得嘅匯率顯示，唔等網絡
+  if (navigator.onLine === false || !V.cfg.url) return;
+  call('getRate', c).then(r => { RATES[c] = r; V.saveRate(c, r); if (state.cur === c) fxHint(prefix, state); }).catch(() => {});   // 背景更新
+}
+function bindForm(prefix, state){
+  renderCats(prefix, state);
+  $(prefix+'type').onclick = ev => { const b = ev.target.closest('[data-type]'); if(!b || b.dataset.type===state.type) return;
+    state.type = b.dataset.type; [...$(prefix+'type').children].forEach(x => x.classList.toggle('on', x===b));
+    if (!catsOf(state.type).some(c => c.name === state.cat)) state.cat = '';
+    renderCats(prefix, state); };
+  $(prefix+'curs').onclick = ev => { const b = ev.target.closest('[data-cur]'); if(!b) return;
+    state.cur = b.dataset.cur; [...$(prefix+'curs').children].forEach(x => x.classList.toggle('on', x===b));
+    $(prefix+'sym').textContent = curInfo(state.cur).sym; $(prefix+'amount').placeholder = curInfo(state.cur).dec===0?'0':'0.00';
+    loadRate(prefix, state); };
+  $(prefix+'amount').oninput = () => fxHint(prefix, state);
+  loadRate(prefix, state);
+  $(prefix+'cats').onclick = ev => {
+    if (ev.target.closest('[data-addcat]')) return openAddCat(state.type, name => { state.cat = name; renderCats(prefix, state); });
+    const b = ev.target.closest('[data-cat]'); if(!b) return;
+    state.cat = b.dataset.cat; [...$(prefix+'cats').children].forEach(x => x.classList.toggle('on', x===b)); };
+  $(prefix+'pays').onclick = ev => { const b = ev.target.closest('[data-pay]'); if(!b) return;
+    state.pay = b.dataset.pay; [...$(prefix+'pays').children].forEach(x => x.classList.toggle('on', x===b)); };
+}
+function readForm(prefix, state){
+  const amount = parseFloat(String($(prefix+'amount').value).replace(',', '.'));
+  if (!(amount > 0)) { toast('請輸入金額 Enter an amount'); $(prefix+'amount').focus(); return null; }
+  if (!state.cat) { toast('請揀類別 Pick a category'); return null; }
+  return { amount, type: state.type || '支出', cur: state.cur || 'HKD', cat: state.cat, pay: state.pay||'', item: $(prefix+'item').value.trim(),
+           date: $(prefix+'date').value || todayHel(), note: $(prefix+'note').value.trim() };
+}
+
+/* ---------- 加類別（即刻喺部機加，背景同步去「類別」分頁）---------- */
+function openAddCat(type, done){
+  let icon = type === '收入' ? '💰' : '🏷️', t = type;
+  $('modalBox').innerHTML = `<h3>加類別 Add category</h3>
+    <div class="seg" id="ac_type">${['支出','收入'].map(x => `<button type="button" data-type="${x}" class="${x===t?'on':''}">${x} ${TYPE_EN[x]}</button>`).join('')}</div>
+    <div class="card">
+      <div class="field" style="margin-top:0"><label>中文名 Name</label><input id="ac_name" maxlength="12" placeholder="例如：寵物"></div>
+      <div class="field"><label>English（可以唔填 optional）</label><input id="ac_en" maxlength="30" placeholder="e.g. Pets"></div>
+      <div class="field"><label>圖示 Icon</label><div class="emojis" id="ac_icons">${EMOJI_CHOICES.map(e => `<button type="button" class="${e===icon?'on':''}" data-e="${e}">${e}</button>`).join('')}</div></div>
+    </div>
+    <button class="btn" id="ac_save">加入 Add</button><button class="btn ghost" id="ac_cancel">取消 Cancel</button>`;
+  $('modal').classList.add('on');
+  $('ac_type').onclick = ev => { const b = ev.target.closest('[data-type]'); if(!b) return; t = b.dataset.type;
+    [...$('ac_type').children].forEach(x => x.classList.toggle('on', x===b)); };
+  $('ac_icons').onclick = ev => { const b = ev.target.closest('[data-e]'); if(!b) return; icon = b.dataset.e;
+    [...$('ac_icons').children].forEach(x => x.classList.toggle('on', x===b)); };
+  $('ac_cancel').onclick = () => $('modal').classList.remove('on');
+  $('ac_save').onclick = async () => {
+    const name = $('ac_name').value.trim(); if (!name) return toast('請輸入類別名 Enter a name');
+    if (D.categories.some(x => x.type === t && x.name === name)) return toast('已經有「' + name + '」呢個類別');
+    await V.enqueueCfg('addCategory', [{type: t, name, en: $('ac_en').value.trim(), icon}]);   // 只等本機 IndexedDB
+    recompute(); $('modal').classList.remove('on'); toast(`已加「${name}」✓${isOff() ? '（有網自動同步）' : ''}`);
+    renderAll(true); if (t === type) done(name);
+    afterWrite();
+  };
+}
+
+let addState = {};
+function renderAdd(){
+  const lastCur = localStorage.getItem('lastCur');
+  const lastPay = localStorage.getItem('lastPay'), st = D.settings || {};
+  // 上次用開嘅 → 「設定」分頁嘅預設值 → 清單第一個
+  addState = { cat:'', type:'支出',
+    pay: D.payments.includes(lastPay) ? lastPay : (D.payments.includes(st.defaultPay) ? st.defaultPay : (D.payments[0] || '')),
+    cur: D.currencies.includes(lastCur) ? lastCur : (D.currencies.includes(st.defaultCur) ? st.defaultCur : 'HKD') };
+  $('formHost').innerHTML = formHTML('a_', {date: todayHel(), pay: addState.pay, cur: addState.cur, type: addState.type}) +
+    `<button class="btn" id="saveBtn">儲存 Save</button>`;
+  bindForm('a_', addState);
+  $('saveBtn').onclick = async () => {
+    const t0 = performance.now();
+    const e = readForm('a_', addState); if(!e) return;
+    blurActive();
+    const op = await V.enqueueAdd(e);                    // 只等本機 IndexedDB（幾毫秒），唔等網絡
+    localStorage.setItem('lastPay', e.pay); localStorage.setItem('lastCur', e.cur);
+    recompute();
+    const p = D.rows.find(r => r.cid === op.id);
+    const amt = e.cur==='HKD' ? hkd(e.amount) : origTxt(e.cur, e.amount) + ' ≈ ' + hkd(p ? p.amount : 0);
+    toast(`已記低${e.type==='收入'?'收入':''} ${e.cat} ${amt} ✓${isOff() ? '（離線，有網自動同步）' : ''}`, 2200);
+    renderAll(true); renderAdd();
+    perfMark('add', t0);
+    afterWrite();
+  };
+}
+function renderMini(){
+  const m = monthOf(todayHel()), s = spent(rowsOf(m)), left = D.budget - s;
+  $('mini').innerHTML = `<div><small>${monthLabel(m)} 已使 Spent</small><br><b>${hkd(s)}</b></div>
+    <div style="text-align:right"><small>${left>=0?'仲剩 Left':'超支 Over'}</small><br><b>${hkd(Math.abs(left))}</b></div>`;
+}
+
+/* ---------- 總覽 ---------- */
+function shiftMonth(k){
+  const [y,m] = viewMonth.split('-').map(Number); const d = new Date(y, m-1+k, 1);
+  viewMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; renderSum();
+}
+function catRows(rs, type){
+  const by = {}; rs.forEach(r => by[r.cat] = (by[r.cat]||0) + r.amount);
+  const list = Object.entries(by).sort((a,b)=>b[1]-a[1]); const max = list.length ? list[0][1] : 1;
+  return list.map(([c,v]) => { const m = catMeta(c, type); return `
+    <div class="catrow"><span>${m.icon}</span><span>${esc(c)}${m.en?`<br><span class="en" style="font-size:10px;color:var(--sub)">${esc(m.en)}</span>`:''}</span>
+      <div class="bar"><i style="width:${v/max*100}%;background:${m.color}"></i></div>
+      <span class="v${type==='收入'?' inc':''}">${type==='收入'?'+':''}${hkd(v)}</span></div>`; }).join('');
+}
+function renderSum(){
+  const all = rowsOf(viewMonth), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
+  const s = sum(ex), income = sum(inc), net = income - s, pct = D.budget ? s / D.budget : 0;
+  const isNow = viewMonth === monthOf(todayHel());
+  const dIn = daysIn(viewMonth), passed = isNow ? Number(todayHel().slice(8)) : dIn;
+  $('mLabel').textContent = monthLabel(viewMonth);
+  $('sumCard').innerHTML = `
+    <p class="label">今個月支出 Spending（港幣 HKD）</p>
+    <div class="big">${hkd(s)}</div>
+    <div class="prog ${pct>1?'over':pct>.85?'warn':''}"><i style="width:${Math.min(100,pct*100)}%"></i></div>
+    <div class="kv"><span>預算 Budget ${hkd(D.budget)} · <button class="link" onclick="editBudget()">改 Edit</button></span>
+      <span>${s<=D.budget?'仲剩 Left '+hkd(D.budget-s):'超支 Over '+hkd(s-D.budget)}</span></div>
+    <div class="netrow">
+      <div><small>收入 Income</small><b class="inc">+${hkd(income)}</b></div>
+      <div><small>淨額 Net（收入 − 支出）</small><b style="color:${net>=0?'var(--inc)':'var(--warn)'}">${net>=0?'+':''}${hkd(net)}</b></div>
+    </div>
+    <div class="stats">
+      <div><b>${all.length}</b><small>筆記錄 Entries</small></div>
+      <div><b>${hkd(passed? s/passed:0)}</b><small>每日平均 Per day</small></div>
+      <div><b>${isNow && dIn-passed>0 ? hkd(Math.max(0,(D.budget-s)/(dIn-passed+1))) : '—'}</b><small>每日可用 Left/day</small></div>
+    </div>`;
+  $('cats').innerHTML = ex.length ? catRows(ex, '支出') : '<div class="empty">呢個月未有支出 No spending</div>';
+  $('incCard').style.display = inc.length ? '' : 'none';
+  $('incCats').innerHTML = catRows(inc, '收入');
+  const byDay = Array(dIn).fill(0); ex.forEach(r => byDay[Number(r.date.slice(8))-1] += r.amount);
+  const dmax = Math.max(1, ...byDay); const td = isNow ? Number(todayHel().slice(8)) : -1;
+  $('days').innerHTML = byDay.map((v,i) => `<i class="${i+1===td?'t':''}" style="height:${v/dmax*100}%" title="${i+1}日 ${hkd(v)}"></i>`).join('');
+  $('daysAxis').innerHTML = `<span>1日</span><span>${Math.ceil(dIn/2)}日</span><span>${dIn}日</span>`;
+}
+function editBudget(){
+  openSheet(`<h3>每月預算 Monthly budget</h3>
+    <div class="card"><p class="label">以港幣計 In HKD（只計支出 expenses only）</p><div class="amt"><span>HK$</span><input id="bud" inputmode="decimal" value="${D.budget}"></div></div>
+    <button class="btn" id="budSave">儲存 Save</button><button class="btn ghost" onclick="closeSheet()">取消 Cancel</button>`);
+  $('budSave').onclick = async () => {
+    const v = parseFloat($('bud').value.replace(',', '.')); if(!(v>0)) return toast('請輸入金額 Enter an amount');
+    await V.enqueueCfg('setBudget', [v]);
+    recompute(); closeSheet(); renderAll(true); toast('預算已更新 ✓' + (isOff() ? '（有網自動同步）' : '')); afterWrite();
+  };
+}
+
+/* ---------- 設定（即刻喺部機改，背景寫入 Sheet：「貨幣」「付款方式」「設定」分頁）---------- */
+function openSettings(){
+  const st = D.settings || {}, s = V.status();
+  const pend = x => x.pending ? ' <span class="tag pend">⏳</span>' : '';
+  const curRows = (D.curInfo||[]).map(c => `<div class="setrow"><b>${esc(c.code)}${pend(c)}</b><span>${esc(c.name)} ${esc(c.sym)}<br><small>估計 1 ${esc(c.code)} ≈ HK$${c.est}${c.dec===0?' · 冇小數':''}</small></span>
+      ${c.code==='HKD' ? '<small>本位幣</small>' : `<button class="link del" data-delcur="${esc(c.code)}">刪 ✕</button>`}</div>`).join('');
+  const payRows = (D.payInfo||[]).map(p => `<div class="setrow"><b>${esc(p.name)}${pend(p)}</b><span><small>${esc(p.en)}</small></span>
+      <button class="link del" data-delpay="${esc(p.name)}">刪 ✕</button></div>`).join('');
+  openSheet(`<h3>設定 Settings</h3>
+    <div class="card"><p class="label">預設 Defaults（未揀過就用呢個）</p>
+      <div class="row2">
+        <div class="field" style="margin-top:0"><label>預設貨幣 Currency</label><select id="st_cur">${D.currencies.map(c => `<option${c===st.defaultCur?' selected':''}>${esc(c)}</option>`).join('')}</select></div>
+        <div class="field" style="margin-top:0"><label>預設付款 Payment</label><select id="st_pay">${D.payments.map(p => `<option${p===st.defaultPay?' selected':''}>${esc(p)}</option>`).join('')}</select></div>
+      </div></div>
+    <div class="card"><p class="label">貨幣 Currencies（「貨幣」分頁）</p>${curRows}
+      <div class="row2" style="margin-top:8px">
+        <div class="field" style="margin-top:0"><label>代號 Code</label><input id="nc_code" placeholder="GBP" maxlength="3" autocapitalize="characters"></div>
+        <div class="field" style="margin-top:0"><label>名稱 Name</label><input id="nc_name" placeholder="英鎊"></div>
+        <div class="field"><label>符號 Symbol</label><input id="nc_sym" placeholder="£"></div>
+        <div class="field"><label>估計匯率 1 = ? HKD</label><input id="nc_est" inputmode="decimal" placeholder="10.2"></div>
+      </div>
+      <label class="tick"><input type="checkbox" id="nc_nodec"> 冇小數（例如日圓）</label>
+      <button class="btn ghost" id="nc_add">＋ 加貨幣 Add currency</button></div>
+    <div class="card"><p class="label">付款方式 Payment methods（「付款方式」分頁）</p>${payRows}
+      <div class="row2" style="margin-top:8px">
+        <div class="field" style="margin-top:0"><label>名稱 Name</label><input id="np_name" placeholder="例如：Apple Pay"></div>
+        <div class="field" style="margin-top:0"><label>English</label><input id="np_en" placeholder="（可以唔填）"></div>
+      </div>
+      <button class="btn ghost" id="np_add">＋ 加付款方式 Add</button></div>
+    <div class="card"><p class="label">同步 Sync（Vault V3 · 資料存喺呢部機 IndexedDB）</p>
+      <div class="kv"><span>上次同步 Last sync</span><span>${agoTxt(s.syncedAt)}</span></div>
+      <div class="kv" style="margin-top:4px"><span>等緊同步 Pending</span><span>${s.pending} 筆</span></div>
+      <div class="kv" style="margin-top:4px"><span>自動同步 Auto</span><span>開 App 時、有網時、返到 App 時、每 ${Math.round(SYNC_MS/60000) || '<1'} 分鐘</span></div>
+      ${s.lastError ? `<div class="kv" style="margin-top:4px"><span>上次問題</span><span>${esc(s.lastError)}</span></div>` : ''}
+      <div class="kv" style="margin-top:4px"><span>永久儲存 Persistent</span><span id="st_persist">…</span></div>
+      <button class="btn ghost" onclick="openConn()">🔗 連線設定 Server URL / token</button>
+      <button class="btn ghost" onclick="closeSheet();bgSync('manual')">🔄 而家同步 Sync now</button></div>
+    <p class="hint">舊記錄唔會受影響：刪咗嘅貨幣／付款方式照樣顯示。每月預算喺「總覽」改。類別喺「記一筆」加，或者直接改「類別」分頁。設定改動即刻生效，有網先寫入 Sheet。</p>
+    <button class="btn ghost" onclick="closeSheet()">完成 Done</button>`);
+  if (navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(p => { const el = $('st_persist'); if (el) el.textContent = p ? '✓ 開咗' : '未有（瀏覽器決定）'; }).catch(() => {});
+  else $('st_persist').textContent = '唔支援';
+  const run = async (fn, args, msg) => {
+    await V.enqueueCfg(fn, args);                         // 只等本機，唔等網絡
+    recompute(); renderAll(true); renderAdd(); openSettings(); toast(msg + (isOff() ? '（有網自動同步）' : '')); afterWrite();
+  };
+  $('st_cur').onchange = ev => run('setSetting', ['預設貨幣', ev.target.value], '預設貨幣已更新 ✓');
+  $('st_pay').onchange = ev => run('setSetting', ['預設付款方式', ev.target.value], '預設付款方式已更新 ✓');
+  $('nc_add').onclick = () => {
+    const c = {code: $('nc_code').value.trim().toUpperCase(), name: $('nc_name').value.trim(), sym: $('nc_sym').value.trim(), est: $('nc_est').value.trim(), dec: $('nc_nodec').checked ? 0 : 2};
+    if (!/^[A-Z]{3}$/.test(c.code)) return toast('貨幣代號要係 3 個英文字母（例如 GBP）', 3000);
+    if (!(Number(c.est) > 0)) return toast('請輸入估計匯率（1 ' + c.code + ' = 幾多 HKD）', 3000);
+    if (D.currencies.includes(c.code)) return toast('已經有 ' + c.code);
+    run('addCurrency', [c], '已加貨幣 ✓');
+  };
+  $('np_add').onclick = () => {
+    const p = {name: $('np_name').value.trim(), en: $('np_en').value.trim()};
+    if (!p.name) return toast('請輸入付款方式'); if (D.payments.includes(p.name)) return toast('已經有「' + p.name + '」');
+    run('addPayment', [p], '已加付款方式 ✓');
+  };
+  $('sheet').querySelectorAll('[data-delcur]').forEach(b => b.onclick = () => {
+    if (confirm('喺清單刪走 ' + b.dataset.delcur + '？（舊記錄唔受影響）')) run('removeCurrency', [b.dataset.delcur], '已刪 ' + b.dataset.delcur); });
+  $('sheet').querySelectorAll('[data-delpay]').forEach(b => b.onclick = () => {
+    if (D.payments.length <= 1) return toast('最少要留一個付款方式');
+    if (confirm('喺清單刪走「' + b.dataset.delpay + '」？（舊記錄唔受影響）')) run('removePayment', [b.dataset.delpay], '已刪 ' + b.dataset.delpay); });
+}
+
+/* ---------- 記錄 ---------- */
+function renderList(){
+  const used = new Set(D.rows.map(r => r.type + '|' + r.cat));
+  // V3（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
+  const known = new Set(D.categories.map(c => c.type + '|' + c.name));
+  const fcats = D.categories.filter(c => used.has(c.type + '|' + c.name))
+    .concat([...used].filter(k => !known.has(k)).map(k => { const [t, n] = k.split('|'); return catMeta(n, t); }).map((m, i) => ({...m, type: [...used].filter(k => !known.has(k))[i].split('|')[0]})));
+  const pills = [['全部','全部 All'],['支出','支出 Expense'],['收入','收入 Income'],
+    ...fcats.map(c => ['c:'+c.type+'|'+c.name, `${c.icon} ${esc(c.name)}${c.en?' <span class="en">'+esc(c.en)+'</span>':''}`])];
+  $('filter').innerHTML = pills.map(([k,l]) => `<button class="pill${k===listFilter?' on':''}" data-f="${esc(k)}">${l}</button>`).join('');
+  $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; renderList(); };
+  const match = r => listFilter==='全部' || r.type===listFilter || listFilter === 'c:'+r.type+'|'+r.cat;
+  const rs = D.rows.filter(match).slice().sort((a,b) => b.date.localeCompare(a.date) || b.row - a.row);
+  if (!rs.length) { $('list').innerHTML = '<div class="empty">未有記錄 No records</div>'; return; }
+  const groups = {}; rs.forEach(r => (groups[r.date] = groups[r.date] || []).push(r));
+  $('list').innerHTML = Object.entries(groups).slice(0, 60).map(([d, items]) => {
+    const ex = spent(items), inc = earned(items);
+    return `
+    <div class="day"><span>${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
+      <span>${ex?hkd(ex):''}${ex&&inc?' · ':''}${inc?`<span class="inc">+${hkd(inc)}</span>`:''}</span></div>
+    <div class="group">${items.map(r => { const m = catMeta(r.cat, r.type); return `
+      <div class="item${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
+        <div class="ic" style="background:${m.color}22">${m.icon}</div>
+        <div class="t"><b>${esc(r.item)}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+          <small>${isInc(r)?'收入 · ':''}${esc(r.cat)}${m.en?' '+esc(m.en):''}${r.pay?' · '+esc(r.pay):''}${r.note && r.note!=='示範' ? ' · '+esc(r.note):''}</small></div>
+        <div class="a${isInc(r)?' inc':''}">${isInc(r)?'+':''}${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}${r.est ? ` <span class="esttag">· ${r.pending ? '離線估計' : '估計'}</span>` : ''}</small>` : ''}</div>
+      </div>`; }).join('')}</div>`; }).join('');
+  $('list').onclick = ev => { const it = ev.target.closest('[data-row]'); if(!it) return;
+    openEdit(D.rows.find(r => String(r.row) === it.dataset.row)); };
+}
+let editState = {};
+/** 打開咗修改表之後背景同步可能改咗行號／op：儲存時用 client id 或 fingerprint 搵返最新嗰行 */
+function freshRow(r){
+  const fp = VaultSync.fpOf(r);
+  return (r.cid && D.rows.find(x => x.cid === r.cid)) || D.rows.find(x => x.row === r.row && VaultSync.fpOf(x) === fp) ||
+         D.rows.find(x => typeof x.row === 'number' && VaultSync.fpOf(x) === fp) || r;
+}
+function openEdit(r){
+  if(!r) return; editing = r; editState = {cat:r.cat, pay:r.pay, cur:r.cur||'HKD', type:r.type||'支出'};
+  openSheet(`<h3>修改記錄 Edit</h3>` + formHTML('e_', r) +
+    `<button type="button" class="btn" id="edSave">儲存修改 Save</button><button type="button" class="btn danger" id="edDel">刪除呢筆 Delete</button>`);
+  bindForm('e_', editState);
+  $('edSave').onclick = async () => {
+    const t0 = performance.now();
+    blurActive();
+    const e = readForm('e_', editState); if(!e) return;
+    try { await V.enqueueEdit(freshRow(editing), e); }       // 只等本機 IndexedDB
+    catch(err){ return toast(err.message || err, 3000); }
+    recompute(); closeSheet(); renderAll(true);
+    toast(isOff() ? '已改（離線，有網自動同步）' : '已更新 ✓');
+    perfMark('edit', t0);
+    afterWrite();
+  };
+  $('edDel').onclick = async () => {
+    blurActive();
+    if (!confirm(`確定刪除「${editing.item} ${editing.cur&&editing.cur!=='HKD' ? origTxt(editing.cur, editing.orig) : hkd(editing.amount)}」？`)) return;
+    const t0 = performance.now();                           // 由確認嗰下開始計
+    try { await V.enqueueDelete(freshRow(editing)); }
+    catch(err){ return toast(err.message || err, 3000); }
+    recompute(); closeSheet(); renderAll(true);
+    toast(isOff() ? '已刪（離線，有網自動同步）' : '已刪除 ✓');
+    perfMark('delete', t0);
+    afterWrite();
+  };
+}
+/* 連線設定：Apps Script /exec 網址 + token（存喺呢部機 IndexedDB，唔會擺入 GitHub）。儲存即刻生效，背景測試 */
+function openConn(){
+  const c = V.cfg;
+  openSheet(`<h3>連線設定 Connection</h3>
+    <div class="card">
+      <div class="field" style="margin-top:0"><label>Apps Script 網頁應用程式網址（/exec 結尾）</label><input id="cn_url" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(c.url)}" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+      <div class="field"><label>Token（同 Api.gs 嘅 API_TOKEN 一樣；冇設就留空）</label><input id="cn_tok" value="${esc(c.token)}" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+      <p class="hint">只會存喺呢部機。網址同 token 唔好放上公開 GitHub。</p>
+    </div>
+    <button class="btn" id="cn_save">儲存 Save</button><button class="btn ghost" onclick="closeSheet()">取消 Cancel</button>`);
+  $('cn_save').onclick = async () => {
+    const url = $('cn_url').value.trim(), tok = $('cn_tok').value.trim();
+    if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url)) return toast('網址要係 https://script.google.com/…/exec', 4000);
+    await V.setCfg(url, tok); closeSheet(); renderPill(); toast('已儲存，背景連線緊…');
+    call('ping').then(() => { toast('連線成功 ✓'); bgSync('manual'); })
+      .catch(err => toast('連唔到：' + (err.message || err) + '（改動照樣存喺部機）', 6000));
+  };
+}
+function openFailed(){
+  const rows = V.failed.map(f => { const op = f.op || {}, e = op.entry || {}, o = (op.ref && op.ref.orig) || op.orig || {};
+    const what = op.op === 'add' ? '新增' : op.op === 'update' ? '修改' : op.op === 'delete' ? '刪除' : '設定';
+    const desc = op.op === 'cfg' ? `${op.fn} ${esc(JSON.stringify(op.args || []))}` : `${esc(e.date || o.date || '')} ${esc(e.item || o.item || e.cat || '')} ${esc(e.cur || o.cur || '')} ${esc(String(e.amount ?? o.orig ?? ''))}`;
+    return `<div class="setrow" style="grid-template-columns:44px 1fr"><b>${what}</b><span>${desc}<br><small>${esc(f.error || '')}</small></span></div>`; }).join('');
+  openSheet(`<h3>同步失敗 Failed</h3><div class="card"><p class="label">呢啲改動伺服器做唔到（例如嗰行喺 Sheet 度改咗／刪咗）。請喺 App 或 Sheet 手動再做一次。</p>${rows || '<div class="empty">冇</div>'}</div>
+    <button class="btn ghost" onclick="V.clearFailed().then(()=>{closeSheet();recompute();renderAll(true)})">清除清單 Clear</button><button class="btn ghost" onclick="closeSheet();bgSync('manual')">🔄 而家同步 Sync now</button><button class="btn ghost" onclick="closeSheet()">關閉 Close</button>`);
+}
+function openSheet(html){ $('sheet').innerHTML = html; $('sheet').classList.add('on'); $('mask').classList.add('on'); }
+function closeSheet(){ $('sheet').classList.remove('on'); $('mask').classList.remove('on'); editing = null; }
+
+/* ---------- 導航（純本機；只畫而家睇緊嗰頁，其他頁轉過去先畫）---------- */
+const dirty = { sum: true, list: true };
+const curView = () => document.querySelector('nav .on').dataset.v;
+function show(v, keepScroll){
+  const t0 = performance.now(), changed = v !== curView();
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v===v));
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id==='v-'+v));
+  if (v === 'sum' && dirty.sum) { renderSum(); dirty.sum = false; }
+  if (v === 'list' && dirty.list) { renderList(); dirty.list = false; }
+  $('title').innerHTML = `${TITLES[v][0]}<span class="en">${TITLES[v][1]}</span>`;
+  const q = V ? V.status().pending : 0;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '睇下今個月使咗幾多 This month at a glance' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  if (!keepScroll) document.querySelector('main').scrollTop = 0;
+  if (changed) perfMark('tab', t0);
+}
+document.querySelector('nav').onclick = ev => { const b = ev.target.closest('[data-v]'); if(b) show(b.dataset.v); };
+let noticeHidden = '';
+function renderNotice(){
+  const n = D.fxNotice, el = $('notice');
+  if (!n || noticeHidden === n.kind + n.est + n.budgetEst) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="notice ${n.kind==='perm'?'perm':''}"><b>${n.kind==='perm' ? '⚠️ 未授權攞匯率 Not authorised' : '⚠️ 用緊估計匯率 Estimated rates'}</b>${esc(n.msg)}${n.kind==='perm' && (n.est||n.budgetEst) ? '<br>（暫時用估計匯率計港幣，授權後會自動更正）' : ''}<button aria-label="close" onclick="noticeHidden='${n.kind}${n.est}${n.budgetEst}';renderNotice()">×</button></div>`;
+}
+function renderAll(keepScroll){
+  renderPill(); renderNotice(); renderMini();
+  dirty.sum = dirty.list = true;
+  show(curView(), keepScroll);
+}
+
+let started = false;
+function start(){
+  if (started) return; started = true;
+  viewMonth = monthOf(todayHel());
+  recompute(); lastCfgSig = configSig(); renderAdd(); renderAll();
+  $('loading').style.display = 'none';
+  const h = (location.hash||'').slice(1); if (TITLES[h]) show(h);
+}
+
+/* ---------- 開機：IndexedDB → 即刻畫 → 之後先背景同步（永遠唔等 getData）---------- */
+async function boot(){
+  PERF.boot.scriptAt = performance.now();
+  $('syncpill').onclick = onPillTap;
+  let db;
+  try { db = await VaultIDB.open(); }
+  catch (err) { $('loading').innerHTML = '呢個瀏覽器開唔到本機資料庫（IndexedDB）。<br>如果係私人瀏覽模式，請用正常模式開。<br><small>' + esc(err.message || err) + '</small>'; return; }
+  V = VaultSync.create({ db, defaults: { url: APPS_SCRIPT_URL, token: API_TOKEN }, options: { intervalMs: SYNC_MS, pullGapMs: Math.min(15000, SYNC_MS / 2) } });
+  V.onChange(onEngineChange);
+  const r = await V.init({ localStorage });           // 第一次開：由 V2.2 PWA 嘅 localStorage 搬資料（localStorage 留低做備份）
+  PERF.boot.idbReadyAt = performance.now();
+  start();
+  PERF.boot.firstRenderAt = performance.now();
+  requestAnimationFrame(() => setTimeout(() => { PERF.boot.firstPaintAt = performance.now(); }, 0));
+  if (r.migrated && (r.migrated.ops || r.migrated.rows)) toast(`已由舊版搬過嚟：${r.migrated.rows} 筆記錄${r.migrated.ops ? '、' + r.migrated.ops + ' 筆未同步' : ''} ✓`, 3500);
+  if (!V.cfg.url) openConn();
+  else if (!V.server) toast('第一次同步緊（背景）… 可以照用', 2500);
+  // 叫瀏覽器唔好清走 IndexedDB（Safari 7 日冇用會清網站資料；加咗落主畫面 + persist 會安全啲）
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(p => p || navigator.storage.persist()).then(p => { PERF.boot.persisted = p; }).catch(() => {});
+  V.startAuto({ intervalMs: SYNC_MS });                // 開住 App 期間每 10 分鐘
+  setTimeout(() => bgSync('open'), 0);                 // 背景：清隊 + 拉 getData
+}
+window.addEventListener('online', () => { renderPill(); bgSync('online'); });
+window.addEventListener('offline', () => renderPill());
+document.addEventListener('visibilitychange', () => { if (!document.hidden && started) bgSync('visible'); });
+
+/* Service worker：外殼 cache-first（即開）；有新版本就問用戶要唔要更新（唔會打緊字突然 reload） */
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'VAULT_BG_SYNCED' && V) bgSync('bg'); });
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      const prompt = w => {
+        $('updbar').innerHTML = `<div class="netbar"><span>🆕 有新版本 New version</span><button id="swUpd">更新 Update</button></div>`;
+        $('swUpd').onclick = () => w.postMessage({type:'SKIP_WAITING'});
+      };
+      if (reg.waiting && navigator.serviceWorker.controller) prompt(reg.waiting);
+      reg.addEventListener('updatefound', () => { const w = reg.installing; if (!w) return;
+        w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) prompt(w); }); });
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloaded || !window.__swHadController) return; reloaded = true; location.reload(); });
+      window.__swHadController = !!navigator.serviceWorker.controller;
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(()=>{}); });
+    } catch (e) { console.warn('SW register failed', e); }
+  });
+}
+boot();
+</script>
+</body>
+</html>
