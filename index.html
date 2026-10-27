@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3（離線優先）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.1（離線優先；V3.1：總覽加「全年每月支出」）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -120,6 +120,24 @@ nav button.on .i{filter:none;opacity:1}
 .days{display:flex;align-items:flex-end;gap:2px;height:90px;margin-top:6px}
 .days i{flex:1;background:#99f6e4;border-radius:3px 3px 0 0;min-height:2px}
 .days i.t{background:var(--brand)}
+/* V3.1：全年每月支出 */
+.ytop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.ytop .big{font-size:28px}
+.ybars{display:flex;align-items:flex-end;gap:3px;height:120px;margin-top:12px;padding-top:14px}
+.ybars button{flex:1;height:100%;border:0;background:none;padding:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}
+.ybars button i{display:block;width:100%;background:#99f6e4;border-radius:5px 5px 0 0;min-height:2px}
+.ybars button.now i{background:var(--brand)}
+.ybars button.fut i{background:#eef0f2}
+.ybars button.sel::after{content:'';position:absolute;left:15%;right:15%;bottom:-6px;height:3px;border-radius:2px;background:var(--brand)}
+.yaxis{display:flex;gap:3px;margin-top:8px;font-size:10px;color:var(--sub)}
+.yaxis span{flex:1;text-align:center}
+.yaxis span.now{color:var(--brand);font-weight:700}
+.ylist{display:grid;grid-template-rows:repeat(6,auto);grid-auto-flow:column;column-gap:14px;margin-top:12px;border-top:1px solid var(--line);padding-top:6px}
+.ylist button{display:flex;justify-content:space-between;border:0;background:none;padding:5px 2px;font-size:13px;border-radius:8px;text-align:left}
+.ylist button b{font-variant-numeric:tabular-nums;font-weight:600}
+.ylist button.now{color:var(--brand);font-weight:700}
+.ylist button.sel{background:#ecfdf9}
+.ylist button.fut{color:#c0c4cc}
 .link{border:0;background:none;color:var(--brand);font-size:13px;padding:0}
 .setrow{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
 .setrow small{color:var(--sub);font-size:11px}
@@ -160,7 +178,7 @@ header{padding-top:calc(14px + env(safe-area-inset-top))}
 .netbar button{border:0;background:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--brand);white-space:nowrap}
 .tag.pend{background:#e0f2fe;color:#075985}
 .item.pend{background:#f8fafc}
-/* V3：同步狀態 */
+/* V3.1：同步狀態 */
 header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .syncpill{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap;margin-top:2px;max-width:56vw;overflow:hidden;text-overflow:ellipsis}
 .syncpill.ok{color:var(--inc);border-color:#bbf7d0}
@@ -189,6 +207,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
     <section class="view" id="v-sum">
       <div class="monthbar"><button onclick="shiftMonth(-1)">‹</button><b id="mLabel"></b><button onclick="shiftMonth(1)">›</button></div>
       <div class="card" id="sumCard"></div>
+      <div class="card" id="yearCard"></div>
       <div class="card"><p class="label">各類支出 Expenses by category</p><div id="cats"></div></div>
       <div class="card" id="incCard"><p class="label">收入來源 Income by category</p><div id="incCats"></div></div>
       <div class="card"><p class="label">每日支出 Daily spending</p><div class="days" id="days"></div><div class="kv" id="daysAxis"></div></div>
@@ -217,8 +236,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 <script src="idb.js"></script>
 <script src="sync.js"></script>
 <script>
-/* Vault V3：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
+/* Vault V3.1：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
+const APP_VERSION = 'V3.1';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -521,6 +541,39 @@ function renderSum(){
   const dmax = Math.max(1, ...byDay); const td = isNow ? Number(todayHel().slice(8)) : -1;
   $('days').innerHTML = byDay.map((v,i) => `<i class="${i+1===td?'t':''}" style="height:${v/dmax*100}%" title="${i+1}日 ${hkd(v)}"></i>`).join('');
   $('daysAxis').innerHTML = `<span>1日</span><span>${Math.ceil(dIn/2)}日</span><span>${dIn}日</span>`;
+  renderYear();
+}
+/* V3.1：全年每月支出（跟住 monthbar 揀嗰個月嘅年份；只計支出，唔計收入；全部喺部機計）*/
+function yearTotals(y){
+  const t = Array(12).fill(0), pre = y + '-';
+  for (const r of D.rows) {                              // 一次過行晒 ~2,500 行，唔使 filter 12 次
+    if (isInc(r) || !r.date || r.date.slice(0,5) !== pre) continue;
+    const m = Number(r.date.slice(5,7)); if (m >= 1 && m <= 12) t[m-1] += Number(r.amount) || 0;
+  }
+  return t;
+}
+function renderYear(){
+  const y = viewMonth.slice(0,4), t = yearTotals(y), today = todayHel(), ty = today.slice(0,4), tm = Number(today.slice(5,7));
+  const sel = Number(viewMonth.slice(5,7));
+  const elapsed = y < ty ? 12 : y > ty ? 0 : tm;          // 計平均用：已經過咗（包括今個月）嘅月數
+  const total = t.reduce((a,b)=>a+b,0), avg = elapsed ? t.slice(0,elapsed).reduce((a,b)=>a+b,0)/elapsed : 0;
+  const max = Math.max(1, ...t), top = t.indexOf(Math.max(...t));
+  const cls = i => [y===ty && i+1===tm ? 'now' : '', (y>ty || (y===ty && i+1>tm)) ? 'fut' : '', i+1===sel ? 'sel' : ''].filter(Boolean).join(' ');
+  $('yearCard').innerHTML = `
+    <p class="label">全年每月支出 Monthly spending (${y})</p>
+    <div class="ytop"><div class="big">${hkd(total)}</div><small style="color:var(--sub)">全年 Year total</small></div>
+    <div class="stats">
+      <div><b>${hkd(avg)}</b><small>每月平均 Avg/month</small></div>
+      <div><b>${total ? (top+1)+'月' : '—'}</b><small>最多 Top month</small></div>
+      <div><b>${elapsed}</b><small>已過月數 Months</small></div>
+    </div>
+    <div class="ybars" id="ybars">${t.map((v,i) => `<button type="button" class="${cls(i)}" data-m="${i+1}" aria-label="${i+1}月 ${hkd(v)}" title="${i+1}月 ${hkd(v)}"><i style="height:${v/max*100}%"></i></button>`).join('')}</div>
+    <div class="yaxis">${t.map((v,i) => `<span class="${y===ty && i+1===tm ? 'now' : ''}">${i+1}</span>`).join('')}</div>
+    <div class="ylist" id="ylist">${t.map((v,i) => `<button type="button" class="${cls(i)}" data-m="${i+1}"><span>${i+1}月</span><b>${(y>ty || (y===ty && i+1>tm)) && !v ? '—' : hkd(v)}</b></button>`).join('')}</div>
+    <p class="hint" style="margin:8px 2px 0">撳一個月睇嗰個月 Tap a month to view it · 只計支出 expenses only</p>`;
+  const go = ev => { const b = ev.target.closest('[data-m]'); if (!b) return;
+    viewMonth = `${y}-${String(b.dataset.m).padStart(2,'0')}`; renderSum(); document.querySelector('main').scrollTop = 0; };
+  $('ybars').onclick = go; $('ylist').onclick = go;
 }
 function editBudget(){
   openSheet(`<h3>每月預算 Monthly budget</h3>
@@ -562,7 +615,7 @@ function openSettings(){
         <div class="field" style="margin-top:0"><label>English</label><input id="np_en" placeholder="（可以唔填）"></div>
       </div>
       <button class="btn ghost" id="np_add">＋ 加付款方式 Add</button></div>
-    <div class="card"><p class="label">同步 Sync（Vault V3 · 資料存喺呢部機 IndexedDB）</p>
+    <div class="card"><p class="label">同步 Sync（Vault ${APP_VERSION} · 資料存喺呢部機 IndexedDB）</p>
       <div class="kv"><span>上次同步 Last sync</span><span>${agoTxt(s.syncedAt)}</span></div>
       <div class="kv" style="margin-top:4px"><span>等緊同步 Pending</span><span>${s.pending} 筆</span></div>
       <div class="kv" style="margin-top:4px"><span>自動同步 Auto</span><span>開 App 時、有網時、返到 App 時、每 ${Math.round(SYNC_MS/60000) || '<1'} 分鐘</span></div>
@@ -602,7 +655,7 @@ function openSettings(){
 /* ---------- 記錄 ---------- */
 function renderList(){
   const used = new Set(D.rows.map(r => r.type + '|' + r.cat));
-  // V3（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
+  // V3.1（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
   const known = new Set(D.categories.map(c => c.type + '|' + c.name));
   const fcats = D.categories.filter(c => used.has(c.type + '|' + c.name))
     .concat([...used].filter(k => !known.has(k)).map(k => { const [t, n] = k.split('|'); return catMeta(n, t); }).map((m, i) => ({...m, type: [...used].filter(k => !known.has(k))[i].split('|')[0]})));
