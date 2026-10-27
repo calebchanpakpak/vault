@@ -6,7 +6,7 @@
  * - Background Sync（只係錦上添花）：Chrome／Android 喺 App 關咗之後都可以幫手送出排緊隊嘅改動。
  *   iOS Safari／主畫面 App 冇 Background Sync 亦冇 Periodic Sync：App 關咗就唔會同步，下次打開先補送。
  */
-const CACHE = 'vault-v3-shell-r1';
+const CACHE = 'vault-v3-shell-r2';
 const SHELL = ['./', './index.html', './idb.js', './sync.js', './manifest.json',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 

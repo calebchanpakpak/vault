@@ -174,7 +174,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 </head>
 <body>
 <div id="app">
-  <header><div><h1 id="title">記一筆</h1><div class="sub" id="subtitle"></div></div>
+  <header><div><h1 id="title">記帳</h1><div class="sub" id="subtitle"></div></div>
     <button class="syncpill" id="syncpill" type="button" aria-label="同步狀態，撳一下即刻同步">…</button></header>
   <div id="updbar"></div>
   <div id="netbar"></div>
@@ -219,7 +219,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 <script>
 /* Vault V3：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
-const TITLES = {add:['記一筆','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
+const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
 const payEn = p => ((D.payInfo||[]).find(x => x.name === p) || {}).en || '';
