@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.1（離線優先；V3.1：總覽加「全年每月支出」）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.2（離線優先；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -112,32 +112,46 @@ nav button.on .i{filter:none;opacity:1}
 .kv{display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
 .stats div{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
-.stats b{display:block;font-size:15px}.stats small{font-size:10.5px;color:var(--sub);white-space:nowrap}
+.stats b{display:block;font-size:15px;overflow-wrap:anywhere}.stats small{font-size:10.5px;color:var(--sub);white-space:nowrap}
 .catrow{display:grid;grid-template-columns:22px 92px 1fr 92px;align-items:center;gap:8px;padding:5px 0;font-size:13px;line-height:1.2}
 .catrow .bar{height:10px;background:#eef0f2;border-radius:99px;overflow:hidden}
 .catrow .bar i{display:block;height:100%;border-radius:99px}
 .catrow .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
-.days{display:flex;align-items:flex-end;gap:2px;height:90px;margin-top:6px}
-.days i{flex:1;background:#99f6e4;border-radius:3px 3px 0 0;min-height:2px}
-.days i.t{background:var(--brand)}
-/* V3.1：全年每月支出 */
+/* V3.2：總覽 toggles + 柱狀圖（支持負數） */
+.seg.seg3{grid-template-columns:repeat(3,1fr);margin-bottom:8px}
+.seg.seg3 button{font-size:13px;padding:7px 0}
+.seg.seg3.per{margin-bottom:12px}
+.seg button.on[data-w="exp"]{color:var(--warn)}.seg button.on[data-w="inc"]{color:var(--inc)}
+.seg button.on[data-w="net"],.seg button.on[data-p]{color:var(--brand)}
 .ytop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .ytop .big{font-size:28px}
-.ybars{display:flex;align-items:flex-end;gap:3px;height:120px;margin-top:12px;padding-top:14px}
-.ybars button{flex:1;height:100%;border:0;background:none;padding:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}
-.ybars button i{display:block;width:100%;background:#99f6e4;border-radius:5px 5px 0 0;min-height:2px}
-.ybars button.now i{background:var(--brand)}
-.ybars button.fut i{background:#eef0f2}
-.ybars button.sel::after{content:'';position:absolute;left:15%;right:15%;bottom:-6px;height:3px;border-radius:2px;background:var(--brand)}
+.chart{position:relative;display:flex;gap:3px;height:130px;margin-top:14px}
+.chart.dense{gap:2px;height:110px}
+.chart button{flex:1;position:relative;height:100%;border:0;background:none;padding:0;min-width:0}
+.chart button i{position:absolute;left:0;right:0;display:block;min-height:2px;border-radius:5px 5px 0 0;background:#99f6e4}
+.chart.dense button i{border-radius:3px 3px 0 0}
+.chart button i.k-inc,.chart button i.k-net{background:#bbf7d0}
+.chart button.neg i{background:#fecaca;border-radius:0 0 5px 5px}
+.chart button.now i.k-exp{background:var(--brand)}
+.chart button.now i.k-inc,.chart button.now i.k-net{background:var(--inc)}
+.chart button.now.neg i{background:var(--warn)}
+.chart button.fut i{background:#eef0f2}
+.chart button.sel::after{content:'';position:absolute;left:15%;right:15%;bottom:-6px;height:3px;border-radius:2px;background:var(--brand)}
+.chart .zero{position:absolute;left:0;right:0;height:1px;background:#9ca3af;z-index:1}
 .yaxis{display:flex;gap:3px;margin-top:8px;font-size:10px;color:var(--sub)}
 .yaxis span{flex:1;text-align:center}
 .yaxis span.now{color:var(--brand);font-weight:700}
 .ylist{display:grid;grid-template-rows:repeat(6,auto);grid-auto-flow:column;column-gap:14px;margin-top:12px;border-top:1px solid var(--line);padding-top:6px}
 .ylist button{display:flex;justify-content:space-between;border:0;background:none;padding:5px 2px;font-size:13px;border-radius:8px;text-align:left}
-.ylist button b{font-variant-numeric:tabular-nums;font-weight:600}
+.ylist button b,.dlist b{font-variant-numeric:tabular-nums;font-weight:600}
 .ylist button.now{color:var(--brand);font-weight:700}
 .ylist button.sel{background:#ecfdf9}
 .ylist button.fut{color:#c0c4cc}
+.dlist{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;margin-top:10px;border-top:1px solid var(--line);padding-top:6px}
+.drow{display:flex;justify-content:space-between;padding:5px 2px;font-size:12.5px}
+.drow.now{color:var(--brand);font-weight:700}
+.vs{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-top:8px}
+.vs .bar{height:10px;background:#eef0f2;border-radius:99px;overflow:hidden}.vs .bar i{display:block;height:100%;border-radius:99px}
 .link{border:0;background:none;color:var(--brand);font-size:13px;padding:0}
 .setrow{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
 .setrow small{color:var(--sub);font-size:11px}
@@ -178,7 +192,7 @@ header{padding-top:calc(14px + env(safe-area-inset-top))}
 .netbar button{border:0;background:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--brand);white-space:nowrap}
 .tag.pend{background:#e0f2fe;color:#075985}
 .item.pend{background:#f8fafc}
-/* V3.1：同步狀態 */
+/* V3.2：同步狀態 */
 header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .syncpill{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap;margin-top:2px;max-width:56vw;overflow:hidden;text-overflow:ellipsis}
 .syncpill.ok{color:var(--inc);border-color:#bbf7d0}
@@ -206,11 +220,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
     <!-- 總覽 -->
     <section class="view" id="v-sum">
       <div class="monthbar"><button onclick="shiftMonth(-1)">‹</button><b id="mLabel"></b><button onclick="shiftMonth(1)">›</button></div>
-      <div class="card" id="sumCard"></div>
-      <div class="card" id="yearCard"></div>
-      <div class="card"><p class="label">各類支出 Expenses by category</p><div id="cats"></div></div>
-      <div class="card" id="incCard"><p class="label">收入來源 Income by category</p><div id="incCats"></div></div>
-      <div class="card"><p class="label">每日支出 Daily spending</p><div class="days" id="days"></div><div class="kv" id="daysAxis"></div></div>
+      <div class="seg seg3" id="sumWhat"></div>
+      <div class="seg seg3 per" id="sumPer"></div>
+      <div id="sumBody"></div>
       <button class="btn ghost" onclick="openSettings()">⚙️ 設定 Settings（貨幣、付款方式、預設值、同步）</button>
     </section>
     <!-- 記錄 -->
@@ -236,9 +248,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 <script src="idb.js"></script>
 <script src="sync.js"></script>
 <script>
-/* Vault V3.1：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
+/* Vault V3.2：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
-const APP_VERSION = 'V3.1';
+const APP_VERSION = 'V3.2';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -500,8 +512,19 @@ function renderMini(){
     <div style="text-align:right"><small>${left>=0?'仲剩 Left':'超支 Over'}</small><br><b>${hkd(Math.abs(left))}</b></div>`;
 }
 
-/* ---------- 總覽 ---------- */
+/* ---------- 總覽（V3.2：揀「睇乜」支出／收入／淨額 ×「幾耐」全年／每月／每日，一次淨係畫一個組合）---------- */
+const SUM_WHAT = [['exp','支出','Spending'],['inc','收入','Income'],['net','淨額','Net']];
+const SUM_PER = [['year','全年','Yearly'],['month','每月','Monthly'],['day','每日','Daily']];
+let sumView = (() => { try { const v = JSON.parse(localStorage.getItem('vault.sumView') || '{}');
+  return { what: SUM_WHAT.some(x => x[0] === v.what) ? v.what : 'exp', per: SUM_PER.some(x => x[0] === v.per) ? v.per : 'month' }; }
+  catch (e) { return { what: 'exp', per: 'month' }; } })();
+function setSumView(what, per){
+  sumView = { what: what || sumView.what, per: per || sumView.per };
+  try { localStorage.setItem('vault.sumView', JSON.stringify(sumView)); } catch (e) {}
+  renderSum();
+}
 function shiftMonth(k){
+  if (sumView.per === 'year') k *= 12;                   // 全年模式：‹ › 一次轉一年
   const [y,m] = viewMonth.split('-').map(Number); const d = new Date(y, m-1+k, 1);
   viewMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; renderSum();
 }
@@ -513,67 +536,130 @@ function catRows(rs, type){
       <div class="bar"><i style="width:${v/max*100}%;background:${m.color}"></i></div>
       <span class="v${type==='收入'?' inc':''}">${type==='收入'?'+':''}${hkd(v)}</span></div>`; }).join('');
 }
-function renderSum(){
+// 一次過行晒啲行（~2,500 行 < 1 毫秒），同時計支出、收入、淨額
+function totalsBy(rows, n, idx){
+  const exp = Array(n).fill(0), inc = Array(n).fill(0), cnt = Array(n).fill(0);
+  for (const r of rows) { const k = idx(r); if (!(k >= 0 && k < n)) continue;
+    const a = Number(r.amount) || 0; if (isInc(r)) inc[k] += a; else exp[k] += a; cnt[k]++; }
+  return { exp, inc, net: inc.map((v,k) => v - exp[k]), cnt };
+}
+function monthsOfYear(y){ const pre = y + '-';
+  return totalsBy(D.rows, 12, r => r.date && r.date.slice(0,5) === pre ? Number(r.date.slice(5,7)) - 1 : -1); }
+function daysOfMonth(m){ return totalsBy(rowsOf(m), daysIn(m), r => Number(r.date.slice(8,10)) - 1); }
+const signed = v => (v > 0 ? '+' : '') + hkd(v);
+const netColor = v => v >= 0 ? 'var(--inc)' : 'var(--warn)';
+const fmtWhat = (what, v) => what === 'net' ? `<span style="color:${netColor(v)}">${signed(v)}</span>` : what === 'inc' ? `<span class="inc">+${hkd(v)}</span>` : hkd(v);
+const tot = a => a.reduce((x,y) => x+y, 0);
+// 柱狀圖：純 HTML/CSS；有負數（淨額）就喺零線下面用紅色
+function chartHTML(vals, what, cls, attr, dense){
+  const maxP = Math.max(0, ...vals), maxN = Math.max(0, ...vals.map(v => -v)), range = (maxP + maxN) || 1, zf = maxP / range;
+  return `<div class="chart${dense?' dense':''}">${maxN ? `<b class="zero" style="top:${(zf*100).toFixed(2)}%"></b>` : ''}${vals.map((v,i) => {
+    const h = (Math.abs(v)/range*100).toFixed(2), st = v >= 0 ? `bottom:${((1-zf)*100).toFixed(2)}%;height:${h}%` : `top:${(zf*100).toFixed(2)}%;height:${h}%`;
+    return `<button type="button" class="${cls(i)}${v<0?' neg':''}" ${attr(i)} title="${esc(attr.label ? attr.label(i) : '')} ${what==='net'?signed(v):hkd(v)}"><i class="k-${what}" style="${st}"></i></button>`; }).join('')}</div>`;
+}
+const LBL = {
+  year: { exp:'全年每月支出 Monthly spending', inc:'全年每月收入 Monthly income', net:'全年每月淨額 Monthly net（收入 − 支出）' },
+  day: { exp:'每日支出 Daily spending', inc:'每日收入 Daily income', net:'每日淨額 Daily net（收入 − 支出）' }
+};
+function yearView(what){
+  const y = viewMonth.slice(0,4), T = monthsOfYear(y), v = T[what], today = todayHel(), ty = today.slice(0,4), tm = Number(today.slice(5,7));
+  const sel = Number(viewMonth.slice(5,7)), elapsed = y < ty ? 12 : y > ty ? 0 : tm;
+  const isFut = i => y > ty || (y === ty && i+1 > tm);
+  const total = tot(v), avg = elapsed ? tot(v.slice(0, elapsed)) / elapsed : 0;
+  const best = v.indexOf(Math.max(...v)), worst = v.indexOf(Math.min(...v)), any = T.cnt.some(Boolean);
+  const cls = i => [y===ty && i+1===tm ? 'now' : '', isFut(i) ? 'fut' : '', i+1===sel ? 'sel' : ''].filter(Boolean).join(' ');
+  const attr = i => `data-m="${i+1}"`; attr.label = i => `${i+1}月`;
+  const stats = what === 'net'
+    ? `<div class="netrow"><div><small>收入 Income</small><b class="inc">+${hkd(tot(T.inc))}</b></div><div><small>支出 Spending</small><b>${hkd(tot(T.exp))}</b></div></div>
+       <div class="kv" style="margin-top:8px"><span>每月平均 Avg/month</span><b style="color:${netColor(avg)}">${signed(avg)}</b></div>`
+    : `<div class="stats"><div><b>${what==='inc'?'+':''}${hkd(avg)}</b><small>每月平均 Avg/month</small></div><div><b>${total ? (best+1)+'月' : '—'}</b><small>最多 Top month</small></div><div><b>${elapsed}</b><small>已過月數 Months</small></div></div>`;
+  return `<div class="card" id="sumMain">
+    <p class="label">${LBL.year[what]} (${y})</p>
+    <div class="ytop"><div class="big">${fmtWhat(what, total)}</div><small style="color:var(--sub)">全年 Year total</small></div>
+    ${stats}
+    ${chartHTML(v, what, cls, attr)}
+    <div class="yaxis">${v.map((x,i) => `<span class="${y===ty && i+1===tm ? 'now' : ''}">${i+1}</span>`).join('')}</div>
+    <div class="ylist">${v.map((x,i) => `<button type="button" class="${cls(i)}" data-m="${i+1}"><span>${i+1}月</span><b>${isFut(i) && !T.cnt[i] ? '—' : fmtWhat(what, x)}</b></button>`).join('')}</div>
+    ${what==='net' && any ? `<div class="kv" style="margin-top:8px"><span>最好 Best · ${best+1}月</span><b style="color:${netColor(v[best])}">${signed(v[best])}</b></div>
+      <div class="kv" style="margin-top:4px"><span>最差 Worst · ${worst+1}月</span><b style="color:${netColor(v[worst])}">${signed(v[worst])}</b></div>` : ''}
+    <p class="hint" style="margin:8px 2px 0">撳一個月睇嗰個月 Tap a month to view it · ${what==='exp'?'只計支出 expenses only':what==='inc'?'只計收入 income only':'收入 − 支出 income minus spending'}</p></div>`;
+}
+function monthView(what){
   const all = rowsOf(viewMonth), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
   const s = sum(ex), income = sum(inc), net = income - s, pct = D.budget ? s / D.budget : 0;
   const isNow = viewMonth === monthOf(todayHel());
   const dIn = daysIn(viewMonth), passed = isNow ? Number(todayHel().slice(8)) : dIn;
-  $('mLabel').textContent = monthLabel(viewMonth);
-  $('sumCard').innerHTML = `
-    <p class="label">今個月支出 Spending（港幣 HKD）</p>
+  const ml = monthLabel(viewMonth);
+  if (what === 'exp') return `<div class="card" id="sumMain">
+    <p class="label">${ml}支出 Spending（港幣 HKD）</p>
     <div class="big">${hkd(s)}</div>
     <div class="prog ${pct>1?'over':pct>.85?'warn':''}"><i style="width:${Math.min(100,pct*100)}%"></i></div>
     <div class="kv"><span>預算 Budget ${hkd(D.budget)} · <button class="link" onclick="editBudget()">改 Edit</button></span>
       <span>${s<=D.budget?'仲剩 Left '+hkd(D.budget-s):'超支 Over '+hkd(s-D.budget)}</span></div>
-    <div class="netrow">
-      <div><small>收入 Income</small><b class="inc">+${hkd(income)}</b></div>
-      <div><small>淨額 Net（收入 − 支出）</small><b style="color:${net>=0?'var(--inc)':'var(--warn)'}">${net>=0?'+':''}${hkd(net)}</b></div>
-    </div>
     <div class="stats">
-      <div><b>${all.length}</b><small>筆記錄 Entries</small></div>
+      <div><b>${ex.length}</b><small>筆支出 Entries</small></div>
       <div><b>${hkd(passed? s/passed:0)}</b><small>每日平均 Per day</small></div>
       <div><b>${isNow && dIn-passed>0 ? hkd(Math.max(0,(D.budget-s)/(dIn-passed+1))) : '—'}</b><small>每日可用 Left/day</small></div>
-    </div>`;
-  $('cats').innerHTML = ex.length ? catRows(ex, '支出') : '<div class="empty">呢個月未有支出 No spending</div>';
-  $('incCard').style.display = inc.length ? '' : 'none';
-  $('incCats').innerHTML = catRows(inc, '收入');
-  const byDay = Array(dIn).fill(0); ex.forEach(r => byDay[Number(r.date.slice(8))-1] += r.amount);
-  const dmax = Math.max(1, ...byDay); const td = isNow ? Number(todayHel().slice(8)) : -1;
-  $('days').innerHTML = byDay.map((v,i) => `<i class="${i+1===td?'t':''}" style="height:${v/dmax*100}%" title="${i+1}日 ${hkd(v)}"></i>`).join('');
-  $('daysAxis').innerHTML = `<span>1日</span><span>${Math.ceil(dIn/2)}日</span><span>${dIn}日</span>`;
-  renderYear();
-}
-/* V3.1：全年每月支出（跟住 monthbar 揀嗰個月嘅年份；只計支出，唔計收入；全部喺部機計）*/
-function yearTotals(y){
-  const t = Array(12).fill(0), pre = y + '-';
-  for (const r of D.rows) {                              // 一次過行晒 ~2,500 行，唔使 filter 12 次
-    if (isInc(r) || !r.date || r.date.slice(0,5) !== pre) continue;
-    const m = Number(r.date.slice(5,7)); if (m >= 1 && m <= 12) t[m-1] += Number(r.amount) || 0;
-  }
-  return t;
-}
-function renderYear(){
-  const y = viewMonth.slice(0,4), t = yearTotals(y), today = todayHel(), ty = today.slice(0,4), tm = Number(today.slice(5,7));
-  const sel = Number(viewMonth.slice(5,7));
-  const elapsed = y < ty ? 12 : y > ty ? 0 : tm;          // 計平均用：已經過咗（包括今個月）嘅月數
-  const total = t.reduce((a,b)=>a+b,0), avg = elapsed ? t.slice(0,elapsed).reduce((a,b)=>a+b,0)/elapsed : 0;
-  const max = Math.max(1, ...t), top = t.indexOf(Math.max(...t));
-  const cls = i => [y===ty && i+1===tm ? 'now' : '', (y>ty || (y===ty && i+1>tm)) ? 'fut' : '', i+1===sel ? 'sel' : ''].filter(Boolean).join(' ');
-  $('yearCard').innerHTML = `
-    <p class="label">全年每月支出 Monthly spending (${y})</p>
-    <div class="ytop"><div class="big">${hkd(total)}</div><small style="color:var(--sub)">全年 Year total</small></div>
+    </div></div>
+    <div class="card"><p class="label">各類支出 Expenses by category</p>${ex.length ? catRows(ex, '支出') : '<div class="empty">呢個月未有支出 No spending</div>'}</div>`;
+  if (what === 'inc') return `<div class="card" id="sumMain">
+    <p class="label">${ml}收入 Income（港幣 HKD）</p>
+    <div class="big inc">+${hkd(income)}</div>
     <div class="stats">
-      <div><b>${hkd(avg)}</b><small>每月平均 Avg/month</small></div>
-      <div><b>${total ? (top+1)+'月' : '—'}</b><small>最多 Top month</small></div>
-      <div><b>${elapsed}</b><small>已過月數 Months</small></div>
+      <div><b>${inc.length}</b><small>筆收入 Entries</small></div>
+      <div><b>${hkd(passed? income/passed:0)}</b><small>每日平均 Per day</small></div>
+      <div><b>${inc.length ? hkd(Math.max(...inc.map(r => r.amount))) : '—'}</b><small>最大一筆 Largest</small></div>
+    </div></div>
+    <div class="card"><p class="label">收入來源 Income by category</p>${inc.length ? catRows(inc, '收入') : '<div class="empty">呢個月未有收入 No income</div>'}</div>`;
+  const mx = Math.max(income, s, 1);
+  return `<div class="card" id="sumMain">
+    <p class="label">${ml}淨額 Net（收入 − 支出）</p>
+    <div class="big" style="color:${netColor(net)}">${signed(net)}</div>
+    <div class="netrow">
+      <div><small>收入 Income</small><b class="inc">+${hkd(income)}</b></div>
+      <div><small>支出 Spending</small><b>${hkd(s)}</b></div>
     </div>
-    <div class="ybars" id="ybars">${t.map((v,i) => `<button type="button" class="${cls(i)}" data-m="${i+1}" aria-label="${i+1}月 ${hkd(v)}" title="${i+1}月 ${hkd(v)}"><i style="height:${v/max*100}%"></i></button>`).join('')}</div>
-    <div class="yaxis">${t.map((v,i) => `<span class="${y===ty && i+1===tm ? 'now' : ''}">${i+1}</span>`).join('')}</div>
-    <div class="ylist" id="ylist">${t.map((v,i) => `<button type="button" class="${cls(i)}" data-m="${i+1}"><span>${i+1}月</span><b>${(y>ty || (y===ty && i+1>tm)) && !v ? '—' : hkd(v)}</b></button>`).join('')}</div>
-    <p class="hint" style="margin:8px 2px 0">撳一個月睇嗰個月 Tap a month to view it · 只計支出 expenses only</p>`;
-  const go = ev => { const b = ev.target.closest('[data-m]'); if (!b) return;
-    viewMonth = `${y}-${String(b.dataset.m).padStart(2,'0')}`; renderSum(); document.querySelector('main').scrollTop = 0; };
-  $('ybars').onclick = go; $('ylist').onclick = go;
+    <div class="vs"><span>收入</span><div class="bar"><i style="width:${income/mx*100}%;background:var(--inc)"></i></div></div>
+    <div class="vs"><span>支出</span><div class="bar"><i style="width:${s/mx*100}%;background:var(--warn)"></i></div></div>
+    <div class="stats">
+      <div><b>${all.length}</b><small>筆記錄 Entries</small></div>
+      <div><b>${income > 0 ? Math.round(net/income*100) + '%' : '—'}</b><small>儲蓄率 Saved</small></div>
+      <div><b style="color:${netColor(net)}">${signed(passed ? net/passed : 0)}</b><small>每日平均 Per day</small></div>
+    </div></div>`;
+}
+function dayView(what){
+  const m = viewMonth, T = daysOfMonth(m), v = T[what], dIn = v.length, today = todayHel(), cm = monthOf(today);
+  const td = m === cm ? Number(today.slice(8)) : -1, passed = m === cm ? td : m < cm ? dIn : 0;
+  const isFut = i => m > cm || (m === cm && i+1 > td);
+  const total = tot(v), best = v.indexOf(Math.max(...v)), worst = v.indexOf(Math.min(...v));
+  const has = v.map((x,i) => what === 'net' ? T.cnt[i] > 0 : x !== 0);
+  const days = has.filter(Boolean).length;
+  const cls = i => [i+1===td ? 'now' : '', isFut(i) ? 'fut' : ''].filter(Boolean).join(' ');
+  const attr = i => `data-d="${i+1}"`; attr.label = i => `${i+1}日`;
+  const stats = what === 'net'
+    ? `<div><b style="color:${netColor(passed ? total/passed : 0)}">${signed(passed ? total/passed : 0)}</b><small>每日平均 Per day</small></div><div><b>${days && v[best] > 0 ? (best+1)+'日' : '—'}</b><small>最好 Best day</small></div><div><b>${days && v[worst] < 0 ? (worst+1)+'日' : '—'}</b><small>最差 Worst day</small></div>`
+    : `<div><b>${what==='inc'?'+':''}${hkd(passed ? total/passed : 0)}</b><small>每日平均 Per day</small></div><div><b>${total ? (best+1)+'日' : '—'}</b><small>最多 Top day</small></div><div><b>${days}</b><small>有記錄日數 Days</small></div>`;
+  const list = v.map((x,i) => has[i] ? `<div class="drow${i+1===td?' now':''}"><span>${i+1}日（${wk(m+'-'+String(i+1).padStart(2,'0'))}）</span><b>${fmtWhat(what, x)}</b></div>` : '').join('');
+  return `<div class="card" id="sumMain">
+    <p class="label">${LBL.day[what]} · ${monthLabel(m)}</p>
+    <div class="ytop"><div class="big">${fmtWhat(what, total)}</div><small style="color:var(--sub)">全月 Month total</small></div>
+    <div class="stats">${stats}</div>
+    ${chartHTML(v, what, cls, attr, true)}
+    <div class="kv" style="margin-top:6px"><span>1日</span><span>${Math.ceil(dIn/2)}日</span><span>${dIn}日</span></div>
+    <div class="dlist">${list || `<div class="empty" style="grid-column:1/-1;padding:16px 0">呢個月未有${what==='inc'?'收入 No income':what==='exp'?'支出 No spending':'記錄 No records'}</div>`}</div></div>`;
+}
+function renderSum(){
+  const { what, per } = sumView;
+  $('mLabel').textContent = per === 'year' ? viewMonth.slice(0,4) + '年' : monthLabel(viewMonth);
+  $('sumWhat').innerHTML = SUM_WHAT.map(([k,zh,en]) => `<button type="button" data-w="${k}" class="${k===what?'on':''}">${zh} ${en}</button>`).join('');
+  $('sumPer').innerHTML = SUM_PER.map(([k,zh,en]) => `<button type="button" data-p="${k}" class="${k===per?'on':''}">${zh} ${en}</button>`).join('');
+  $('sumBody').innerHTML = per === 'year' ? yearView(what) : per === 'month' ? monthView(what) : dayView(what);
+}
+function bindSum(){
+  $('sumWhat').onclick = ev => { const b = ev.target.closest('[data-w]'); if (b) setSumView(b.dataset.w, null); };
+  $('sumPer').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) setSumView(null, b.dataset.p); };
+  $('sumBody').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b) return;     // 全年：撳一個月 → 跳去嗰個月（每月）
+    viewMonth = `${viewMonth.slice(0,4)}-${String(b.dataset.m).padStart(2,'0')}`; setSumView(null, 'month'); document.querySelector('main').scrollTop = 0; };
 }
 function editBudget(){
   openSheet(`<h3>每月預算 Monthly budget</h3>
@@ -655,7 +741,7 @@ function openSettings(){
 /* ---------- 記錄 ---------- */
 function renderList(){
   const used = new Set(D.rows.map(r => r.type + '|' + r.cat));
-  // V3.1（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
+  // V3.2（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
   const known = new Set(D.categories.map(c => c.type + '|' + c.name));
   const fcats = D.categories.filter(c => used.has(c.type + '|' + c.name))
     .concat([...used].filter(k => !known.has(k)).map(k => { const [t, n] = k.split('|'); return catMeta(n, t); }).map((m, i) => ({...m, type: [...used].filter(k => !known.has(k))[i].split('|')[0]})));
@@ -757,7 +843,7 @@ function show(v, keepScroll){
   if (v === 'list' && dirty.list) { renderList(); dirty.list = false; }
   $('title').innerHTML = `${TITLES[v][0]}<span class="en">${TITLES[v][1]}</span>`;
   const q = V ? V.status().pending : 0;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '睇下今個月使咗幾多 This month at a glance' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
@@ -786,7 +872,7 @@ function start(){
 /* ---------- 開機：IndexedDB → 即刻畫 → 之後先背景同步（永遠唔等 getData）---------- */
 async function boot(){
   PERF.boot.scriptAt = performance.now();
-  $('syncpill').onclick = onPillTap;
+  $('syncpill').onclick = onPillTap; bindSum();
   let db;
   try { db = await VaultIDB.open(); }
   catch (err) { $('loading').innerHTML = '呢個瀏覽器開唔到本機資料庫（IndexedDB）。<br>如果係私人瀏覽模式，請用正常模式開。<br><small>' + esc(err.message || err) + '</small>'; return; }
