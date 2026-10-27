@@ -1,4 +1,4 @@
-/* Vault V3 — 離線優先資料層（IndexedDB 係部機嘅真相來源）
+/* Vault V3.3 — 離線優先資料層（V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
  *  - 所有新增／修改／刪除／設定：先寫 IndexedDB（transaction complete）先回覆，畫面即刻更新，唔使等網絡
  *  - 背景同步：single-flight、按次序清隊、指數退避、拉 getData 合併（唔會蓋過未同步嘅改動）
  *  - 改緊「同步緊」嘅記錄：開新 op 串住（client id 或者預計嘅 fingerprint），唔會阻用戶
@@ -15,6 +15,10 @@
   const clone = o => JSON.parse(JSON.stringify(o));
   // 同伺服器 clean_ 一樣嘅正規化（用嚟預計「同步完之後」嘅 fingerprint）
   const normItem = e => String(e.item || '').trim().slice(0, 100) || e.cat;
+  // V3.3：帳戶 A／B／C／D（同伺服器 normAcct_ 一樣）；空白／唔啱 = 'A'。舊記錄（冇 acct）一律當 A
+  const ACCTS = ['A', 'B', 'C', 'D'];
+  const normAcct = v => { const a = String(v == null ? '' : v).trim().toUpperCase(); return ACCTS.indexOf(a) >= 0 ? a : ''; };
+  const acctOf = r => normAcct(r && r.acct) || 'A';
   const bySeq = (a, b) => a.seq - b.seq;
 
   /** fetch → Apps Script（Api.gs doPost）。text/plain = 唔觸發 CORS preflight；自動跟 302 去 googleusercontent */
@@ -117,14 +121,14 @@
     }
     function pendingAddRow(op) {
       const e = op.entry, g = rateGuess(e.cur);
-      return { row: 'p:' + op.id, cid: op.id, pending: true, _ops: [op.id], date: e.date, item: normItem(e), cat: e.cat, pay: e.pay || '', note: e.note || '',
+      return { row: 'p:' + op.id, cid: op.id, pending: true, _ops: [op.id], date: e.date, item: normItem(e), cat: e.cat, pay: e.pay || '', note: e.note || '', acct: acctOf(e),
         cur: String(e.cur).toUpperCase(), orig: round2(e.amount), type: e.type, rate: g, amount: e.cur === 'HKD' ? round2(e.amount) : round2(e.amount * g),
         src: e.cur === 'HKD' ? 'HKD' : OFFLINE_SRC, est: e.cur !== 'HKD', eurAmt: 0 };
     }
     function applyEdit(base, op) {
       const e = op.entry, cur = String(e.cur).toUpperCase(), same = base.cur === cur && base.rate > 0;
       const rate = same ? base.rate : rateGuess(cur);
-      return Object.assign({}, base, { pending: true, date: e.date, item: normItem(e), cat: e.cat, pay: e.pay || '', note: e.note || '',
+      return Object.assign({}, base, { pending: true, date: e.date, item: normItem(e), cat: e.cat, pay: e.pay || '', note: e.note || '', acct: normAcct(e.acct) || acctOf(base),
         cur: cur, orig: round2(e.amount), type: e.type, rate: rate, amount: round2(e.amount * rate),
         est: same ? base.est : cur !== 'HKD', src: same ? base.src : OFFLINE_SRC });
     }
@@ -394,6 +398,6 @@
     };
   }
 
-  const VaultSync = { create, fetchApi, fpOf, CFG_FNS, OFFLINE_SRC };
+  const VaultSync = { create, fetchApi, fpOf, acctOf, CFG_FNS, OFFLINE_SRC };
   if (typeof module !== 'undefined' && module.exports) module.exports = VaultSync; else root.VaultSync = VaultSync;
 })(typeof self !== 'undefined' ? self : globalThis);
