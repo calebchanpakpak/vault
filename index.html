@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.3（離線優先；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.4（離線優先；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -96,6 +96,13 @@ nav button.on .i{filter:none;opacity:1}
 .field label{font-size:12px;color:var(--sub)}
 .field input{border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;width:100%;min-height:46px;-webkit-appearance:none;appearance:none}
 .field input:focus{outline:0;border-color:var(--brand)}
+/* V3.4：項目建議（自訂 dropdown，唔用 datalist；iPhone Safari 唔會被鍵盤遮住） */
+.itemwrap{position:relative}
+.itemdd{display:none;position:fixed;z-index:40;background:#fff;border:1.5px solid var(--line);border-radius:12px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);max-height:min(240px,42vh);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px}
+.itemdd.on{display:block}
+.itemdd button{display:block;width:100%;text-align:left;border:0;background:none;padding:11px 12px;font-size:15px;border-radius:8px;color:var(--ink)}
+.itemdd button:active,.itemdd button.hi{background:#ecfdf9;color:var(--brand)}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;background:var(--brand);color:#fff;margin-top:14px}
 .btn:disabled{opacity:.5}
 #saveBtn,#edSave{position:sticky;bottom:10px;box-shadow:0 6px 18px rgba(15,118,110,.35);z-index:5}
@@ -253,10 +260,10 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 <script src="idb.js"></script>
 <script src="sync.js"></script>
 <script>
-/* Vault V3.3：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
+/* Vault V3.4：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D'];                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.3';
+const APP_VERSION = 'V3.4';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -379,6 +386,87 @@ function catMeta(name, type){
          D.categories.find(c => c.name === name) || {name, en:'', icon: type==='收入'?'💰':'📦', color:'#9ca3af'};
 }
 const blurActive = () => { try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(x){} };
+
+/* ---------- V3.4：項目建議（本機 IndexedDB 記錄，按而家揀嘅類型＋類別；自訂 dropdown） ---------- */
+const ITEM_SUG_CAP = 10;
+function itemKey_(s){ return String(s || '').trim().replace(/\s+/g, ' ').toLowerCase(); }
+function itemSuggestions(type, cat, q){
+  if (!cat) return [];
+  const rows = (D.rows || []).filter(r => (r.type || '支出') === (type || '支出') && r.cat === cat);
+  const by = new Map();                                         // key → {item, n, last}
+  rows.forEach(r => {
+    const item = String(r.item || '').trim(); if (!item) return;
+    const k = itemKey_(item); if (!k) return;
+    const prev = by.get(k), last = String(r.date || '');
+    if (!prev) by.set(k, { item, n: 1, last });
+    else { prev.n++; if (last > prev.last) { prev.last = last; prev.item = item; } }   // 保留最近用嘅寫法
+  });
+  let list = [...by.values()].sort((a, b) => b.n - a.n || (b.last < a.last ? -1 : b.last > a.last ? 1 : 0) || a.item.localeCompare(b.item, 'zh'));
+  const qq = itemKey_(q);
+  if (qq) {
+    const pref = [], sub = [];
+    list.forEach(x => {
+      const k = itemKey_(x.item);
+      if (k.startsWith(qq)) pref.push(x);
+      else if (k.includes(qq)) sub.push(x);
+    });
+    list = pref.concat(sub);
+  }
+  return list.slice(0, ITEM_SUG_CAP).map(x => x.item);
+}
+function placeItemDd_(inp, dd){
+  const r = inp.getBoundingClientRect(), gap = 4;
+  const vw = window.visualViewport, vh = (vw && vw.height) || window.innerHeight, topOff = (vw && vw.offsetTop) || 0;
+  const below = r.bottom + gap, spaceBelow = vh + topOff - below, spaceAbove = r.top - topOff - gap;
+  const maxH = Math.min(240, Math.floor(Math.max(spaceBelow, spaceAbove, 120) * 0.95));
+  dd.style.maxHeight = maxH + 'px';
+  dd.style.width = Math.max(r.width, 160) + 'px';
+  dd.style.left = Math.min(Math.max(8, r.left), window.innerWidth - r.width - 8) + 'px';
+  if (spaceBelow >= Math.min(maxH, 140) || spaceBelow >= spaceAbove) {
+    dd.style.top = below + 'px'; dd.style.bottom = 'auto';
+  } else {
+    dd.style.top = 'auto'; dd.style.bottom = (window.innerHeight - r.top + gap) + 'px';
+  }
+}
+function bindItemSuggest(prefix, state){
+  const inp = $(prefix+'item'), dd = $(prefix+'itemdd'); if (!inp || !dd) return;
+  let open = false, items = [], hideT = 0;
+  const render = list => {
+    items = list;
+    if (!list.length) { hide(true); return; }
+    dd.innerHTML = list.map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('');
+    dd.hidden = false; dd.classList.add('on'); open = true; placeItemDd_(inp, dd);
+  };
+  const refresh = () => { if (document.activeElement !== inp) return; render(itemSuggestions(state.type, state.cat, inp.value)); };
+  const hide = force => {
+    clearTimeout(hideT);
+    const go = () => { dd.classList.remove('on'); dd.hidden = true; dd.innerHTML = ''; open = false; };
+    if (force) go(); else hideT = setTimeout(go, 180);          // 留少少時間俾 pointerdown 揀建議
+  };
+  const pick = t => { inp.value = t; hide(true); try { inp.focus(); } catch(x){} };
+  inp.addEventListener('focus', () => { clearTimeout(hideT); refresh(); });
+  inp.addEventListener('input', refresh);
+  inp.addEventListener('keydown', ev => { if (ev.key === 'Escape') { hide(true); ev.preventDefault(); } });
+  inp.addEventListener('blur', () => hide(false));
+  // pointerdown／mousedown：喺 blur 之前攞住，iPhone Safari 唔會食咗一下
+  const onPick = ev => {
+    const b = ev.target.closest('[data-i]'); if (!b || !dd.contains(b)) return;
+    ev.preventDefault(); ev.stopPropagation();
+    pick(items[Number(b.dataset.i)] || b.textContent);
+  };
+  dd.addEventListener('pointerdown', onPick);
+  dd.addEventListener('mousedown', onPick);
+  // 類別／類型轉咗：如果輸入框喺 focus 就即刻更新建議
+  state._itemRefresh = refresh;
+  state._itemHide = () => hide(true);
+  const onVV = () => { if (open) placeItemDd_(inp, dd); };
+  window.addEventListener('resize', onVV);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', onVV);
+  const sheet = $('sheet');
+  if (sheet) sheet.addEventListener('scroll', onVV, { passive: true });
+  document.addEventListener('scroll', onVV, { passive: true, capture: true });
+}
+
 /* ---------- 表格（新增 / 修改共用） ---------- */
 function formHTML(prefix, e){
   const cur = e.cur || 'HKD', type = e.type || '支出', acct = ACCTS.includes(e.acct) ? e.acct : 'A';
@@ -394,7 +482,7 @@ function formHTML(prefix, e){
   </div>
   <div class="card"><p class="label">類別 Category</p><div class="chips" id="${prefix}cats"></div></div>
   <div class="card">
-    <div class="field" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" placeholder="例如：K-Market 買餸" value="${esc(e.item||'')}"></div>
+    <div class="field itemwrap" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" value="${esc(e.item||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><div class="itemdd" id="${prefix}itemdd" hidden></div></div>
     <div class="row2">
       <div class="field"><label>日期 Date</label><input id="${prefix}date" type="date" value="${e.date}"></div>
       <div class="field"><label>備註 Note</label><input id="${prefix}note" placeholder="（可以唔填）" value="${esc(e.note||'')}"></div>
@@ -438,7 +526,7 @@ function bindForm(prefix, state){
   $(prefix+'type').onclick = ev => { const b = ev.target.closest('[data-type]'); if(!b || b.dataset.type===state.type) return;
     state.type = b.dataset.type; [...$(prefix+'type').children].forEach(x => x.classList.toggle('on', x===b));
     if (!catsOf(state.type).some(c => c.name === state.cat)) state.cat = '';
-    renderCats(prefix, state); };
+    renderCats(prefix, state); if (state._itemRefresh) state._itemRefresh(); };
   $(prefix+'curs').onclick = ev => { const b = ev.target.closest('[data-cur]'); if(!b) return;
     state.cur = b.dataset.cur; [...$(prefix+'curs').children].forEach(x => x.classList.toggle('on', x===b));
     $(prefix+'sym').textContent = curInfo(state.cur).sym; $(prefix+'amount').placeholder = curInfo(state.cur).dec===0?'0':'0.00';
@@ -446,15 +534,18 @@ function bindForm(prefix, state){
   $(prefix+'amount').oninput = () => fxHint(prefix, state);
   loadRate(prefix, state);
   $(prefix+'cats').onclick = ev => {
-    if (ev.target.closest('[data-addcat]')) return openAddCat(state.type, name => { state.cat = name; renderCats(prefix, state); });
+    if (ev.target.closest('[data-addcat]')) return openAddCat(state.type, name => { state.cat = name; renderCats(prefix, state); if (state._itemRefresh) state._itemRefresh(); });
     const b = ev.target.closest('[data-cat]'); if(!b) return;
-    state.cat = b.dataset.cat; [...$(prefix+'cats').children].forEach(x => x.classList.toggle('on', x===b)); };
+    state.cat = b.dataset.cat; [...$(prefix+'cats').children].forEach(x => x.classList.toggle('on', x===b));
+    if (state._itemRefresh) state._itemRefresh(); };
   $(prefix+'pays').onclick = ev => { const b = ev.target.closest('[data-pay]'); if(!b) return;
     state.pay = b.dataset.pay; [...$(prefix+'pays').children].forEach(x => x.classList.toggle('on', x===b)); };
   $(prefix+'acct').onclick = ev => { const b = ev.target.closest('[data-acct]'); if(!b) return;       // V3.3：帳戶
     state.acct = b.dataset.acct; [...$(prefix+'acct').children].forEach(x => x.classList.toggle('on', x===b)); };
+  bindItemSuggest(prefix, state);                                          // V3.4：項目建議
 }
 function readForm(prefix, state){
+  if (state && state._itemHide) state._itemHide();
   const amount = parseFloat(String($(prefix+'amount').value).replace(',', '.'));
   if (!(amount > 0)) { toast('請輸入金額 Enter an amount'); $(prefix+'amount').focus(); return null; }
   if (!state.cat) { toast('請揀類別 Pick a category'); return null; }
