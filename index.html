@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.8（離線優先；V3.8：加帳戶 F（爸爸扣賬卡・Finland exchange）；V3.7：記錄列表項目名完整顯示（自動換行）＋「顯示更多」睇返 60 日之前嘅記錄；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.9（離線優先；V3.9：記錄列表加戶口篩選（A／B／C／D／F，可同類別篩選一齊用）；V3.8：加帳戶 F（爸爸扣賬卡・Finland exchange）；V3.7：記錄列表項目名完整顯示（自動換行）＋「顯示更多」睇返 60 日之前嘅記錄；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -241,6 +241,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
     <!-- 記錄 -->
     <section class="view" id="v-list">
       <div class="pills filter" id="filter"></div>
+      <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
   </main>
@@ -264,7 +265,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 /* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.8';
+const APP_VERSION = 'V3.9';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -272,7 +273,7 @@ const payEn = p => ((D.payInfo||[]).find(x => x.name === p) || {}).en || '';
 const RATES = {HKD:{rate:1}};   // 預覽用（真正換算喺伺服器同步時做）
 const EMOJI_CHOICES = ['🏷️','💰','🎁','☕','🍰','🐶','🎮','🎵','📱','💻','🚕','🏥','💄','🧴','🎓','⚽','🏦','💼','🪙','🎉'];
 let D = {rows:[], budget:0, currencies:['HKD'], curInfo:[], categories:[], payments:[], payInfo:[], settings:{}, today:''};
-let viewMonth = '', listFilter = '全部', editing = null;
+let viewMonth = '', listFilter = '全部', listAcct = '全部', editing = null;   // V3.9：listAcct = 戶口篩選
 
 /* ---------- 連線（Apps Script /exec）---------- */
 // 可以直接喺度填 /exec 網址（私人 host 先好咁做）；留空就第一次開 App 時喺「連線設定」填，存喺呢部機（IndexedDB）。
@@ -852,7 +853,14 @@ function renderList(){
     ...fcats.map(c => ['c:'+c.type+'|'+c.name, `${c.icon} ${esc(c.name)}${c.en?' <span class="en">'+esc(c.en)+'</span>':''}`])];
   $('filter').innerHTML = pills.map(([k,l]) => `<button class="pill${k===listFilter?' on':''}" data-f="${esc(k)}">${l}</button>`).join('');
   $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; listDays = 60; renderList(); };
-  const match = r => listFilter==='全部' || r.type===listFilter || listFilter === 'c:'+r.type+'|'+r.cat;
+  // V3.9：戶口篩選（可同 支出／收入／類別 篩選一齊用）
+  const acctOf = r => ACCTS.includes(r.acct) ? r.acct : 'A';
+  const acctCount = {}; D.rows.forEach(r => { const a = acctOf(r); acctCount[a] = (acctCount[a] || 0) + 1; });
+  $('acctFilter').innerHTML = [['全部', '全部戶口 All accts'], ...ACCTS.map(a => [a, `${a}帳 <span class="en">${acctCount[a] || 0}</span>`])]
+    .map(([k, l]) => `<button class="pill${k===listAcct?' on':''}" data-a="${k}">${l}</button>`).join('');
+  $('acctFilter').onclick = ev => { const b = ev.target.closest('[data-a]'); if(!b) return; listAcct = b.dataset.a; listDays = 60; renderList(); };
+  const match = r => (listAcct==='全部' || acctOf(r)===listAcct) &&
+    (listFilter==='全部' || r.type===listFilter || listFilter === 'c:'+r.type+'|'+r.cat);
   const rs = D.rows.filter(match).slice().sort((a,b) => b.date.localeCompare(a.date) || b.row - a.row);
   if (!rs.length) { $('list').innerHTML = '<div class="empty">未有記錄 No records</div>'; return; }
   const groups = {}; rs.forEach(r => (groups[r.date] = groups[r.date] || []).push(r));
