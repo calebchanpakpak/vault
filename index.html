@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.9（離線優先；V3.9：記錄列表加戶口篩選（A／B／C／D／F，可同類別篩選一齊用）；V3.8：加帳戶 F（爸爸扣賬卡・Finland exchange）；V3.7：記錄列表項目名完整顯示（自動換行）＋「顯示更多」睇返 60 日之前嘅記錄；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.10（離線優先；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選（A／B／C／D／F，可同類別篩選一齊用）；V3.8：加帳戶 F（爸爸扣賬卡・Finland exchange）；V3.7：記錄列表項目名完整顯示（自動換行）＋「顯示更多」睇返 60 日之前嘅記錄；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -132,6 +132,8 @@ nav button.on .i{filter:none;opacity:1}
 .seg.seg4{grid-template-columns:repeat(5,1fr);margin-bottom:0}
 .seg.seg4 button{font-size:14px;padding:8px 0}
 .seg.seg4 button.on{color:var(--brand)}
+.acctrow{display:flex;align-items:center;gap:10px;margin:8px 0 12px}.acctrow .seg{flex:1}
+.acctlab{font-size:13px;font-weight:600;color:var(--sub);line-height:1.1;text-align:center}.acctlab small{font-size:10px;font-weight:400}
 .acctlbl{color:#6366f1;font-weight:600;font-size:11px;margin-right:4px}
 .seg button.on[data-w="exp"]{color:var(--warn)}.seg button.on[data-w="inc"]{color:var(--inc)}
 .seg button.on[data-w="net"],.seg button.on[data-p]{color:var(--brand)}
@@ -265,7 +267,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 /* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.9';
+const APP_VERSION = 'V3.10';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -476,6 +478,7 @@ function formHTML(prefix, e){
   const pays = D.payments.map(p => `<button type="button" class="pill${p===e.pay?' on':''}" data-pay="${p}">${bi(esc(p), esc(payEn(p)))}</button>`).join('');
   return `
   <div class="seg" id="${prefix}type">${['支出','收入'].map(t => `<button type="button" data-type="${t}" class="${t===type?'on':''}">${t} ${TYPE_EN[t]}</button>`).join('')}</div>
+  <div class="acctrow"><span class="acctlab">帳戶<br><small>Account</small></span><div class="seg seg4" id="${prefix}acct">${ACCTS.map(a => `<button type="button" data-acct="${a}" class="${a===acct?'on':''}">${a}</button>`).join('')}</div></div>   <!-- V3.10：帳戶揀選移到 支出／收入 下面 -->
   <div class="card">
     <p class="label">貨幣 Currency</p>
     <div class="curs" id="${prefix}curs">${curs}</div>
@@ -490,7 +493,6 @@ function formHTML(prefix, e){
       <div class="field"><label>備註 Note</label><input id="${prefix}note" placeholder="（可以唔填）" value="${esc(e.note||'')}"></div>
     </div>
     <div class="field"><label>付款方式 Payment</label><div class="pills" id="${prefix}pays">${pays}</div></div>
-    <div class="field"><label>帳戶 Account</label><div class="seg seg4" id="${prefix}acct">${ACCTS.map(a => `<button type="button" data-acct="${a}" class="${a===acct?'on':''}">${a}</button>`).join('')}</div></div>
   </div>`;
 }
 function renderCats(prefix, state){
