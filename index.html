@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.5（離線優先；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.6（離線優先；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -263,7 +263,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 /* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D'];                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.5';
+const APP_VERSION = 'V3.6';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -857,7 +857,7 @@ function renderList(){
   $('list').innerHTML = Object.entries(groups).slice(0, 60).map(([d, items]) => {
     const ex = spent(items), inc = earned(items);
     return `
-    <div class="day"><span>${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
+    <div class="day"><span>${d.slice(0,4)}年${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
       <span>${ex?hkd(ex):''}${ex&&inc?' · ':''}${inc?`<span class="inc">+${hkd(inc)}</span>`:''}</span></div>
     <div class="group">${items.map(r => { const m = catMeta(r.cat, r.type); return `
       <div class="item${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
