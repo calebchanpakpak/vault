@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.16（離線優先；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.17（離線優先；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -318,7 +318,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.16';
+const APP_VERSION = 'V3.17';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -1336,7 +1336,6 @@ function adjNotesHTML(b){
       (ad.label || '調整');
     notes.push(`<div class="bal-adj">⚠️ ${esc(a)}：${esc(lab)} · ${fmtBal(ad.amount)} as of ${esc(ad.date||'?')}</div>`);
   });
-  notes.push(`<div class="bal-adj" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534">Retirement-bank 今日／7 月底用 Journal 2,007.30（Caleb 口頭 2,007.31 當作 1 仙口誤）。Journal Aug–Oct 2026 空白：結餘帶出。</div>`);
   return notes.join('');
 }
 function renderBalToday(){
