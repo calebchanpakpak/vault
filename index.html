@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.15（離線優先；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.16（離線優先；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -318,7 +318,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.15';
+const APP_VERSION = 'V3.16';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -1209,23 +1209,34 @@ function closeSheet(){ $('sheet').classList.remove('on'); $('mask').classList.re
 
 /* ---------- V3.12 資產負債表 Balance Sheet ---------- */
 const BAL_ACCTS = ASSET_ACCTS; // five asset accounts
+function normOpenDate(s){
+  s = String(s == null ? '' : s).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const t = Date.parse(s);
+  if (Number.isFinite(t)) {
+    try { return new Date(t).toLocaleDateString('sv-SE', { timeZone: 'Europe/Helsinki' }); } catch (e) {}
+  }
+  return '2024-10-31';
+}
 function openingsOf(){
   const st = (D.settings && D.settings.openings) || {};
   const am = st.amounts || {};
   const adj = st.adjustments || {};
-  const out = { date: st.date || '2024-10-31', amounts: {}, adjustments: {} };
+  const out = { date: normOpenDate(st.date || '2024-10-31'), amounts: {}, adjustments: {} };
   BAL_ACCTS.forEach(a => {
     const n = Number(am[a]);
     out.amounts[a] = Number.isFinite(n) ? n : 0;
-    if (adj[a] && Number(adj[a].amount)) out.adjustments[a] = { amount: Number(adj[a].amount), date: adj[a].date || '', label: adj[a].label || '調整' };
+    if (adj[a] && Number(adj[a].amount)) out.adjustments[a] = { amount: Number(adj[a].amount), date: normOpenDate(adj[a].date || out.date), label: adj[a].label || '調整' };
   });
   return out;
 }
 function rowDate(r){ return String(r.date || '').slice(0,10); }
 function rowHkd(r){
-  const h = Number(r.hkd); if (Number.isFinite(h)) return h;
+  // API／IndexedDB 用 amount；唔好用 Number(undefined)/Number(null)=0 誤判
+  if (r.amount != null && r.amount !== '') { const a = Number(r.amount); if (Number.isFinite(a)) return a; }
+  if (r.hkd != null && r.hkd !== '') { const h = Number(r.hkd); if (Number.isFinite(h)) return h; }
   const o = Number(r.orig), rate = Number(r.rate);
-  if (Number.isFinite(o) && Number.isFinite(rate)) return o * rate;
+  if (Number.isFinite(o) && Number.isFinite(rate) && rate !== 0) return o * rate;
   return Number.isFinite(o) ? o : 0;
 }
 function isPersBankFlow(r){ const a = String(r.acct || 'A').toUpperCase(); return a === 'A' || a === 'B'; }
@@ -1332,8 +1343,7 @@ function renderBalToday(){
   const today = todayHel();
   const b = balancesAsOf(today);
   const cards = BAL_ACCTS.map(a => {
-    const warn = (a === 'Personal-bank' || a === 'Personal-investment') ? ' warn' : '';
-    return `<div class="bal-card${warn}"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div></div>`;
+    return `<div class="bal-card"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div></div>`;
   }).join('');
   return `<div class="bal-cards">${cards}
       <div class="bal-card total"><div class="n">總財富 Total wealth（五帳戶 + C − D）</div><div class="v">${fmtBal(b.totalWealth)} HKD</div></div>
@@ -1352,14 +1362,15 @@ function renderBalMonth(){
   balMonth = months[idx];
   $('balLabel').textContent = monthLabel(balMonth);
   let prev = null;
-  const series = { total: [], 'Retirement-bank': [], 'Year End': [], 'Personal-bank': [] };
+  const series = { total: [] };
+  BAL_ACCTS.forEach(a => { series[a] = []; });
+  series.C = []; series.D = [];
   const rows = months.map((ym, i) => {
     const asOf = lastDayOfMonth(ym);
     const b = balancesAsOf(asOf);
     series.total.push(b.totalWealth);
-    series['Retirement-bank'].push(b['Retirement-bank']);
-    series['Year End'].push(b['Year End']);
-    series['Personal-bank'].push(b['Personal-bank']);
+    BAL_ACCTS.forEach(a => series[a].push(b[a]));
+    series.C.push(b.C); series.D.push(b.D);
     const chg = {};
     BAL_ACCTS.forEach(a => { chg[a] = prev ? b[a] - prev[a] : b[a] - (openingsOf().amounts[a] || 0); });
     const twChg = prev ? b.totalWealth - prev.totalWealth : null;
@@ -1368,8 +1379,11 @@ function renderBalMonth(){
     return `<tr${hi}><td>${monthLabel(ym)}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
       <td>${fmtBal(b.C)}</td><td>${fmtBal(b.D)}</td><td>${fmtBal(b.totalWealth)}<br>${chgHtml(twChg)}</td></tr>`;
   }).join('');
-  return `${sparkHTML(series.total, idx)}
-    <p class="bal-note">總財富月趨勢（撳左右切月）</p>
+  const sparkBlock = (lab, vals) => `<p class="bal-note" style="margin:10px 0 0">${lab}</p>${sparkHTML(vals, idx)}`;
+  return `${sparkBlock('總財富月趨勢 Total wealth', series.total)}
+    ${BAL_ACCTS.map(a => sparkBlock(a, series[a])).join('')}
+    ${sparkBlock('C 待還', series.C)}${sparkBlock('D 未付', series.D)}
+    <p class="bal-note">撳左右切月 · 表內數字係月底結餘</p>
     <div class="bal-scroll"><table class="bal-table"><thead><tr><th>月</th>${BAL_ACCTS.map(a=>`<th>${a.replace('Retirement','Ret.').replace('Personal','Pers.').replace('-investment','-inv').replace('-bank','-bk')}</th>`).join('')}<th>C</th><th>D</th><th>總財富</th></tr></thead><tbody>${rows}</tbody></table></div>
     ${adjNotesHTML(balancesAsOf(todayHel()))}`;
 }
@@ -1380,9 +1394,14 @@ function renderBalYear(){
   const endY = Number(todayHel().slice(0,4));
   const years = []; for (let y = startY; y <= endY; y++) years.push(String(y));
   let prev = null;
+  const series = { total: [] }; BAL_ACCTS.forEach(a => { series[a] = []; }); series.C = []; series.D = [];
+  let yIdx = years.indexOf(balYear); if (yIdx < 0) yIdx = years.length - 1;
   const rows = years.map(y => {
     const asOf = (y === todayHel().slice(0,4)) ? todayHel() : `${y}-12-31`;
     const b = balancesAsOf(asOf);
+    series.total.push(b.totalWealth);
+    BAL_ACCTS.forEach(a => series[a].push(b[a]));
+    series.C.push(b.C); series.D.push(b.D);
     const chg = {};
     BAL_ACCTS.forEach(a => { chg[a] = prev ? b[a] - prev[a] : b[a] - (openingsOf().amounts[a] || 0); });
     prev = Object.assign({}, b);
@@ -1390,7 +1409,11 @@ function renderBalYear(){
     return `<tr${hi}><td>${y}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
       <td>${fmtBal(b.C)}</td><td>${fmtBal(b.D)}</td><td>${fmtBal(b.totalWealth)}</td></tr>`;
   }).join('');
-  return `<div class="bal-scroll"><table class="bal-table"><thead><tr><th>年</th>${BAL_ACCTS.map(a=>`<th>${a.split('-')[0]}</th>`).join('')}<th>C</th><th>D</th><th>總</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const sparkBlock = (lab, vals) => `<p class="bal-note" style="margin:10px 0 0">${lab}</p>${sparkHTML(vals, yIdx)}`;
+  return `${sparkBlock('總財富年趨勢 Total wealth', series.total)}
+    ${BAL_ACCTS.map(a => sparkBlock(a, series[a])).join('')}
+    ${sparkBlock('C 待還', series.C)}${sparkBlock('D 未付', series.D)}
+    <div class="bal-scroll"><table class="bal-table"><thead><tr><th>年</th>${BAL_ACCTS.map(a=>`<th>${a.split('-')[0]}</th>`).join('')}<th>C</th><th>D</th><th>總</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function renderBal(){
   const modes = [['today','今日 Today'],['month','按月 Month'],['year','按年 Year']];
@@ -1429,7 +1452,7 @@ function show(v, keepScroll){
   if (v === 'bal' && dirty.bal) { renderBal(); dirty.bal = false; }
   $('title').innerHTML = `${TITLES[v][0]}<span class="en">${TITLES[v][1]}</span>`;
   const q = V ? V.status().pending : 0;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '四個資產帳戶 · Personal／Retire／Year End／Investment' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
@@ -1475,7 +1498,18 @@ async function boot(){
   // 叫瀏覽器唔好清走 IndexedDB（Safari 7 日冇用會清網站資料；加咗落主畫面 + persist 會安全啲）
   if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(p => p || navigator.storage.persist()).then(p => { PERF.boot.persisted = p; }).catch(() => {});
   V.startAuto({ intervalMs: SYNC_MS });                // 開住 App 期間每 10 分鐘
-  setTimeout(() => bgSync('open'), 0);                 // 背景：清隊 + 拉 getData
+  // V3.16：升版後強制重拉 getData（清 lastPullAt），確保期初日期／轉帳補記入到 IndexedDB
+  try {
+    const seen = localStorage.getItem('vault.appVersion');
+    if (seen !== APP_VERSION) {
+      localStorage.setItem('vault.appVersion', APP_VERSION);
+      if (V && typeof V.forcePull === 'function') {
+        V.forcePull().catch(() => bgSync('manual'));
+      } else setTimeout(() => bgSync('manual'), 0);
+    } else {
+      setTimeout(() => bgSync('open'), 0);
+    }
+  } catch (e) { setTimeout(() => bgSync('open'), 0); }
 }
 window.addEventListener('online', () => { renderPill(); bgSync('online'); });
 window.addEventListener('offline', () => renderPill());

@@ -1,4 +1,4 @@
-/* Vault V3.12 — 離線優先資料層（V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
+/* Vault V3.16 — 離線優先資料層（V3.16：forcePull 升版重拉；V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
  *  - 所有新增／修改／刪除／設定：先寫 IndexedDB（transaction complete）先回覆，畫面即刻更新，唔使等網絡
  *  - 背景同步：single-flight、按次序清隊、指數退避、拉 getData 合併（唔會蓋過未同步嘅改動）
  *  - 改緊「同步緊」嘅記錄：開新 op 串住（client id 或者預計嘅 fingerprint），唔會阻用戶
@@ -433,6 +433,7 @@
       saveRate(cur, r) { if (r && r.rate > 0 && !r.est) { rates[cur] = { cur: cur, rate: r.rate, date: r.date || '', src: r.src || '', at: now() }; return db.put('rates', rates[cur]); } return Promise.resolve(); },
       cachedRate: cur => rates[cur] || null,
       setCfg(url, token) { cfg = { url: String(url || '').trim(), token: String(token || '').trim() }; resetBackoff(); return putMeta('cfg', cfg).then(emit); },
+      forcePull() { meta.lastPullAt = 0; return putMeta('lastPullAt', 0).then(() => syncAll({ trigger: 'manual', pull: true })); },
       clearFailed() { failed = []; return db.clear('failed').then(() => emit(true)); },
       get cfg() { return cfg; }, get ver() { return ver; }, get server() { return server; }, get queue() { return queue; }, get failed() { return failed; }, get rows() { return rows; },
       get api() { return api; }, OFFLINE_SRC
