@@ -16,7 +16,7 @@
   // 同伺服器 clean_ 一樣嘅正規化（用嚟預計「同步完之後」嘅 fingerprint）
   const normItem = e => String(e.item || '').trim().slice(0, 100) || e.cat;
   // V3.3：帳戶 A／B／C／D（同伺服器 normAcct_ 一樣）；空白／唔啱 = 'A'。舊記錄（冇 acct）一律當 A
-  const ACCTS = ['A', 'B', 'C', 'D'];
+  const ACCTS = ['A', 'B', 'C', 'D', 'F'];   // V3.8：加 F
   const normAcct = v => { const a = String(v == null ? '' : v).trim().toUpperCase(); return ACCTS.indexOf(a) >= 0 ? a : ''; };
   const acctOf = r => normAcct(r && r.acct) || 'A';
   const bySeq = (a, b) => a.seq - b.seq;
