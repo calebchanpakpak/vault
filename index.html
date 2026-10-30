@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.17（離線優先；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.18（離線優先；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -279,6 +279,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="monthbar"><button onclick="shiftMonth(-1)">‹</button><b id="mLabel"></b><button onclick="shiftMonth(1)">›</button></div>
       <div class="seg seg3" id="sumWhat"></div>
       <div class="seg seg3 per" id="sumPer"></div>
+      <div class="pills filter" id="sumAcct" style="margin:6px 0 2px"></div>
       <div id="sumBody"></div>
       <button class="btn ghost" onclick="openSettings()">⚙️ 設定 Settings（貨幣、付款方式、預設值、同步）</button>
     </section>
@@ -318,7 +319,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.17';
+const APP_VERSION = 'V3.18';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -823,6 +824,18 @@ const SUM_PER = [['year','全年','Yearly'],['month','每月','Monthly'],['day',
 let sumView = (() => { try { const v = JSON.parse(localStorage.getItem('vault.sumView') || '{}');
   return { what: SUM_WHAT.some(x => x[0] === v.what) ? v.what : 'exp', per: SUM_PER.some(x => x[0] === v.per) ? v.per : 'month' }; }
   catch (e) { return { what: 'exp', per: 'month' }; } })();
+// V3.18：總覽戶口剔選（只計剔咗嘅戶口；舊記錄冇 acct = A）
+let sumAccts = (() => { try { const v = JSON.parse(localStorage.getItem('vault.sumAccts') || 'null');
+  if (Array.isArray(v)) { const ok = v.filter(a => ACCTS.includes(a)); if (ok.length) return ok; } } catch (e) {}
+  return ACCTS.slice(); })();
+const sumHas = r => sumAccts.includes(ACCTS.includes(r.acct) ? r.acct : 'A');
+function toggleSumAcct(a){
+  if (!ACCTS.includes(a)) return;
+  if (sumAccts.includes(a)) { if (sumAccts.length === 1) return toast('最少要剔一個戶口 Keep at least one account'); sumAccts = sumAccts.filter(x => x !== a); }
+  else sumAccts = ACCTS.filter(x => x === a || sumAccts.includes(x));
+  try { localStorage.setItem('vault.sumAccts', JSON.stringify(sumAccts)); } catch (e) {}
+  renderSum();
+}
 function setSumView(what, per){
   sumView = { what: what || sumView.what, per: per || sumView.per };
   try { localStorage.setItem('vault.sumView', JSON.stringify(sumView)); } catch (e) {}
@@ -846,6 +859,7 @@ function totalsBy(rows, n, idx){
   const exp = Array(n).fill(0), inc = Array(n).fill(0), cnt = Array(n).fill(0);
   for (const r of rows) {
     if (isXfer(r)) continue;                                 // V3.11：轉帳唔入支出／收入／圖表
+    if (!sumHas(r)) continue;                                // V3.18：只計剔咗嘅戶口
     const k = idx(r); if (!(k >= 0 && k < n)) continue;
     const a = Number(r.amount) || 0; if (isInc(r)) inc[k] += a; else exp[k] += a; cnt[k]++; }
   return { exp, inc, net: inc.map((v,k) => v - exp[k]), cnt };
@@ -892,7 +906,7 @@ function yearView(what){
     <p class="hint" style="margin:8px 2px 0">撳一個月睇嗰個月 Tap a month to view it · ${what==='exp'?'只計支出 expenses only':what==='inc'?'只計收入 income only':'收入 − 支出 income minus spending'}</p></div>`;
 }
 function monthView(what){
-  const all = rowsOf(viewMonth).filter(r => !isXfer(r)), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
+  const all = rowsOf(viewMonth).filter(r => !isXfer(r) && sumHas(r)), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
   const s = sum(ex), income = sum(inc), net = income - s, pct = D.budget ? s / D.budget : 0;
   const isNow = viewMonth === monthOf(todayHel());
   const dIn = daysIn(viewMonth), passed = isNow ? Number(todayHel().slice(8)) : dIn;
@@ -960,11 +974,14 @@ function renderSum(){
   $('mLabel').textContent = per === 'year' ? viewMonth.slice(0,4) + '年' : monthLabel(viewMonth);
   $('sumWhat').innerHTML = SUM_WHAT.map(([k,zh,en]) => `<button type="button" data-w="${k}" class="${k===what?'on':''}">${zh} ${en}</button>`).join('');
   $('sumPer').innerHTML = SUM_PER.map(([k,zh,en]) => `<button type="button" data-p="${k}" class="${k===per?'on':''}">${zh} ${en}</button>`).join('');
+  $('sumAcct').innerHTML = `<span style="font-size:12px;color:var(--sub);align-self:center">戶口 Accts</span>` +
+    ACCTS.map(a => `<button type="button" class="pill${sumAccts.includes(a)?' on':''}" data-sa="${a}">${sumAccts.includes(a)?'☑':'☐'} ${a}</button>`).join('');
   $('sumBody').innerHTML = per === 'year' ? yearView(what) : per === 'month' ? monthView(what) : dayView(what);
 }
 function bindSum(){
   $('sumWhat').onclick = ev => { const b = ev.target.closest('[data-w]'); if (b) setSumView(b.dataset.w, null); };
   $('sumPer').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) setSumView(null, b.dataset.p); };
+  $('sumAcct').onclick = ev => { const b = ev.target.closest('[data-sa]'); if (b) toggleSumAcct(b.dataset.sa); };
   $('sumBody').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b) return;     // 全年：撳一個月 → 跳去嗰個月（每月）
     viewMonth = `${viewMonth.slice(0,4)}-${String(b.dataset.m).padStart(2,'0')}`; setSumView(null, 'month'); document.querySelector('main').scrollTop = 0; };
 }
