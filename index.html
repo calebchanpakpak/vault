@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.10（離線優先；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選（A／B／C／D／F，可同類別篩選一齊用）；V3.8：加帳戶 F（爸爸扣賬卡・Finland exchange）；V3.7：記錄列表項目名完整顯示（自動換行）＋「顯示更多」睇返 60 日之前嘅記錄；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.11（離線優先；V3.11：記帳畫面加「帳戶 Transfer」：Personal／Retire／Year End／Investment 資產轉帳（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -59,10 +59,20 @@ nav button.on .i{filter:none;opacity:1}
 .fxline.err{color:var(--warn)}
 /* 支出 / 收入 */
 .seg{display:grid;grid-template-columns:1fr 1fr;background:#eef0f2;border-radius:12px;padding:3px;margin-bottom:12px}
+.seg.segtype{grid-template-columns:repeat(3,1fr)}
+.seg.segtype button{font-size:12.5px;padding:8px 2px}
 .seg button{border:0;background:none;border-radius:10px;padding:8px 0;font-size:14px;font-weight:600;color:var(--sub)}
 .seg button.on{background:#fff;color:var(--warn);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .seg button.on[data-type="收入"]{color:var(--inc)}
+.seg button.on[data-type="轉帳"]{color:#6366f1}
 .inc{color:var(--inc)!important}
+.xfer{color:#6366f1!important}
+.xferlist{margin-top:14px}
+.xferlist .label{margin-bottom:6px}
+.item.xfer .ic{background:#6366f122}
+.item.xfer .a{color:#6366f1}
+.assetseg{grid-template-columns:repeat(2,1fr)}
+.assetseg button{font-size:12.5px;padding:8px 4px}
 .netrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .netrow div{border-radius:12px;padding:8px 10px;background:var(--bg)}
 .netrow small{display:block;font-size:11px;color:var(--sub)}.netrow b{font-size:16px}
@@ -267,9 +277,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 /* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.10';
+const ASSET_ACCTS = ['Personal','Retire','Year End','Investment'];  // V3.11：總資產帳戶（轉帳 From／To）
+const APP_VERSION = 'V3.11';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
-const TYPE_EN = {支出:'Expense', 收入:'Income'};
+const TYPE_EN = {支出:'Expense', 收入:'Income', 轉帳:'Transfer'};
+const TYPE_BTNS = [['支出','支出 Expense'],['收入','收入 Income'],['轉帳','帳戶 Transfer']];
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
 const payEn = p => ((D.payInfo||[]).find(x => x.name === p) || {}).en || '';
 const RATES = {HKD:{rate:1}};   // 預覽用（真正換算喺伺服器同步時做）
@@ -381,8 +393,9 @@ function wk(d){ return ['日','一','二','三','四','五','六'][new Date(d+'T
 function toast(msg, ms){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'), ms||1800); }
 function rowsOf(m){ return D.rows.filter(r => monthOf(r.date) === m); }
 const isInc = r => r.type === '收入';
+const isXfer = r => r.type === '轉帳';
 function sum(rs){ return rs.reduce((a,r)=>a+r.amount,0); }
-function spent(rs){ return sum(rs.filter(r => !isInc(r))); }
+function spent(rs){ return sum(rs.filter(r => !isInc(r) && !isXfer(r))); }   // V3.11：轉帳唔計支出
 function earned(rs){ return sum(rs.filter(isInc)); }
 function catsOf(type){ return D.categories.filter(c => c.type === type); }
 function catMeta(name, type){
@@ -396,7 +409,7 @@ const ITEM_SUG_CAP = 10;
 function itemKey_(s){ return String(s || '').trim().replace(/\s+/g, ' ').toLowerCase(); }
 function itemSuggestions(type, cat, q){
   if (!cat) return [];
-  const rows = (D.rows || []).filter(r => (r.type || '支出') === (type || '支出') && r.cat === cat);
+  const rows = (D.rows || []).filter(r => (r.type || '支出') === (type || '支出') && (type === '轉帳' || r.cat === cat));
   const by = new Map();                                         // key → {item, n, last}
   rows.forEach(r => {
     const item = String(r.item || '').trim(); if (!item) return;
@@ -474,25 +487,32 @@ function bindItemSuggest(prefix, state){
 /* ---------- 表格（新增 / 修改共用） ---------- */
 function formHTML(prefix, e){
   const cur = e.cur || 'HKD', type = e.type || '支出', acct = ACCTS.includes(e.acct) ? e.acct : 'A';
+  const fromA = ASSET_ACCTS.includes(e.fromAcct) ? e.fromAcct : (ASSET_ACCTS.includes(e.acct) ? e.acct : ASSET_ACCTS[0]);
+  const toA = ASSET_ACCTS.includes(e.toAcct) ? e.toAcct : (ASSET_ACCTS.find(a => a !== fromA) || ASSET_ACCTS[1]);
   const curs = D.currencies.concat(D.currencies.includes(cur) ? [] : [cur]).map(c => `<button type="button" class="cur${c===cur?' on':''}" data-cur="${c}"><b>${c}</b><small>${esc(curInfo(c).name)}</small></button>`).join('');
   const pays = D.payments.map(p => `<button type="button" class="pill${p===e.pay?' on':''}" data-pay="${p}">${bi(esc(p), esc(payEn(p)))}</button>`).join('');
+  const assetBtns = (sel, key) => ASSET_ACCTS.map(a => `<button type="button" data-${key}="${a}" class="${a===sel?'on':''}">${a}</button>`).join('');
   return `
-  <div class="seg" id="${prefix}type">${['支出','收入'].map(t => `<button type="button" data-type="${t}" class="${t===type?'on':''}">${t} ${TYPE_EN[t]}</button>`).join('')}</div>
-  <div class="acctrow"><span class="acctlab">帳戶<br><small>Account</small></span><div class="seg seg4" id="${prefix}acct">${ACCTS.map(a => `<button type="button" data-acct="${a}" class="${a===acct?'on':''}">${a}</button>`).join('')}</div></div>   <!-- V3.10：帳戶揀選移到 支出／收入 下面 -->
+  <div class="seg segtype" id="${prefix}type">${TYPE_BTNS.map(([t,l]) => `<button type="button" data-type="${t}" class="${t===type?'on':''}">${l}</button>`).join('')}</div>
+  <div class="acctrow" id="${prefix}expAcctRow"><span class="acctlab">帳戶<br><small>Account</small></span><div class="seg seg4" id="${prefix}acct">${ACCTS.map(a => `<button type="button" data-acct="${a}" class="${a===acct?'on':''}">${a}</button>`).join('')}</div></div>
+  <div id="${prefix}xferBlock" hidden>
+    <div class="acctrow"><span class="acctlab">轉出<br><small>From</small></span><div class="seg assetseg" id="${prefix}from">${assetBtns(fromA,'from')}</div></div>
+    <div class="acctrow"><span class="acctlab">轉入<br><small>To</small></span><div class="seg assetseg" id="${prefix}to">${assetBtns(toA,'to')}</div></div>
+  </div>
   <div class="card">
     <p class="label">貨幣 Currency</p>
     <div class="curs" id="${prefix}curs">${curs}</div>
     <div class="amt"><span id="${prefix}sym">${esc(curInfo(cur).sym)}</span><input id="${prefix}amount" inputmode="decimal" placeholder="${curInfo(cur).dec===0?'0':'0.00'}" value="${e.orig||''}" autocomplete="off"></div>
     <div class="fxline" id="${prefix}fx"></div>
   </div>
-  <div class="card"><p class="label">類別 Category</p><div class="chips" id="${prefix}cats"></div></div>
+  <div class="card" id="${prefix}catCard"><p class="label">類別 Category</p><div class="chips" id="${prefix}cats"></div></div>
   <div class="card">
-    <div class="field itemwrap" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" value="${esc(e.item||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><div class="itemdd" id="${prefix}itemdd" hidden></div></div>
+    <div class="field itemwrap" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" value="${esc(e.item||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder=""><div class="itemdd" id="${prefix}itemdd" hidden></div></div>
     <div class="row2">
       <div class="field"><label>日期 Date</label><input id="${prefix}date" type="date" value="${e.date}"></div>
       <div class="field"><label>備註 Note</label><input id="${prefix}note" placeholder="（可以唔填）" value="${esc(e.note||'')}"></div>
     </div>
-    <div class="field"><label>付款方式 Payment</label><div class="pills" id="${prefix}pays">${pays}</div></div>
+    <div class="field" id="${prefix}payField"><label>付款方式 Payment</label><div class="pills" id="${prefix}pays">${pays}</div></div>
   </div>`;
 }
 function renderCats(prefix, state){
@@ -525,12 +545,25 @@ function loadRate(prefix, state){
   if (navigator.onLine === false || !V.cfg.url) return;
   call('getRate', c).then(r => { RATES[c] = r; V.saveRate(c, r); if (state.cur === c) fxHint(prefix, state); }).catch(() => {});   // 背景更新
 }
+function applyFormMode(prefix, state){
+  const xfer = state.type === '轉帳';
+  const hide = (id, on) => { const el = $(id); if (el) el.hidden = !!on; };
+  hide(prefix+'expAcctRow', xfer);
+  hide(prefix+'xferBlock', !xfer);
+  hide(prefix+'catCard', xfer);
+  hide(prefix+'payField', xfer);
+  if (!xfer) renderCats(prefix, state);
+  if (state._onMode) state._onMode(xfer);
+}
 function bindForm(prefix, state){
-  renderCats(prefix, state);
+  if (!state.fromAcct) state.fromAcct = ASSET_ACCTS.includes(state.acct) ? state.acct : ASSET_ACCTS[0];
+  if (!state.toAcct || state.toAcct === state.fromAcct) state.toAcct = ASSET_ACCTS.find(a => a !== state.fromAcct) || ASSET_ACCTS[1];
+  applyFormMode(prefix, state);
   $(prefix+'type').onclick = ev => { const b = ev.target.closest('[data-type]'); if(!b || b.dataset.type===state.type) return;
     state.type = b.dataset.type; [...$(prefix+'type').children].forEach(x => x.classList.toggle('on', x===b));
-    if (!catsOf(state.type).some(c => c.name === state.cat)) state.cat = '';
-    renderCats(prefix, state); if (state._itemRefresh) state._itemRefresh(); };
+    if (state.type !== '轉帳' && !catsOf(state.type).some(c => c.name === state.cat)) state.cat = '';
+    if (state.type === '轉帳') state.cat = '轉帳';
+    applyFormMode(prefix, state); if (state._itemRefresh) state._itemRefresh(); };
   $(prefix+'curs').onclick = ev => { const b = ev.target.closest('[data-cur]'); if(!b) return;
     state.cur = b.dataset.cur; [...$(prefix+'curs').children].forEach(x => x.classList.toggle('on', x===b));
     $(prefix+'sym').textContent = curInfo(state.cur).sym; $(prefix+'amount').placeholder = curInfo(state.cur).dec===0?'0':'0.00';
@@ -546,15 +579,44 @@ function bindForm(prefix, state){
     state.pay = b.dataset.pay; [...$(prefix+'pays').children].forEach(x => x.classList.toggle('on', x===b)); };
   $(prefix+'acct').onclick = ev => { const b = ev.target.closest('[data-acct]'); if(!b) return;       // V3.3：帳戶
     state.acct = b.dataset.acct; [...$(prefix+'acct').children].forEach(x => x.classList.toggle('on', x===b)); };
+  const pickAsset = (which, key) => {
+    const el = $(prefix+which); if (!el) return;
+    el.onclick = ev => { const b = ev.target.closest('[data-'+key+']'); if(!b) return;
+      const v = b.getAttribute('data-'+key);
+      if (which === 'from') {
+        state.fromAcct = v;
+        if (state.toAcct === v) state.toAcct = ASSET_ACCTS.find(a => a !== v) || v;
+        [...el.children].forEach(x => x.classList.toggle('on', x.getAttribute('data-from')===state.fromAcct));
+        [...$(prefix+'to').children].forEach(x => x.classList.toggle('on', x.getAttribute('data-to')===state.toAcct));
+      } else {
+        if (v === state.fromAcct) return toast('轉入要唔同轉出 To must differ from From');
+        state.toAcct = v;
+        [...el.children].forEach(x => x.classList.toggle('on', x.getAttribute('data-to')===state.toAcct));
+      }
+    };
+  };
+  pickAsset('from', 'from'); pickAsset('to', 'to');
   bindItemSuggest(prefix, state);                                          // V3.4：項目建議
 }
 function readForm(prefix, state){
   if (state && state._itemHide) state._itemHide();
   const amount = parseFloat(String($(prefix+'amount').value).replace(',', '.'));
   if (!(amount > 0)) { toast('請輸入金額 Enter an amount'); $(prefix+'amount').focus(); return null; }
+  const type = state.type || '支出';
+  const item = $(prefix+'item').value.trim();
+  const date = $(prefix+'date').value || todayHel();
+  const note = $(prefix+'note').value.trim();
+  if (type === '轉帳') {
+    const from = ASSET_ACCTS.includes(state.fromAcct) ? state.fromAcct : ASSET_ACCTS[0];
+    const to = ASSET_ACCTS.includes(state.toAcct) ? state.toAcct : '';
+    if (!to) { toast('請揀轉入帳戶 Pick destination'); return null; }
+    if (from === to) { toast('轉出同轉入唔可以相同'); return null; }
+    return { amount, type: '轉帳', cur: state.cur || 'HKD', cat: '轉帳', pay: '', acct: from, toAcct: to,
+             item: item || '轉帳', date, note };
+  }
   if (!state.cat) { toast('請揀類別 Pick a category'); return null; }
-  return { amount, type: state.type || '支出', cur: state.cur || 'HKD', cat: state.cat, pay: state.pay||'', acct: ACCTS.includes(state.acct) ? state.acct : 'A', item: $(prefix+'item').value.trim(),
-           date: $(prefix+'date').value || todayHel(), note: $(prefix+'note').value.trim() };
+  return { amount, type, cur: state.cur || 'HKD', cat: state.cat, pay: state.pay||'', acct: ACCTS.includes(state.acct) ? state.acct : 'A', item,
+           date, note, toAcct: '' };
 }
 
 /* ---------- 加類別（即刻喺部機加，背景同步去「類別」分頁）---------- */
@@ -585,28 +647,54 @@ function openAddCat(type, done){
 }
 
 let addState = {};
-function renderAdd(){
+function xferListHTML(){
+  const xs = D.rows.filter(isXfer).slice().sort((a,b) => b.date.localeCompare(a.date) || (b.row - a.row));
+  if (!xs.length) return `<div class="xferlist" id="xferList"><p class="label">轉帳記錄 Transfers</p><div class="empty">未有轉帳 No transfers yet</div></div>`;
+  return `<div class="xferlist" id="xferList"><p class="label">轉帳記錄 Transfers（${xs.length}）· 撳一下可改／刪</p>
+    <div class="group">${xs.map(r => `
+      <div class="item xfer${r.pending?' pend':''}" data-xfer="${esc(String(r.row))}">
+        <div class="ic">🔄</div>
+        <div class="t"><b>${esc(r.item)}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+          <small><span class="acctlbl">${esc(r.acct)} → ${esc(r.toAcct || '?')}</span>${r.note ? ' · '+esc(r.note):''} · ${esc(r.date)}</small></div>
+        <div class="a xfer">${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}</small>` : ''}</div>
+      </div>`).join('')}</div></div>`;
+}
+function renderAdd(keepType){
   const lastCur = localStorage.getItem('lastCur');
   const lastPay = localStorage.getItem('lastPay'), st = D.settings || {};
+  const keep = keepType && addState && addState.type;
   // 上次用開嘅 → 「設定」分頁嘅預設值 → 清單第一個
-  addState = { cat:'', type:'支出',
+  addState = { cat: keep === '轉帳' ? '轉帳' : '', type: keep || '支出',
     pay: D.payments.includes(lastPay) ? lastPay : (D.payments.includes(st.defaultPay) ? st.defaultPay : (D.payments[0] || '')),
     cur: D.currencies.includes(lastCur) ? lastCur : (D.currencies.includes(st.defaultCur) ? st.defaultCur : 'HKD'),
-    acct: ACCTS.includes(localStorage.getItem('lastAcct')) ? localStorage.getItem('lastAcct') : 'A' };      // V3.3：記住上次用嘅帳戶
-  $('formHost').innerHTML = formHTML('a_', {date: todayHel(), pay: addState.pay, cur: addState.cur, type: addState.type, acct: addState.acct}) +
-    `<button class="btn" id="saveBtn">儲存 Save</button>`;
+    acct: ACCTS.includes(localStorage.getItem('lastAcct')) ? localStorage.getItem('lastAcct') : 'A',
+    fromAcct: ASSET_ACCTS.includes(localStorage.getItem('lastFromAcct')) ? localStorage.getItem('lastFromAcct') : ASSET_ACCTS[0],
+    toAcct: ASSET_ACCTS.includes(localStorage.getItem('lastToAcct')) ? localStorage.getItem('lastToAcct') : ASSET_ACCTS[1] };
+  if (addState.toAcct === addState.fromAcct) addState.toAcct = ASSET_ACCTS.find(a => a !== addState.fromAcct) || ASSET_ACCTS[1];
+  $('formHost').innerHTML = formHTML('a_', {date: todayHel(), pay: addState.pay, cur: addState.cur, type: addState.type, acct: addState.acct, fromAcct: addState.fromAcct, toAcct: addState.toAcct}) +
+    `<button class="btn" id="saveBtn">儲存 Save</button>` + xferListHTML();
+  addState._onMode = xfer => { const xl = $('xferList'); if (xl) xl.hidden = !xfer; };
   bindForm('a_', addState);
+  addState._onMode(addState.type === '轉帳');
+  $('xferList').onclick = ev => { const it = ev.target.closest('[data-xfer]'); if (!it) return;
+    openEdit(D.rows.find(r => String(r.row) === it.dataset.xfer)); };
   $('saveBtn').onclick = async () => {
     const t0 = performance.now();
     const e = readForm('a_', addState); if(!e) return;
     blurActive();
     const op = await V.enqueueAdd(e);                    // 只等本機 IndexedDB（幾毫秒），唔等網絡
-    localStorage.setItem('lastPay', e.pay); localStorage.setItem('lastCur', e.cur); localStorage.setItem('lastAcct', e.acct);
+    if (e.type === '轉帳') {
+      localStorage.setItem('lastFromAcct', e.acct); localStorage.setItem('lastToAcct', e.toAcct);
+      localStorage.setItem('lastCur', e.cur);
+    } else {
+      localStorage.setItem('lastPay', e.pay); localStorage.setItem('lastCur', e.cur); localStorage.setItem('lastAcct', e.acct);
+    }
     recompute();
     const p = D.rows.find(r => r.cid === op.id);
     const amt = e.cur==='HKD' ? hkd(e.amount) : origTxt(e.cur, e.amount) + ' ≈ ' + hkd(p ? p.amount : 0);
-    toast(`已記低${e.type==='收入'?'收入':''} ${e.cat} ${amt} ✓${isOff() ? '（離線，有網自動同步）' : ''}`, 2200);
-    renderAll(true); renderAdd();
+    const label = e.type === '轉帳' ? `${e.acct}→${e.toAcct}` : (e.type==='收入'?'收入 ':'') + e.cat;
+    toast(`已記低${label} ${amt} ✓${isOff() ? '（離線，有網自動同步）' : ''}`, 2200);
+    renderAll(true); renderAdd(e.type === '轉帳' ? '轉帳' : undefined);
     perfMark('add', t0);
     afterWrite();
   };
@@ -644,7 +732,9 @@ function catRows(rs, type){
 // 一次過行晒啲行（~2,500 行 < 1 毫秒），同時計支出、收入、淨額
 function totalsBy(rows, n, idx){
   const exp = Array(n).fill(0), inc = Array(n).fill(0), cnt = Array(n).fill(0);
-  for (const r of rows) { const k = idx(r); if (!(k >= 0 && k < n)) continue;
+  for (const r of rows) {
+    if (isXfer(r)) continue;                                 // V3.11：轉帳唔入支出／收入／圖表
+    const k = idx(r); if (!(k >= 0 && k < n)) continue;
     const a = Number(r.amount) || 0; if (isInc(r)) inc[k] += a; else exp[k] += a; cnt[k]++; }
   return { exp, inc, net: inc.map((v,k) => v - exp[k]), cnt };
 }
@@ -690,7 +780,7 @@ function yearView(what){
     <p class="hint" style="margin:8px 2px 0">撳一個月睇嗰個月 Tap a month to view it · ${what==='exp'?'只計支出 expenses only':what==='inc'?'只計收入 income only':'收入 − 支出 income minus spending'}</p></div>`;
 }
 function monthView(what){
-  const all = rowsOf(viewMonth), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
+  const all = rowsOf(viewMonth).filter(r => !isXfer(r)), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
   const s = sum(ex), income = sum(inc), net = income - s, pct = D.budget ? s / D.budget : 0;
   const isNow = viewMonth === monthOf(todayHel());
   const dIn = daysIn(viewMonth), passed = isNow ? Number(todayHel().slice(8)) : dIn;
@@ -846,22 +936,26 @@ function openSettings(){
 /* ---------- 記錄 ---------- */
 let listDays = 60;   // V3.7：記錄列表每次顯示 60 日，撳「顯示更多」再加 60 日
 function renderList(){
-  const used = new Set(D.rows.map(r => r.type + '|' + r.cat));
+  // V3.11：主列表唔顯示轉帳（轉帳喺記帳畫面「帳戶 Transfer」下面睇／改／刪）
+  const mainRows = D.rows.filter(r => !isXfer(r));
+  const used = new Set(mainRows.map(r => r.type + '|' + r.cat));
   // V3.2（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
   const known = new Set(D.categories.map(c => c.type + '|' + c.name));
+  const unknownKeys = [...used].filter(k => !known.has(k));
   const fcats = D.categories.filter(c => used.has(c.type + '|' + c.name))
-    .concat([...used].filter(k => !known.has(k)).map(k => { const [t, n] = k.split('|'); return catMeta(n, t); }).map((m, i) => ({...m, type: [...used].filter(k => !known.has(k))[i].split('|')[0]})));
+    .concat(unknownKeys.map(k => { const [t, n] = k.split('|'); return {...catMeta(n, t), type: t}; }));
   const pills = [['全部','全部 All'],['支出','支出 Expense'],['收入','收入 Income'],
     ...fcats.map(c => ['c:'+c.type+'|'+c.name, `${c.icon} ${esc(c.name)}${c.en?' <span class="en">'+esc(c.en)+'</span>':''}`])];
+  if (listFilter === '轉帳') listFilter = '全部';
   $('filter').innerHTML = pills.map(([k,l]) => `<button class="pill${k===listFilter?' on':''}" data-f="${esc(k)}">${l}</button>`).join('');
   $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; listDays = 60; renderList(); };
-  // V3.9：戶口篩選（可同 支出／收入／類別 篩選一齊用）
+  // V3.9：戶口篩選（可同 支出／收入／類別 篩選一齊用）；淨計支出／收入戶口 A–F
   const acctOf = r => ACCTS.includes(r.acct) ? r.acct : 'A';
-  const acctCount = {}; D.rows.forEach(r => { const a = acctOf(r); acctCount[a] = (acctCount[a] || 0) + 1; });
+  const acctCount = {}; mainRows.forEach(r => { const a = acctOf(r); acctCount[a] = (acctCount[a] || 0) + 1; });
   $('acctFilter').innerHTML = [['全部', '全部戶口 All accts'], ...ACCTS.map(a => [a, `${a}帳 <span class="en">${acctCount[a] || 0}</span>`])]
     .map(([k, l]) => `<button class="pill${k===listAcct?' on':''}" data-a="${k}">${l}</button>`).join('');
   $('acctFilter').onclick = ev => { const b = ev.target.closest('[data-a]'); if(!b) return; listAcct = b.dataset.a; listDays = 60; renderList(); };
-  const match = r => (listAcct==='全部' || acctOf(r)===listAcct) &&
+  const match = r => !isXfer(r) && (listAcct==='全部' || acctOf(r)===listAcct) &&
     (listFilter==='全部' || r.type===listFilter || listFilter === 'c:'+r.type+'|'+r.cat);
   const rs = D.rows.filter(match).slice().sort((a,b) => b.date.localeCompare(a.date) || b.row - a.row);
   if (!rs.length) { $('list').innerHTML = '<div class="empty">未有記錄 No records</div>'; return; }
@@ -892,9 +986,15 @@ function freshRow(r){
          D.rows.find(x => typeof x.row === 'number' && VaultSync.fpOf(x) === fp) || r;
 }
 function openEdit(r){
-  if(!r) return; editing = r; editState = {cat:r.cat, pay:r.pay, cur:r.cur||'HKD', type:r.type||'支出', acct: ACCTS.includes(r.acct) ? r.acct : 'A'};
-  openSheet(`<h3>修改記錄 Edit</h3>` + formHTML('e_', r) +
+  if(!r) return; editing = r;
+  const isT = isXfer(r);
+  editState = {cat: isT ? '轉帳' : r.cat, pay:r.pay, cur:r.cur||'HKD', type:r.type||'支出',
+    acct: ACCTS.includes(r.acct) ? r.acct : 'A',
+    fromAcct: isT ? (ASSET_ACCTS.includes(r.acct) ? r.acct : ASSET_ACCTS[0]) : ASSET_ACCTS[0],
+    toAcct: isT ? (ASSET_ACCTS.includes(r.toAcct) ? r.toAcct : ASSET_ACCTS[1]) : ASSET_ACCTS[1]};
+  openSheet(`<h3>${isT ? '修改轉帳 Edit transfer' : '修改記錄 Edit'}</h3>` + formHTML('e_', Object.assign({}, r, {fromAcct: editState.fromAcct, toAcct: editState.toAcct})) +
     `<button type="button" class="btn" id="edSave">儲存修改 Save</button><button type="button" class="btn danger" id="edDel">刪除呢筆 Delete</button>`);
+  editState._onMode = () => {};
   bindForm('e_', editState);
   $('edSave').onclick = async () => {
     const t0 = performance.now();
@@ -902,7 +1002,7 @@ function openEdit(r){
     const e = readForm('e_', editState); if(!e) return;
     try { await V.enqueueEdit(freshRow(editing), e); }       // 只等本機 IndexedDB
     catch(err){ return toast(err.message || err, 3000); }
-    recompute(); closeSheet(); renderAll(true);
+    recompute(); closeSheet(); renderAll(true); if (document.getElementById('v-add').classList.contains('on')) renderAdd(e.type === '轉帳' ? '轉帳' : undefined);
     toast(isOff() ? '已改（離線，有網自動同步）' : '已更新 ✓');
     perfMark('edit', t0);
     afterWrite();
@@ -911,9 +1011,10 @@ function openEdit(r){
     blurActive();
     if (!confirm(`確定刪除「${editing.item} ${editing.cur&&editing.cur!=='HKD' ? origTxt(editing.cur, editing.orig) : hkd(editing.amount)}」？`)) return;
     const t0 = performance.now();                           // 由確認嗰下開始計
+    const wasXfer = isXfer(editing);
     try { await V.enqueueDelete(freshRow(editing)); }
     catch(err){ return toast(err.message || err, 3000); }
-    recompute(); closeSheet(); renderAll(true);
+    recompute(); closeSheet(); renderAll(true); if (document.getElementById('v-add').classList.contains('on')) renderAdd(wasXfer ? '轉帳' : undefined);
     toast(isOff() ? '已刪（離線，有網自動同步）' : '已刪除 ✓');
     perfMark('delete', t0);
     afterWrite();
