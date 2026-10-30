@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.11（離線優先；V3.11：記帳畫面加「帳戶 Transfer」：Personal／Retire／Year End／Investment 資產轉帳（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.12（離線優先；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -69,9 +69,9 @@ nav button.on .i{filter:none;opacity:1}
 .xfer{color:#6366f1!important}
 .xferlist{margin-top:14px}
 .xferlist .label{margin-bottom:6px}
-.item.xfer .ic{background:#6366f122}
-.item.xfer .a{color:#6366f1}
-.assetseg{grid-template-columns:repeat(2,1fr)}
+.item.xfer .ic{background:#9ca3af33}
+.item.xfer .a{color:#6b7280}
+.assetseg{grid-template-columns:1fr}.assetseg button{font-size:12px;padding:8px 6px;text-align:left}
 .assetseg button{font-size:12.5px;padding:8px 4px}
 .netrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .netrow div{border-radius:12px;padding:8px 10px;background:var(--bg)}
@@ -227,6 +227,37 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .syncpill.busy{color:var(--brand)}
 .syncpill small{font-weight:400;opacity:.8}
 .loading.boot{background:var(--bg);font-size:13px}
+
+/* V3.12 Balance Sheet */
+.bal-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.bal-card{background:var(--card);border-radius:var(--r);padding:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.bal-card .n{font-size:12px;color:var(--muted);margin-bottom:4px}
+.bal-card .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.bal-card.total{grid-column:1/-1;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.bal-card.total .n{color:rgba(255,255,255,.85)}
+.bal-card.warn .n::after{content:' · 需期初';font-size:10px;color:#b45309}
+.bal-table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.bal-table th,.bal-table td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.bal-table th:first-child,.bal-table td:first-child{text-align:left;position:sticky;left:0;background:var(--bg);z-index:1}
+.bal-table th{font-size:10px;color:var(--muted);font-weight:600;text-transform:none}
+.bal-table .chg{font-size:10px;color:var(--muted)}
+.bal-table .chg.up{color:#059669}.bal-table .chg.dn{color:#dc2626}
+.bal-scroll{overflow-x:auto;margin:0 -4px;padding:0 4px}
+.bal-note{font-size:11.5px;color:var(--muted);line-height:1.45;margin:8px 0 0}
+.bal-open .row2{gap:8px}
+
+.item.xfer{background:#f3f4f6}
+.item.xfer .ic{background:#9ca3af33;font-size:18px}
+.item.xfer .a{color:#6b7280!important;font-weight:600}
+.item.xfer .t b{color:#374151}
+.badge-c{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;vertical-align:middle}
+.listmode{margin-bottom:10px}
+.bal-spark{display:flex;align-items:flex-end;gap:2px;height:48px;margin:8px 0 4px;padding:0 2px}
+.bal-spark i{flex:1;background:var(--brand);opacity:.75;border-radius:2px 2px 0 0;min-width:3px}
+.bal-spark i.on{opacity:1;background:var(--brand2)}
+.bal-adj{font-size:11px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.4}
+.cdrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.cdrow .bal-card{padding:10px}
 </style>
 </head>
 <body>
@@ -252,14 +283,22 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
     </section>
     <!-- 記錄 -->
     <section class="view" id="v-list">
+      <div class="seg seg3 listmode" id="listMode"></div>
       <div class="pills filter" id="filter"></div>
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
+    </section>
+    <!-- V3.12 資產負債表 -->
+    <section class="view" id="v-bal">
+      <div class="seg seg3" id="balMode"></div>
+      <div class="monthbar" id="balBar" style="display:none"><button type="button" id="balPrev">‹</button><b id="balLabel"></b><button type="button" id="balNext">›</button></div>
+      <div id="balBody"></div>
     </section>
   </main>
   <nav>
     <button data-v="add" class="on"><span class="i">✏️</span>記帳<span class="en">Add</span></button>
     <button data-v="sum"><span class="i">📊</span>總覽<span class="en">Summary</span></button>
+    <button data-v="bal"><span class="i">🏦</span>資產<span class="en">Balance</span></button>
     <button data-v="list"><span class="i">🧾</span>記錄<span class="en">Records</span></button>
   </nav>
 </div>
@@ -277,9 +316,9 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 /* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
-const ASSET_ACCTS = ['Personal','Retire','Year End','Investment'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.11';
-const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
+const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
+const APP_VERSION = 'V3.12';
+const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], bal:['資產負債表','Balance'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income', 轉帳:'Transfer'};
 const TYPE_BTNS = [['支出','支出 Expense'],['收入','收入 Income'],['轉帳','帳戶 Transfer']];
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -288,6 +327,7 @@ const RATES = {HKD:{rate:1}};   // 預覽用（真正換算喺伺服器同步時
 const EMOJI_CHOICES = ['🏷️','💰','🎁','☕','🍰','🐶','🎮','🎵','📱','💻','🚕','🏥','💄','🧴','🎓','⚽','🏦','💼','🪙','🎉'];
 let D = {rows:[], budget:0, currencies:['HKD'], curInfo:[], categories:[], payments:[], payInfo:[], settings:{}, today:''};
 let viewMonth = '', listFilter = '全部', listAcct = '全部', editing = null;   // V3.9：listAcct = 戶口篩選
+let balMode = 'today', balMonth = '', balYear = '';   // V3.12：資產負債表檢視
 
 /* ---------- 連線（Apps Script /exec）---------- */
 // 可以直接喺度填 /exec 網址（私人 host 先好咁做）；留空就第一次開 App 時喺「連線設定」填，存喺呢部機（IndexedDB）。
@@ -491,7 +531,11 @@ function formHTML(prefix, e){
   const toA = ASSET_ACCTS.includes(e.toAcct) ? e.toAcct : (ASSET_ACCTS.find(a => a !== fromA) || ASSET_ACCTS[1]);
   const curs = D.currencies.concat(D.currencies.includes(cur) ? [] : [cur]).map(c => `<button type="button" class="cur${c===cur?' on':''}" data-cur="${c}"><b>${c}</b><small>${esc(curInfo(c).name)}</small></button>`).join('');
   const pays = D.payments.map(p => `<button type="button" class="pill${p===e.pay?' on':''}" data-pay="${p}">${bi(esc(p), esc(payEn(p)))}</button>`).join('');
-  const assetBtns = (sel, key) => ASSET_ACCTS.map(a => `<button type="button" data-${key}="${a}" class="${a===sel?'on':''}">${a}</button>`).join('');
+  const assetBtns = (sel, key) => {
+    const list = ASSET_ACCTS.slice();
+    if (sel && list.indexOf(sel) < 0) list.unshift(sel); // e.g. Interest 補記
+    return list.map(a => `<button type="button" data-${key}="${a}" class="${a===sel?'on':''}">${a}</button>`).join('');
+  };
   return `
   <div class="seg segtype" id="${prefix}type">${TYPE_BTNS.map(([t,l]) => `<button type="button" data-type="${t}" class="${t===type?'on':''}">${l}</button>`).join('')}</div>
   <div class="acctrow" id="${prefix}expAcctRow"><span class="acctlab">帳戶<br><small>Account</small></span><div class="seg seg4" id="${prefix}acct">${ACCTS.map(a => `<button type="button" data-acct="${a}" class="${a===acct?'on':''}">${a}</button>`).join('')}</div></div>
@@ -648,16 +692,9 @@ function openAddCat(type, done){
 
 let addState = {};
 function xferListHTML(){
-  const xs = D.rows.filter(isXfer).slice().sort((a,b) => b.date.localeCompare(a.date) || (b.row - a.row));
-  if (!xs.length) return `<div class="xferlist" id="xferList"><p class="label">轉帳記錄 Transfers</p><div class="empty">未有轉帳 No transfers yet</div></div>`;
-  return `<div class="xferlist" id="xferList"><p class="label">轉帳記錄 Transfers（${xs.length}）· 撳一下可改／刪</p>
-    <div class="group">${xs.map(r => `
-      <div class="item xfer${r.pending?' pend':''}" data-xfer="${esc(String(r.row))}">
-        <div class="ic">🔄</div>
-        <div class="t"><b>${esc(r.item)}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
-          <small><span class="acctlbl">${esc(r.acct)} → ${esc(r.toAcct || '?')}</span>${r.note ? ' · '+esc(r.note):''} · ${esc(r.date)}</small></div>
-        <div class="a xfer">${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}</small>` : ''}</div>
-      </div>`).join('')}</div></div>`;
+  const n = D.rows.filter(isXfer).length;
+  return `<div class="xferlist" id="xferList"><p class="label">轉帳記錄</p>
+    <p class="bal-note">共 ${n} 筆 · 去「記錄 → 轉帳」睇完整列表／改刪。See Records → Transfers.</p></div>`;
 }
 function renderAdd(keepType){
   const lastCur = localStorage.getItem('lastCur');
@@ -676,8 +713,7 @@ function renderAdd(keepType){
   addState._onMode = xfer => { const xl = $('xferList'); if (xl) xl.hidden = !xfer; };
   bindForm('a_', addState);
   addState._onMode(addState.type === '轉帳');
-  $('xferList').onclick = ev => { const it = ev.target.closest('[data-xfer]'); if (!it) return;
-    openEdit(D.rows.find(r => String(r.row) === it.dataset.xfer)); };
+  $('xferList'); // V3.12：完整轉帳列表喺「記錄 → 轉帳」
   $('saveBtn').onclick = async () => {
     const t0 = performance.now();
     const e = readForm('a_', addState); if(!e) return;
@@ -935,11 +971,42 @@ function openSettings(){
 
 /* ---------- 記錄 ---------- */
 let listDays = 60;   // V3.7：記錄列表每次顯示 60 日，撳「顯示更多」再加 60 日
+let listMode = 'flow';   // V3.12：'flow' 收支 | 'xfer' 轉帳
 function renderList(){
-  // V3.11：主列表唔顯示轉帳（轉帳喺記帳畫面「帳戶 Transfer」下面睇／改／刪）
+  // V3.12：頂部切換 收支 | 轉帳；轉帳只喺轉帳 view；收支保持原篩選
+  $('filter').parentElement; // ensure list section exists
+  const modeHost = document.getElementById('listMode');
+  if (modeHost) {
+    modeHost.innerHTML = [['flow','收支 Records'],['xfer','轉帳 Transfers']].map(([k,l]) =>
+      `<button type="button" data-lm="${k}" class="${listMode===k?'on':''}">${l}</button>`).join('');
+    modeHost.onclick = ev => { const b = ev.target.closest('[data-lm]'); if (!b) return; listMode = b.dataset.lm; listDays = 60; renderList(); };
+  }
+  if (listMode === 'xfer') {
+    $('filter').innerHTML = '';
+    $('acctFilter').innerHTML = '';
+    const xs = D.rows.filter(isXfer).slice().sort((a,b) => b.date.localeCompare(a.date) || (b.row - a.row));
+    if (!xs.length) { $('list').innerHTML = '<div class="empty">未有轉帳 No transfers yet</div>'; return; }
+    const groups = {}; xs.forEach(r => (groups[r.date] = groups[r.date] || []).push(r));
+    const allDays = Object.entries(groups);
+    $('list').innerHTML = allDays.slice(0, listDays).map(([d, items]) => `
+      <div class="day"><span>${d.slice(0,4)}年${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
+        <span>${items.length} 筆轉帳</span></div>
+      <div class="group">${items.map(r => `
+        <div class="item xfer${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
+          <div class="ic">🔁</div>
+          <div class="t"><b>${esc(r.item)}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+            <small><span class="acctlbl">${esc(r.acct || '?')} → ${esc(r.toAcct || '?')}</span>${r.note ? ' · '+esc(r.note):''}</small></div>
+          <div class="a">${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}</small>` : ''}</div>
+        </div>`).join('')}</div>`).join('') +
+      (allDays.length > listDays ? `<button class="more" id="listMore">顯示更多 Show more（仲有 ${allDays.length - listDays} 日）</button>` : '');
+    $('list').onclick = ev => { if (ev.target.closest('#listMore')) { listDays += 60; renderList(); return; }
+      const it = ev.target.closest('[data-row]'); if(!it) return;
+      openEdit(D.rows.find(r => String(r.row) === it.dataset.row)); };
+    return;
+  }
+  // --- 收支 view（原行為；唔顯示轉帳）---
   const mainRows = D.rows.filter(r => !isXfer(r));
   const used = new Set(mainRows.map(r => r.type + '|' + r.cat));
-  // V3.2（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
   const known = new Set(D.categories.map(c => c.type + '|' + c.name));
   const unknownKeys = [...used].filter(k => !known.has(k));
   const fcats = D.categories.filter(c => used.has(c.type + '|' + c.name))
@@ -949,7 +1016,6 @@ function renderList(){
   if (listFilter === '轉帳') listFilter = '全部';
   $('filter').innerHTML = pills.map(([k,l]) => `<button class="pill${k===listFilter?' on':''}" data-f="${esc(k)}">${l}</button>`).join('');
   $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; listDays = 60; renderList(); };
-  // V3.9：戶口篩選（可同 支出／收入／類別 篩選一齊用）；淨計支出／收入戶口 A–F
   const acctOf = r => ACCTS.includes(r.acct) ? r.acct : 'A';
   const acctCount = {}; mainRows.forEach(r => { const a = acctOf(r); acctCount[a] = (acctCount[a] || 0) + 1; });
   $('acctFilter').innerHTML = [['全部', '全部戶口 All accts'], ...ACCTS.map(a => [a, `${a}帳 <span class="en">${acctCount[a] || 0}</span>`])]
@@ -966,10 +1032,11 @@ function renderList(){
     return `
     <div class="day"><span>${d.slice(0,4)}年${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
       <span>${ex?hkd(ex):''}${ex&&inc?' · ':''}${inc?`<span class="inc">+${hkd(inc)}</span>`:''}</span></div>
-    <div class="group">${items.map(r => { const m = catMeta(r.cat, r.type); return `
+    <div class="group">${items.map(r => { const m = catMeta(r.cat, r.type); const isC = String(r.acct||'').toUpperCase()==='C';
+      return `
       <div class="item${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
         <div class="ic" style="background:${m.color}22">${m.icon}</div>
-        <div class="t"><b>${esc(r.item)}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+        <div class="t"><b>${esc(r.item)}${isC?'<span class="badge-c">↩️ C 待還</span>':''}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
           <small><span class="acctlbl">(${ACCTS.includes(r.acct) ? r.acct : 'A'}帳)</span>${isInc(r)?'收入 · ':''}${esc(r.cat)}${m.en?' '+esc(m.en):''}${r.pay?' · '+esc(r.pay):''}${r.note && r.note!=='示範' ? ' · '+esc(r.note):''}</small></div>
         <div class="a${isInc(r)?' inc':''}">${isInc(r)?'+':''}${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}${r.est ? ` <span class="esttag">· ${r.pending ? '離線估計' : '估計'}</span>` : ''}</small>` : ''}</div>
       </div>`; }).join('')}</div>`; }).join('') +
@@ -990,7 +1057,7 @@ function openEdit(r){
   const isT = isXfer(r);
   editState = {cat: isT ? '轉帳' : r.cat, pay:r.pay, cur:r.cur||'HKD', type:r.type||'支出',
     acct: ACCTS.includes(r.acct) ? r.acct : 'A',
-    fromAcct: isT ? (ASSET_ACCTS.includes(r.acct) ? r.acct : ASSET_ACCTS[0]) : ASSET_ACCTS[0],
+    fromAcct: isT ? (r.acct || ASSET_ACCTS[0]) : ASSET_ACCTS[0],
     toAcct: isT ? (ASSET_ACCTS.includes(r.toAcct) ? r.toAcct : ASSET_ACCTS[1]) : ASSET_ACCTS[1]};
   openSheet(`<h3>${isT ? '修改轉帳 Edit transfer' : '修改記錄 Edit'}</h3>` + formHTML('e_', Object.assign({}, r, {fromAcct: editState.fromAcct, toAcct: editState.toAcct})) +
     `<button type="button" class="btn" id="edSave">儲存修改 Save</button><button type="button" class="btn danger" id="edDel">刪除呢筆 Delete</button>`);
@@ -1049,8 +1116,221 @@ function openFailed(){
 function openSheet(html){ $('sheet').innerHTML = html; $('sheet').classList.add('on'); $('mask').classList.add('on'); }
 function closeSheet(){ $('sheet').classList.remove('on'); $('mask').classList.remove('on'); editing = null; }
 
+
+/* ---------- V3.12 資產負債表 Balance Sheet ---------- */
+const BAL_ACCTS = ASSET_ACCTS; // five asset accounts
+function openingsOf(){
+  const st = (D.settings && D.settings.openings) || {};
+  const am = st.amounts || {};
+  const adj = st.adjustments || {};
+  const out = { date: st.date || '2024-10-31', amounts: {}, adjustments: {} };
+  BAL_ACCTS.forEach(a => {
+    const n = Number(am[a]);
+    out.amounts[a] = Number.isFinite(n) ? n : 0;
+    if (adj[a] && Number(adj[a].amount)) out.adjustments[a] = { amount: Number(adj[a].amount), date: adj[a].date || '', label: adj[a].label || '調整' };
+  });
+  return out;
+}
+function rowDate(r){ return String(r.date || '').slice(0,10); }
+function rowHkd(r){
+  const h = Number(r.hkd); if (Number.isFinite(h)) return h;
+  const o = Number(r.orig), rate = Number(r.rate);
+  if (Number.isFinite(o) && Number.isFinite(rate)) return o * rate;
+  return Number.isFinite(o) ? o : 0;
+}
+function isPersBankFlow(r){ const a = String(r.acct || 'A').toUpperCase(); return a === 'A' || a === 'B'; }
+/** C asset = sum of C expenses (先墊支待還); D liability = sum of D expenses */
+function cdAsOf(asOf){
+  let c = 0, d = 0;
+  (D.rows || []).forEach(r => {
+    const dt = rowDate(r); if (!dt || dt > asOf) return;
+    if (isXfer(r)) return;
+    const acct = String(r.acct || '').toUpperCase();
+    const amt = rowHkd(r);
+    if (acct === 'C' && !isInc(r)) c += amt;
+    if (acct === 'D' && !isInc(r)) d += amt;
+    if (acct === 'C' && isInc(r)) c -= amt; // repayment reduces receivable
+    if (acct === 'D' && isInc(r)) d -= amt;
+  });
+  return { C: c, D: d };
+}
+function balancesAsOf(asOf){
+  const op = openingsOf();
+  const bal = {};
+  BAL_ACCTS.forEach(a => { bal[a] = op.amounts[a] || 0; });
+  const openD = op.date;
+  (D.rows || []).forEach(r => {
+    const d = rowDate(r);
+    if (!d || d <= openD || d > asOf) return;
+    if (isXfer(r)) {
+      const amt = rowHkd(r);
+      const frm = BAL_ACCTS.includes(r.acct) ? r.acct : null; // Interest etc. ignored on from
+      const to = BAL_ACCTS.includes(r.toAcct) ? r.toAcct : null;
+      if (frm) bal[frm] -= amt;
+      if (to) bal[to] += amt;
+      return;
+    }
+    if (!isPersBankFlow(r)) return;
+    const amt = rowHkd(r);
+    if (isInc(r)) bal['Personal-bank'] += amt;
+    else bal['Personal-bank'] -= amt;
+  });
+  // labelled adjustments applied on/after their date
+  Object.keys(op.adjustments || {}).forEach(a => {
+    const ad = op.adjustments[a];
+    if (!ad || !BAL_ACCTS.includes(a)) return;
+    const adDate = ad.date || asOf;
+    if (adDate <= asOf) bal[a] += Number(ad.amount) || 0;
+  });
+  const cd = cdAsOf(asOf);
+  bal.C = cd.C; bal.D = cd.D;
+  bal.totalWealth = BAL_ACCTS.reduce((s,a) => s + bal[a], 0) + bal.C - bal.D;
+  return bal;
+}
+function lastDayOfMonth(ym){
+  const [y,m] = ym.split('-').map(Number);
+  const dt = new Date(y, m, 0);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+}
+function monthListFromOpen(){
+  const op = openingsOf().date;
+  let y = Number(op.slice(0,4)), m = Number(op.slice(5,7));
+  // include opening month as first month-end
+  const end = todayHel().slice(0,7);
+  const out = [];
+  while (true) {
+    const ym = `${y}-${String(m).padStart(2,'0')}`;
+    out.push(ym);
+    if (ym >= end) break;
+    m++; if (m > 12) { m = 1; y++; }
+    if (out.length > 120) break;
+  }
+  return out;
+}
+function fmtBal(n){
+  const v = Math.round(Number(n) * 100) / 100;
+  const abs = Math.abs(v).toLocaleString('en-HK', { minimumFractionDigits: (Math.abs(v) % 1) ? 2 : 0, maximumFractionDigits: 2 });
+  return (v < 0 ? '−' : '') + abs;
+}
+function chgHtml(n){
+  if (!Number.isFinite(n) || Math.abs(n) < 0.005) return `<span class="chg">—</span>`;
+  const cls = n > 0 ? 'up' : 'dn';
+  return `<span class="chg ${cls}">${n>0?'+':'−'}${fmtBal(Math.abs(n))}</span>`;
+}
+function sparkHTML(values, highlightIdx){
+  const max = Math.max(...values.map(Math.abs), 1);
+  return `<div class="bal-spark">${values.map((v,i) => {
+    const h = Math.max(2, Math.round(Math.abs(v)/max*46));
+    return `<i class="${i===highlightIdx?'on':''}" style="height:${h}px;opacity:${v<0?0.35:0.75}" title="${fmtBal(v)}"></i>`;
+  }).join('')}</div>`;
+}
+function adjNotesHTML(b){
+  const op = openingsOf();
+  const notes = [];
+  Object.keys(op.adjustments||{}).forEach(a => {
+    const ad = op.adjustments[a];
+    if (!ad || !ad.amount) return;
+    const lab = a === 'Personal-investment' ? '未解釋調整 unexplained (+19,000 → 今日 34,000)' :
+      a === 'Personal-bank' ? `結餘調整 to match today −1,322.24（A+B 淨流＋轉帳後仲差 ${fmtBal(ad.amount)}）` :
+      (ad.label || '調整');
+    notes.push(`<div class="bal-adj">⚠️ ${esc(a)}：${esc(lab)} · ${fmtBal(ad.amount)} as of ${esc(ad.date||'?')}</div>`);
+  });
+  // C vs Caleb 749.33
+  if (Math.abs((b.C||0) - 749.33) > 0.5) notes.push(`<div class="bal-adj">⚠️ C 待還 Vault 合計 ${fmtBal(b.C)}（C 戶支出合計）；Caleb 今日數字 749.33 · 差額 ${fmtBal((b.C||0)-749.33)}。未強制覆蓋。</div>`);
+  notes.push(`<div class="bal-adj" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534">Retirement-bank 今日／7 月底用 Journal 2,007.30（Caleb 口頭 2,007.31 當作 1 仙口誤）。Journal Aug–Oct 2026 空白：結餘帶出。</div>`);
+  return notes.join('');
+}
+function renderBalToday(){
+  const today = todayHel();
+  const b = balancesAsOf(today);
+  const cards = BAL_ACCTS.map(a => {
+    const warn = (a === 'Personal-bank' || a === 'Personal-investment') ? ' warn' : '';
+    return `<div class="bal-card${warn}"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div></div>`;
+  }).join('');
+  return `<div class="bal-cards">${cards}
+      <div class="bal-card total"><div class="n">總財富 Total wealth（五帳戶 + C − D）</div><div class="v">${fmtBal(b.totalWealth)} HKD</div></div>
+    </div>
+    <div class="cdrow">
+      <div class="bal-card"><div class="n">C 待還 Receivables</div><div class="v">${fmtBal(b.C)}</div></div>
+      <div class="bal-card"><div class="n">D 未付 Liabilities</div><div class="v">${fmtBal(b.D)}</div></div>
+    </div>
+    <p class="bal-note">截至今日 ${today}（Europe/Helsinki）。期初 ${openingsOf().date}。</p>
+    ${adjNotesHTML(b)}`;
+}
+function renderBalMonth(){
+  if (!balMonth) balMonth = monthOf(todayHel());
+  const months = monthListFromOpen();
+  let idx = months.indexOf(balMonth); if (idx < 0) idx = months.length - 1;
+  balMonth = months[idx];
+  $('balLabel').textContent = monthLabel(balMonth);
+  let prev = null;
+  const series = { total: [], 'Retirement-bank': [], 'Year End': [], 'Personal-bank': [] };
+  const rows = months.map((ym, i) => {
+    const asOf = lastDayOfMonth(ym);
+    const b = balancesAsOf(asOf);
+    series.total.push(b.totalWealth);
+    series['Retirement-bank'].push(b['Retirement-bank']);
+    series['Year End'].push(b['Year End']);
+    series['Personal-bank'].push(b['Personal-bank']);
+    const chg = {};
+    BAL_ACCTS.forEach(a => { chg[a] = prev ? b[a] - prev[a] : b[a] - (openingsOf().amounts[a] || 0); });
+    const twChg = prev ? b.totalWealth - prev.totalWealth : null;
+    prev = b;
+    const hi = ym === balMonth ? ' style="background:#ecfdf5"' : '';
+    return `<tr${hi}><td>${monthLabel(ym)}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
+      <td>${fmtBal(b.C)}</td><td>${fmtBal(b.D)}</td><td>${fmtBal(b.totalWealth)}<br>${chgHtml(twChg)}</td></tr>`;
+  }).join('');
+  return `${sparkHTML(series.total, idx)}
+    <p class="bal-note">總財富月趨勢（撳左右切月）</p>
+    <div class="bal-scroll"><table class="bal-table"><thead><tr><th>月</th>${BAL_ACCTS.map(a=>`<th>${a.replace('Retirement','Ret.').replace('Personal','Pers.').replace('-investment','-inv').replace('-bank','-bk')}</th>`).join('')}<th>C</th><th>D</th><th>總財富</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${adjNotesHTML(balancesAsOf(todayHel()))}`;
+}
+function renderBalYear(){
+  if (!balYear) balYear = todayHel().slice(0,4);
+  $('balLabel').textContent = balYear + '年';
+  const startY = Number(openingsOf().date.slice(0,4));
+  const endY = Number(todayHel().slice(0,4));
+  const years = []; for (let y = startY; y <= endY; y++) years.push(String(y));
+  let prev = null;
+  const rows = years.map(y => {
+    const asOf = (y === todayHel().slice(0,4)) ? todayHel() : `${y}-12-31`;
+    const b = balancesAsOf(asOf);
+    const chg = {};
+    BAL_ACCTS.forEach(a => { chg[a] = prev ? b[a] - prev[a] : b[a] - (openingsOf().amounts[a] || 0); });
+    prev = Object.assign({}, b);
+    const hi = y === balYear ? ' style="background:#ecfdf5"' : '';
+    return `<tr${hi}><td>${y}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
+      <td>${fmtBal(b.C)}</td><td>${fmtBal(b.D)}</td><td>${fmtBal(b.totalWealth)}</td></tr>`;
+  }).join('');
+  return `<div class="bal-scroll"><table class="bal-table"><thead><tr><th>年</th>${BAL_ACCTS.map(a=>`<th>${a.split('-')[0]}</th>`).join('')}<th>C</th><th>D</th><th>總</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function renderBal(){
+  const modes = [['today','今日 Today'],['month','按月 Month'],['year','按年 Year']];
+  $('balMode').innerHTML = modes.map(([k,l]) => `<button type="button" data-bm="${k}" class="${balMode===k?'on':''}">${l}</button>`).join('');
+  $('balMode').onclick = ev => { const b = ev.target.closest('[data-bm]'); if (!b) return; balMode = b.dataset.bm; dirty.bal = true; renderBal(); };
+  const bar = $('balBar');
+  bar.style.display = (balMode === 'month' || balMode === 'year') ? '' : 'none';
+  if (balMode === 'today') $('balBody').innerHTML = renderBalToday();
+  else if (balMode === 'month') $('balBody').innerHTML = renderBalMonth();
+  else $('balBody').innerHTML = renderBalYear();
+  $('balPrev').onclick = () => {
+    if (balMode === 'month') {
+      const ms = monthListFromOpen(); let i = ms.indexOf(balMonth); if (i > 0) { balMonth = ms[i-1]; dirty.bal = true; renderBal(); }
+    } else {
+      const y = String(Number(balYear) - 1); if (y >= openingsOf().date.slice(0,4)) { balYear = y; dirty.bal = true; renderBal(); }
+    }
+  };
+  $('balNext').onclick = () => {
+    if (balMode === 'month') {
+      const ms = monthListFromOpen(); let i = ms.indexOf(balMonth); if (i >= 0 && i < ms.length - 1) { balMonth = ms[i+1]; dirty.bal = true; renderBal(); }
+    } else {
+      const y = String(Number(balYear) + 1); if (y <= todayHel().slice(0,4)) { balYear = y; dirty.bal = true; renderBal(); }
+    }
+  };
+}
+
 /* ---------- 導航（純本機；只畫而家睇緊嗰頁，其他頁轉過去先畫）---------- */
-const dirty = { sum: true, list: true };
+const dirty = { sum: true, list: true, bal: true };
 const curView = () => document.querySelector('nav .on').dataset.v;
 function show(v, keepScroll){
   const t0 = performance.now(), changed = v !== curView();
@@ -1058,9 +1338,10 @@ function show(v, keepScroll){
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id==='v-'+v));
   if (v === 'sum' && dirty.sum) { renderSum(); dirty.sum = false; }
   if (v === 'list' && dirty.list) { renderList(); dirty.list = false; }
+  if (v === 'bal' && dirty.bal) { renderBal(); dirty.bal = false; }
   $('title').innerHTML = `${TITLES[v][0]}<span class="en">${TITLES[v][1]}</span>`;
   const q = V ? V.status().pending : 0;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '四個資產帳戶 · Personal／Retire／Year End／Investment' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
@@ -1073,14 +1354,14 @@ function renderNotice(){
 }
 function renderAll(keepScroll){
   renderPill(); renderNotice(); renderMini();
-  dirty.sum = dirty.list = true;
+  dirty.sum = dirty.list = dirty.bal = true;
   show(curView(), keepScroll);
 }
 
 let started = false;
 function start(){
   if (started) return; started = true;
-  viewMonth = monthOf(todayHel());
+  viewMonth = monthOf(todayHel()); balMonth = viewMonth; balYear = viewMonth.slice(0,4);
   recompute(); lastCfgSig = configSig(); renderAdd(); renderAll();
   $('loading').style.display = 'none';
   const h = (location.hash||'').slice(1); if (TITLES[h]) show(h);

@@ -1,4 +1,4 @@
-/* Vault V3.11 — 離線優先資料層（V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
+/* Vault V3.12 — 離線優先資料層（V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
  *  - 所有新增／修改／刪除／設定：先寫 IndexedDB（transaction complete）先回覆，畫面即刻更新，唔使等網絡
  *  - 背景同步：single-flight、按次序清隊、指數退避、拉 getData 合併（唔會蓋過未同步嘅改動）
  *  - 改緊「同步緊」嘅記錄：開新 op 串住（client id 或者預計嘅 fingerprint），唔會阻用戶
@@ -18,11 +18,13 @@
   // V3.3：帳戶 A／B／C／D／F（同伺服器 normAcct_ 一樣）；空白／唔啱 = 'A'。舊記錄（冇 acct）一律當 A
   // V3.11：轉帳用資產帳戶 Personal／Retire／Year End／Investment；欄位 toAcct = 轉入
   const ACCTS = ['A', 'B', 'C', 'D', 'F'];   // V3.8：加 F
-  const ASSET_ACCTS = ['Personal', 'Retire', 'Year End', 'Investment'];
+  const ASSET_ACCTS = ['Personal-bank', 'Personal-investment', 'Retirement-bank', 'Retirement-investment', 'Year End'];
   const normAcct = v => { const a = String(v == null ? '' : v).trim().toUpperCase(); return ACCTS.indexOf(a) >= 0 ? a : ''; };
   const normAsset = v => { const a = String(v == null ? '' : v).trim(); return ASSET_ACCTS.indexOf(a) >= 0 ? a : ''; };
+  const XFER_FROM_EXTRA = ['Interest'];
+  const normXferFrom = v => { const a = String(v == null ? '' : v).trim(); return ASSET_ACCTS.indexOf(a) >= 0 || XFER_FROM_EXTRA.indexOf(a) >= 0 ? a : ''; };
   const acctOf = r => {
-    if (r && r.type === '轉帳') return normAsset(r.acct) || ASSET_ACCTS[0];
+    if (r && r.type === '轉帳') return normXferFrom(r.acct) || ASSET_ACCTS[0];
     return normAcct(r && r.acct) || 'A';
   };
   const toAcctOf = r => (r && r.type === '轉帳') ? (normAsset(r.toAcct) || '') : '';
@@ -130,7 +132,7 @@
       const e = op.entry, g = rateGuess(e.cur);
       const type = e.type || '支出';
       return { row: 'p:' + op.id, cid: op.id, pending: true, _ops: [op.id], date: e.date, item: normItem(e), cat: type === '轉帳' ? '轉帳' : e.cat, pay: e.pay || '', note: e.note || '',
-        acct: type === '轉帳' ? (normAsset(e.acct) || ASSET_ACCTS[0]) : acctOf(e),
+        acct: type === '轉帳' ? (normXferFrom(e.acct) || ASSET_ACCTS[0]) : acctOf(e),
         toAcct: type === '轉帳' ? (normAsset(e.toAcct) || '') : '',
         cur: String(e.cur).toUpperCase(), orig: round2(e.amount), type: type, rate: g, amount: e.cur === 'HKD' ? round2(e.amount) : round2(e.amount * g),
         src: e.cur === 'HKD' ? 'HKD' : OFFLINE_SRC, est: e.cur !== 'HKD', eurAmt: 0 };
@@ -180,7 +182,33 @@
           case 'removeCurrency': c.curInfo = c.curInfo.filter(x => x.code !== a[0]); break;
           case 'addPayment': if (!c.payInfo.some(x => x.name === a[0].name)) c.payInfo.push({ name: a[0].name, en: a[0].en || '', pending: true }); break;
           case 'removePayment': c.payInfo = c.payInfo.filter(x => x.name !== a[0]); break;
-          case 'setSetting': if (a[0] === '預設貨幣') c.settings.defaultCur = a[1]; else if (a[0] === '預設付款方式') c.settings.defaultPay = a[1]; break;
+          case 'setSetting':
+            if (a[0] === '預設貨幣') c.settings.defaultCur = a[1];
+            else if (a[0] === '預設付款方式') c.settings.defaultPay = a[1];
+            else if (a[0] === '期初日期') {
+              c.settings.openings = c.settings.openings || { date: '', amounts: {}, adjustments: {} };
+              c.settings.openings.date = a[1];
+            } else if (String(a[0]).indexOf('期初結餘_') === 0) {
+              c.settings.openings = c.settings.openings || { date: '2024-10-31', amounts: {}, adjustments: {} };
+              c.settings.openings.amounts = c.settings.openings.amounts || {};
+              const acct = String(a[0]).slice('期初結餘_'.length);
+              c.settings.openings.amounts[acct] = Number(a[1]) || 0;
+            } else if (String(a[0]).indexOf('調整日期_') === 0) {
+              const acct = String(a[0]).slice('調整日期_'.length);
+              c.settings.openings = c.settings.openings || { date: '2024-10-31', amounts: {}, adjustments: {} };
+              c.settings.openings.adjustments = c.settings.openings.adjustments || {};
+              const cur = c.settings.openings.adjustments[acct] || { amount: 0, date: a[1], label: '' };
+              cur.date = a[1];
+              c.settings.openings.adjustments[acct] = cur;
+            } else if (String(a[0]).indexOf('調整_') === 0) {
+              const acct = String(a[0]).slice('調整_'.length);
+              c.settings.openings = c.settings.openings || { date: '2024-10-31', amounts: {}, adjustments: {} };
+              c.settings.openings.adjustments = c.settings.openings.adjustments || {};
+              const cur = c.settings.openings.adjustments[acct] || { amount: 0, date: '', label: '' };
+              cur.amount = Number(a[1]) || 0;
+              c.settings.openings.adjustments[acct] = cur;
+            }
+            break;
         }
       });
       c.currencies = c.curInfo.length ? c.curInfo.map(x => x.code) : (c.currencies || ['HKD']);
