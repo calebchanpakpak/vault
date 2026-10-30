@@ -1,4 +1,4 @@
-/* Vault V3.4 service worker
+/* Vault V3.5 service worker
  * - 安裝：一次過預先快取成個 App 外殼（index.html + idb.js + sync.js + icons + manifest），保證新舊唔會夾雜
  * - 開 App：外殼一律 cache-first（唔等網絡，飛航模式／網絡好慢都即開）；資料由 IndexedDB 出
  * - 更新：改咗任何外殼檔案就要改 CACHE 名（例如版本號） → 瀏覽器發現 sw.js 唔同 → 背景裝新版 → App 頂部問「更新」
@@ -6,7 +6,7 @@
  * - Background Sync（只係錦上添花）：Chrome／Android 喺 App 關咗之後都可以幫手送出排緊隊嘅改動。
  *   iOS Safari／主畫面 App 冇 Background Sync 亦冇 Periodic Sync：App 關咗就唔會同步，下次打開先補送。
  */
-const CACHE = 'vault-v3.4-shell';
+const CACHE = 'vault-v3.5-shell';
 const SHELL = ['./', './index.html', './idb.js', './sync.js', './manifest.json',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 

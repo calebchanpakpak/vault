@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.4（離線優先；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.5（離線優先；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -224,7 +224,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
   <div id="netbar"></div>
   <div id="notice"></div>
   <main>
-    <!-- 記一筆 -->
+    <!-- 記帳 -->
     <section class="view on" id="v-add">
       <div class="mini" id="mini"></div>
       <div id="formHost"></div>
@@ -244,7 +244,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
     </section>
   </main>
   <nav>
-    <button data-v="add" class="on"><span class="i">✏️</span>記一筆<span class="en">Add</span></button>
+    <button data-v="add" class="on"><span class="i">✏️</span>記帳<span class="en">Add</span></button>
     <button data-v="sum"><span class="i">📊</span>總覽<span class="en">Summary</span></button>
     <button data-v="list"><span class="i">🧾</span>記錄<span class="en">Records</span></button>
   </nav>
@@ -260,10 +260,10 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 <script src="idb.js"></script>
 <script src="sync.js"></script>
 <script>
-/* Vault V3.4：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
+/* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D'];                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.4';
+const APP_VERSION = 'V3.5';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -810,7 +810,7 @@ function openSettings(){
       <div class="kv" style="margin-top:4px"><span>永久儲存 Persistent</span><span id="st_persist">…</span></div>
       <button class="btn ghost" onclick="openConn()">🔗 連線設定 Server URL / token</button>
       <button class="btn ghost" onclick="closeSheet();bgSync('manual')">🔄 而家同步 Sync now</button></div>
-    <p class="hint">舊記錄唔會受影響：刪咗嘅貨幣／付款方式照樣顯示。每月預算喺「總覽」改。類別喺「記一筆」加，或者直接改「類別」分頁。設定改動即刻生效，有網先寫入 Sheet。</p>
+    <p class="hint">舊記錄唔會受影響：刪咗嘅貨幣／付款方式照樣顯示。每月預算喺「總覽」改。類別喺「記帳」加，或者直接改「類別」分頁。設定改動即刻生效，有網先寫入 Sheet。</p>
     <button class="btn ghost" onclick="closeSheet()">完成 Done</button>`);
   if (navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(p => { const el = $('st_persist'); if (el) el.textContent = p ? '✓ 開咗' : '未有（瀏覽器決定）'; }).catch(() => {});
   else $('st_persist').textContent = '唔支援';
