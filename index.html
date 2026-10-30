@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.6（離線優先；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
+<!-- Vault V3.7（離線優先；V3.7：記錄列表項目名完整顯示（自動換行）＋「顯示更多」睇返 60 日之前嘅記錄；V3.6：記錄列表日期加年份；V3.5：底欄「記一筆」改「記帳」；V3.4：項目輸入建議；V3.3：每筆記錄加「帳戶」A／B／C／D；V3.1：總覽加「全年每月支出」；V3.2：總覽改做 支出／收入／淨額 × 全年／每月／每日 toggles）：靜態檔（GitHub Pages 等）+ IndexedDB（部機嘅真相來源）+ 背景同步去 Apps Script JSON API（Api.gs doPost） -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -178,9 +178,10 @@ select{width:100%;padding:9px;border:1.5px solid var(--line);border-radius:10px;
 .group .item:last-child{border-bottom:0}
 .item .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
 .item .t{flex:1;min-width:0}
-.item .t b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item .t small{display:block;color:var(--sub);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item .a{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.item .t b{display:block;font-weight:600;font-size:15px;white-space:normal;overflow-wrap:anywhere;line-height:1.3}
+.item .t small{display:block;color:var(--sub);font-size:12px;white-space:normal;overflow-wrap:anywhere}
+.more{display:block;width:100%;margin:14px 0 4px;padding:12px;border:1.5px solid var(--line);background:#fff;border-radius:var(--r);font-size:14px;font-weight:600;color:var(--brand)}
+.item .a{flex:none;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .item .a small{display:block;font-weight:400;font-size:11px;color:#9ca3af;margin-top:1px}
 .tag{display:inline-block;font-size:10px;background:#fef3c7;color:#92400e;border-radius:6px;padding:1px 5px;margin-left:4px;vertical-align:1px}
 .filter{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;margin:0 -14px;padding-left:14px;padding-right:14px}
@@ -263,7 +264,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 /* Vault V3.5：所有掣只會等本機 IndexedDB（幾毫秒），永遠唔等網絡；同步全部喺背景做 */
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D'];                       // V3.3：帳戶（舊記錄冇 acct = A）
-const APP_VERSION = 'V3.6';
+const APP_VERSION = 'V3.7';
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income'};
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -840,6 +841,7 @@ function openSettings(){
 }
 
 /* ---------- 記錄 ---------- */
+let listDays = 60;   // V3.7：記錄列表每次顯示 60 日，撳「顯示更多」再加 60 日
 function renderList(){
   const used = new Set(D.rows.map(r => r.type + '|' + r.cat));
   // V3.2（同 V2.2 一樣）：類別全部嚟自「類別」分頁；篩選只顯示有記錄嘅類別，連分頁冇嘅舊類別（灰色 📦／💰）都會列出
@@ -849,12 +851,13 @@ function renderList(){
   const pills = [['全部','全部 All'],['支出','支出 Expense'],['收入','收入 Income'],
     ...fcats.map(c => ['c:'+c.type+'|'+c.name, `${c.icon} ${esc(c.name)}${c.en?' <span class="en">'+esc(c.en)+'</span>':''}`])];
   $('filter').innerHTML = pills.map(([k,l]) => `<button class="pill${k===listFilter?' on':''}" data-f="${esc(k)}">${l}</button>`).join('');
-  $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; renderList(); };
+  $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; listDays = 60; renderList(); };
   const match = r => listFilter==='全部' || r.type===listFilter || listFilter === 'c:'+r.type+'|'+r.cat;
   const rs = D.rows.filter(match).slice().sort((a,b) => b.date.localeCompare(a.date) || b.row - a.row);
   if (!rs.length) { $('list').innerHTML = '<div class="empty">未有記錄 No records</div>'; return; }
   const groups = {}; rs.forEach(r => (groups[r.date] = groups[r.date] || []).push(r));
-  $('list').innerHTML = Object.entries(groups).slice(0, 60).map(([d, items]) => {
+  const allDays = Object.entries(groups);
+  $('list').innerHTML = allDays.slice(0, listDays).map(([d, items]) => {
     const ex = spent(items), inc = earned(items);
     return `
     <div class="day"><span>${d.slice(0,4)}年${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
@@ -865,8 +868,10 @@ function renderList(){
         <div class="t"><b>${esc(r.item)}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
           <small><span class="acctlbl">(${ACCTS.includes(r.acct) ? r.acct : 'A'}帳)</span>${isInc(r)?'收入 · ':''}${esc(r.cat)}${m.en?' '+esc(m.en):''}${r.pay?' · '+esc(r.pay):''}${r.note && r.note!=='示範' ? ' · '+esc(r.note):''}</small></div>
         <div class="a${isInc(r)?' inc':''}">${isInc(r)?'+':''}${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}${r.est ? ` <span class="esttag">· ${r.pending ? '離線估計' : '估計'}</span>` : ''}</small>` : ''}</div>
-      </div>`; }).join('')}</div>`; }).join('');
-  $('list').onclick = ev => { const it = ev.target.closest('[data-row]'); if(!it) return;
+      </div>`; }).join('')}</div>`; }).join('') +
+    (allDays.length > listDays ? `<button class="more" id="listMore">顯示更多 Show more（仲有 ${allDays.length - listDays} 日）</button>` : '');
+  $('list').onclick = ev => { if (ev.target.closest('#listMore')) { listDays += 60; renderList(); return; }
+    const it = ev.target.closest('[data-row]'); if(!it) return;
     openEdit(D.rows.find(r => String(r.row) === it.dataset.row)); };
 }
 let editState = {};
