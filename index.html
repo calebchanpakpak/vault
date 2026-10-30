@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.13（離線優先；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.14（離線優先；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -318,7 +318,33 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.13';
+const APP_VERSION = 'V3.14';
+/* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
+const XFER_CATS = [
+  {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
+  {id:'投資轉帳', zh:'投資轉帳', en:'Investment transfer', icon:'📈'},
+  {id:'Year End 支出', zh:'Year End 支出', en:'Year end spending', icon:'✈️'},
+  {id:'其他', zh:'其他', en:'Other', icon:'🔁'}
+];
+const XFER_CAT_IDS = XFER_CATS.map(c => c.id);
+const xferCatMeta = id => XFER_CATS.find(c => c.id === id) || XFER_CATS[3];
+/** 轉帳類型：新記錄 item＝類型 id；舊記錄先睇 From→To，再睇項目文字（display／篩選用） */
+function xferCatOf(r){
+  const item = String(r && r.item != null ? r.item : '').trim();
+  if (XFER_CAT_IDS.includes(item)) return item;
+  const from = String(r && r.acct != null ? r.acct : '').trim();
+  const to = String(r && r.toAcct != null ? r.toAcct : '').trim();
+  // Route rules（同 Journal 補記重分類一致）
+  if (from === 'Personal-bank' && (to === 'Retirement-bank' || to === 'Year End')) return '每月收入供款';
+  if ((from === 'Personal-bank' && to === 'Personal-investment') ||
+      (from === 'Retirement-bank' && to === 'Retirement-investment')) return '投資轉帳';
+  if (from === 'Year End' && to === 'Personal-bank') return 'Year End 支出';
+  // Fallback by item text（唔喺標準 From→To 嘅舊字）
+  if (/contribution|每月收入供款|income sheet|\bincome\b|供款/i.test(item) && !/investment/i.test(item)) return '每月收入供款';
+  if (/investment/i.test(item) || to === 'Personal-investment' || to === 'Retirement-investment') return '投資轉帳';
+  if (/trip|tai\s*wan|taiwan|sanya|singapore|guang\s*zhou|guangzhou|nagoya|wedding|gift|旅遊|人情/i.test(item)) return 'Year End 支出';
+  return '其他';
+}
 const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], bal:['資產負債表','Balance'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income', 轉帳:'Transfer'};
 const TYPE_BTNS = [['支出','支出 Expense'],['收入','收入 Income'],['轉帳','帳戶 Transfer']];
@@ -327,7 +353,7 @@ const payEn = p => ((D.payInfo||[]).find(x => x.name === p) || {}).en || '';
 const RATES = {HKD:{rate:1}};   // 預覽用（真正換算喺伺服器同步時做）
 const EMOJI_CHOICES = ['🏷️','💰','🎁','☕','🍰','🐶','🎮','🎵','📱','💻','🚕','🏥','💄','🧴','🎓','⚽','🏦','💼','🪙','🎉'];
 let D = {rows:[], budget:0, currencies:['HKD'], curInfo:[], categories:[], payments:[], payInfo:[], settings:{}, today:''};
-let viewMonth = '', listFilter = '全部', listAcct = '全部', editing = null;   // V3.9：listAcct = 戶口篩選
+let viewMonth = '', listFilter = '全部', listAcct = '全部', listXferFilter = '全部', editing = null;   // V3.9：listAcct；V3.14：listXferFilter 轉帳類型
 let balMode = 'today', balMonth = '', balYear = '';   // V3.12：資產負債表檢視
 
 /* ---------- 連線（Apps Script /exec）---------- */
@@ -551,11 +577,16 @@ function formHTML(prefix, e){
     <div class="fxline" id="${prefix}fx"></div>
   </div>
   <div class="card" id="${prefix}catCard"><p class="label">類別 Category</p><div class="chips" id="${prefix}cats"></div></div>
+  <div class="card" id="${prefix}xferCatCard" hidden>
+    <p class="label">轉帳類型 Transfer type</p>
+    <div class="chips" id="${prefix}xferCats"></div>
+    <p class="bal-note" id="${prefix}xferLegacy" hidden></p>
+  </div>
   <div class="card">
-    <div class="field itemwrap" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" value="${esc(e.item||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder=""><div class="itemdd" id="${prefix}itemdd" hidden></div></div>
+    <div class="field itemwrap" id="${prefix}itemField" style="margin-top:0"><label>項目 Item</label><input id="${prefix}item" value="${esc(e.item||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder=""><div class="itemdd" id="${prefix}itemdd" hidden></div></div>
     <div class="row2">
       <div class="field"><label>日期 Date</label><input id="${prefix}date" type="date" value="${e.date}"></div>
-      <div class="field"><label>備註 Note</label><input id="${prefix}note" placeholder="（可以唔填）" value="${esc(e.note||'')}"></div>
+      <div class="field"><label>備註 Note</label><input id="${prefix}note" placeholder="旅行／詳情（可以唔填） Travel / details" value="${esc(e.note||'')}"></div>
     </div>
     <div class="field" id="${prefix}payField"><label>付款方式 Payment</label><div class="pills" id="${prefix}pays">${pays}</div></div>
   </div>`;
@@ -590,14 +621,34 @@ function loadRate(prefix, state){
   if (navigator.onLine === false || !V.cfg.url) return;
   call('getRate', c).then(r => { RATES[c] = r; V.saveRate(c, r); if (state.cur === c) fxHint(prefix, state); }).catch(() => {});   // 背景更新
 }
+function renderXferCats(prefix, state){
+  const el = $(prefix+'xferCats'); if (!el) return;
+  if (!state.xferCat || !XFER_CAT_IDS.includes(state.xferCat)) {
+    const last = localStorage.getItem('lastXferCat');
+    state.xferCat = XFER_CAT_IDS.includes(last) ? last : XFER_CATS[0].id;
+  }
+  el.innerHTML = XFER_CATS.map(c =>
+    `<button type="button" class="chip${c.id===state.xferCat?' on':''}" data-xcat="${esc(c.id)}"><span class="e">${c.icon}</span>${esc(c.zh)}<small>${esc(c.en)}</small></button>`
+  ).join('');
+  const leg = $(prefix+'xferLegacy');
+  if (leg) {
+    const raw = String(state._xferRawItem || '').trim();
+    const show = raw && !XFER_CAT_IDS.includes(raw);
+    leg.hidden = !show;
+    leg.textContent = show ? `原項目（儲存後會改做類型名，詳情可寫備註）：${raw}` : '';
+  }
+}
 function applyFormMode(prefix, state){
   const xfer = state.type === '轉帳';
   const hide = (id, on) => { const el = $(id); if (el) el.hidden = !!on; };
   hide(prefix+'expAcctRow', xfer);
   hide(prefix+'xferBlock', !xfer);
   hide(prefix+'catCard', xfer);
+  hide(prefix+'xferCatCard', !xfer);
+  hide(prefix+'itemField', xfer);   // V3.14：轉帳用類型掣，唔用自由項目
   hide(prefix+'payField', xfer);
   if (!xfer) renderCats(prefix, state);
+  if (xfer) renderXferCats(prefix, state);
   if (state._onMode) state._onMode(xfer);
 }
 function bindForm(prefix, state){
@@ -607,8 +658,20 @@ function bindForm(prefix, state){
   $(prefix+'type').onclick = ev => { const b = ev.target.closest('[data-type]'); if(!b || b.dataset.type===state.type) return;
     state.type = b.dataset.type; [...$(prefix+'type').children].forEach(x => x.classList.toggle('on', x===b));
     if (state.type !== '轉帳' && !catsOf(state.type).some(c => c.name === state.cat)) state.cat = '';
-    if (state.type === '轉帳') state.cat = '轉帳';
+    if (state.type === '轉帳') {
+      state.cat = '轉帳';
+      if (!state.xferCat || !XFER_CAT_IDS.includes(state.xferCat)) {
+        const last = localStorage.getItem('lastXferCat');
+        state.xferCat = XFER_CAT_IDS.includes(last) ? last : XFER_CATS[0].id;
+      }
+    }
     applyFormMode(prefix, state); if (state._itemRefresh) state._itemRefresh(); };
+  const xferCatsEl = $(prefix+'xferCats');
+  if (xferCatsEl) xferCatsEl.onclick = ev => {
+    const b = ev.target.closest('[data-xcat]'); if (!b) return;
+    state.xferCat = b.dataset.xcat;
+    [...xferCatsEl.children].forEach(x => x.classList.toggle('on', x===b));
+  };
   $(prefix+'curs').onclick = ev => { const b = ev.target.closest('[data-cur]'); if(!b) return;
     state.cur = b.dataset.cur; [...$(prefix+'curs').children].forEach(x => x.classList.toggle('on', x===b));
     $(prefix+'sym').textContent = curInfo(state.cur).sym; $(prefix+'amount').placeholder = curInfo(state.cur).dec===0?'0':'0.00';
@@ -641,7 +704,7 @@ function bindForm(prefix, state){
     };
   };
   pickAsset('from', 'from'); pickAsset('to', 'to');
-  bindItemSuggest(prefix, state);                                          // V3.4：項目建議
+  if (state.type !== '轉帳') bindItemSuggest(prefix, state);                // V3.4：項目建議（轉帳改用類型掣）
 }
 function readForm(prefix, state){
   if (state && state._itemHide) state._itemHide();
@@ -656,8 +719,18 @@ function readForm(prefix, state){
     const to = ASSET_ACCTS.includes(state.toAcct) ? state.toAcct : '';
     if (!to) { toast('請揀轉入帳戶 Pick destination'); return null; }
     if (from === to) { toast('轉出同轉入唔可以相同'); return null; }
+    const xcat = XFER_CAT_IDS.includes(state.xferCat) ? state.xferCat : '';
+    if (!xcat) { toast('請揀轉帳類型 Pick a transfer type'); return null; }
+    try { localStorage.setItem('lastXferCat', xcat); } catch (e) {}
+    // 修改舊轉帳：若原本項目唔係四類型之一，自動將舊項目併入備註（唔會整批改 Sheet）
+    let noteOut = note;
+    const raw = String(state._xferRawItem || '').trim();
+    if (raw && !XFER_CAT_IDS.includes(raw)) {
+      if (!noteOut) noteOut = raw;
+      else if (noteOut.indexOf(raw) < 0) noteOut = raw + '｜' + noteOut;
+    }
     return { amount, type: '轉帳', cur: state.cur || 'HKD', cat: '轉帳', pay: '', acct: from, toAcct: to,
-             item: item || '轉帳', date, note };
+             item: xcat, date, note: noteOut };
   }
   if (!state.cat) { toast('請揀類別 Pick a category'); return null; }
   return { amount, type, cur: state.cur || 'HKD', cat: state.cat, pay: state.pay||'', acct: ACCTS.includes(state.acct) ? state.acct : 'A', item,
@@ -702,12 +775,14 @@ function renderAdd(keepType){
   const lastPay = localStorage.getItem('lastPay'), st = D.settings || {};
   const keep = keepType && addState && addState.type;
   // 上次用開嘅 → 「設定」分頁嘅預設值 → 清單第一個
+  const lastXferCat = localStorage.getItem('lastXferCat');
   addState = { cat: keep === '轉帳' ? '轉帳' : '', type: keep || '支出',
     pay: D.payments.includes(lastPay) ? lastPay : (D.payments.includes(st.defaultPay) ? st.defaultPay : (D.payments[0] || '')),
     cur: D.currencies.includes(lastCur) ? lastCur : (D.currencies.includes(st.defaultCur) ? st.defaultCur : 'HKD'),
     acct: ACCTS.includes(localStorage.getItem('lastAcct')) ? localStorage.getItem('lastAcct') : 'A',
     fromAcct: ASSET_ACCTS.includes(localStorage.getItem('lastFromAcct')) ? localStorage.getItem('lastFromAcct') : ASSET_ACCTS[0],
-    toAcct: ASSET_ACCTS.includes(localStorage.getItem('lastToAcct')) ? localStorage.getItem('lastToAcct') : ASSET_ACCTS[1] };
+    toAcct: ASSET_ACCTS.includes(localStorage.getItem('lastToAcct')) ? localStorage.getItem('lastToAcct') : ASSET_ACCTS[1],
+    xferCat: XFER_CAT_IDS.includes(lastXferCat) ? lastXferCat : XFER_CATS[0].id };
   if (addState.toAcct === addState.fromAcct) addState.toAcct = ASSET_ACCTS.find(a => a !== addState.fromAcct) || ASSET_ACCTS[1];
   $('formHost').innerHTML = formHTML('a_', {date: todayHel(), pay: addState.pay, cur: addState.cur, type: addState.type, acct: addState.acct, fromAcct: addState.fromAcct, toAcct: addState.toAcct}) +
     `<button class="btn" id="saveBtn">儲存 Save</button>` + xferListHTML();
@@ -980,25 +1055,37 @@ function renderList(){
   if (modeHost) {
     modeHost.innerHTML = [['flow','收支 Records'],['xfer','轉帳 Transfers']].map(([k,l]) =>
       `<button type="button" data-lm="${k}" class="${listMode===k?'on':''}">${l}</button>`).join('');
-    modeHost.onclick = ev => { const b = ev.target.closest('[data-lm]'); if (!b) return; listMode = b.dataset.lm; listDays = 60; renderList(); };
+    modeHost.onclick = ev => { const b = ev.target.closest('[data-lm]'); if (!b) return; listMode = b.dataset.lm; listDays = 60; if (listMode!=='xfer') listFilter = listFilter; else listXferFilter = listXferFilter; renderList(); };
   }
   if (listMode === 'xfer') {
-    $('filter').innerHTML = '';
     $('acctFilter').innerHTML = '';
-    const xs = D.rows.filter(isXfer).slice().sort((a,b) => b.date.localeCompare(a.date) || (b.row - a.row));
+    const allX = D.rows.filter(isXfer);
+    const catCount = {}; XFER_CAT_IDS.forEach(id => catCount[id] = 0);
+    allX.forEach(r => { const c = xferCatOf(r); catCount[c] = (catCount[c] || 0) + 1; });
+    const xpills = [['全部', `全部 All <span class="en">${allX.length}</span>`],
+      ...XFER_CATS.map(c => [c.id, `${c.icon} ${esc(c.zh)} <span class="en">${catCount[c.id]||0}</span>`])];
+    if (listXferFilter !== '全部' && !XFER_CAT_IDS.includes(listXferFilter)) listXferFilter = '全部';
+    $('filter').innerHTML = xpills.map(([k,l]) => `<button class="pill${k===listXferFilter?' on':''}" data-xf="${esc(k)}">${l}</button>`).join('');
+    $('filter').onclick = ev => { const b = ev.target.closest('[data-xf]'); if(!b) return; listXferFilter = b.dataset.xf; listDays = 60; renderList(); };
+    const xs = allX.filter(r => listXferFilter==='全部' || xferCatOf(r)===listXferFilter)
+      .slice().sort((a,b) => b.date.localeCompare(a.date) || (b.row - a.row));
     if (!xs.length) { $('list').innerHTML = '<div class="empty">未有轉帳 No transfers yet</div>'; return; }
     const groups = {}; xs.forEach(r => (groups[r.date] = groups[r.date] || []).push(r));
     const allDays = Object.entries(groups);
     $('list').innerHTML = allDays.slice(0, listDays).map(([d, items]) => `
       <div class="day"><span>${d.slice(0,4)}年${Number(d.slice(5,7))}月${Number(d.slice(8))}日（${wk(d)}）</span>
         <span>${items.length} 筆轉帳</span></div>
-      <div class="group">${items.map(r => `
+      <div class="group">${items.map(r => {
+        const xc = xferCatMeta(xferCatOf(r));
+        const raw = String(r.item||'').trim();
+        const title = XFER_CAT_IDS.includes(raw) ? xc.zh : raw;
+        return `
         <div class="item xfer${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
-          <div class="ic">🔁</div>
-          <div class="t"><b>${esc(r.item)}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
-            <small><span class="acctlbl">${esc(r.acct || '?')} → ${esc(r.toAcct || '?')}</span>${r.note ? ' · '+esc(r.note):''}</small></div>
+          <div class="ic">${xc.icon}</div>
+          <div class="t"><b>${esc(title)}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+            <small><span class="acctlbl">${esc(r.acct || '?')} → ${esc(r.toAcct || '?')}</span>${XFER_CAT_IDS.includes(raw)?'':' · '+esc(xc.zh)}${r.note ? ' · '+esc(r.note):''}</small></div>
           <div class="a">${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}</small>` : ''}</div>
-        </div>`).join('')}</div>`).join('') +
+        </div>`; }).join('')}</div>`).join('') +
       (allDays.length > listDays ? `<button class="more" id="listMore">顯示更多 Show more（仲有 ${allDays.length - listDays} 日）</button>` : '');
     $('list').onclick = ev => { if (ev.target.closest('#listMore')) { listDays += 60; renderList(); return; }
       const it = ev.target.closest('[data-row]'); if(!it) return;
@@ -1059,7 +1146,9 @@ function openEdit(r){
   editState = {cat: isT ? '轉帳' : r.cat, pay:r.pay, cur:r.cur||'HKD', type:r.type||'支出',
     acct: ACCTS.includes(r.acct) ? r.acct : 'A',
     fromAcct: isT ? (r.acct || ASSET_ACCTS[0]) : ASSET_ACCTS[0],
-    toAcct: isT ? (ASSET_ACCTS.includes(r.toAcct) ? r.toAcct : ASSET_ACCTS[1]) : ASSET_ACCTS[1]};
+    toAcct: isT ? (ASSET_ACCTS.includes(r.toAcct) ? r.toAcct : ASSET_ACCTS[1]) : ASSET_ACCTS[1],
+    xferCat: isT ? xferCatOf(r) : XFER_CATS[0].id,
+    _xferRawItem: isT ? String(r.item || '') : ''};
   openSheet(`<h3>${isT ? '修改轉帳 Edit transfer' : '修改記錄 Edit'}</h3>` + formHTML('e_', Object.assign({}, r, {fromAcct: editState.fromAcct, toAcct: editState.toAcct})) +
     `<button type="button" class="btn" id="edSave">儲存修改 Save</button><button type="button" class="btn danger" id="edDel">刪除呢筆 Delete</button>`);
   editState._onMode = () => {};
