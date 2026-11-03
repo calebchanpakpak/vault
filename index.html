@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.18（離線優先；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.19（離線優先；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -319,7 +319,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.18';
+const APP_VERSION = 'V3.19';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -464,6 +464,8 @@ const isInc = r => r.type === '收入';
 const isXfer = r => r.type === '轉帳';
 function sum(rs){ return rs.reduce((a,r)=>a+r.amount,0); }
 function spent(rs){ return sum(rs.filter(r => !isInc(r) && !isXfer(r))); }   // V3.11：轉帳唔計支出
+const isAcctA = r => (ACCTS.includes(r.acct) ? r.acct : 'A') === 'A';
+function budgetSpent(m){ return spent(rowsOf(m).filter(isAcctA)); }          // V3.19：預算只計 A 戶口
 function earned(rs){ return sum(rs.filter(isInc)); }
 function catsOf(type){ return D.categories.filter(c => c.type === type); }
 function catMeta(name, type){
@@ -813,7 +815,7 @@ function renderAdd(keepType){
   };
 }
 function renderMini(){
-  const m = monthOf(todayHel()), s = spent(rowsOf(m)), left = D.budget - s;
+  const m = monthOf(todayHel()), s = budgetSpent(m), left = D.budget - s;
   $('mini').innerHTML = `<div><small>${monthLabel(m)} 已使 Spent</small><br><b>${hkd(s)}</b></div>
     <div style="text-align:right"><small>${left>=0?'仲剩 Left':'超支 Over'}</small><br><b>${hkd(Math.abs(left))}</b></div>`;
 }
@@ -907,7 +909,7 @@ function yearView(what){
 }
 function monthView(what){
   const all = rowsOf(viewMonth).filter(r => !isXfer(r) && sumHas(r)), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
-  const s = sum(ex), income = sum(inc), net = income - s, pct = D.budget ? s / D.budget : 0;
+  const s = sum(ex), income = sum(inc), net = income - s, bs = budgetSpent(viewMonth), pct = D.budget ? bs / D.budget : 0;
   const isNow = viewMonth === monthOf(todayHel());
   const dIn = daysIn(viewMonth), passed = isNow ? Number(todayHel().slice(8)) : dIn;
   const ml = monthLabel(viewMonth);
@@ -916,11 +918,11 @@ function monthView(what){
     <div class="big">${hkd(s)}</div>
     <div class="prog ${pct>1?'over':pct>.85?'warn':''}"><i style="width:${Math.min(100,pct*100)}%"></i></div>
     <div class="kv"><span>預算 Budget ${hkd(D.budget)} · <button class="link" onclick="editBudget()">改 Edit</button></span>
-      <span>${s<=D.budget?'仲剩 Left '+hkd(D.budget-s):'超支 Over '+hkd(s-D.budget)}</span></div>
+      <span>${bs<=D.budget?'仲剩 Left '+hkd(D.budget-bs):'超支 Over '+hkd(bs-D.budget)}</span></div>
     <div class="stats">
       <div><b>${ex.length}</b><small>筆支出 Entries</small></div>
       <div><b>${hkd(passed? s/passed:0)}</b><small>每日平均 Per day</small></div>
-      <div><b>${isNow && dIn-passed>0 ? hkd(Math.max(0,(D.budget-s)/(dIn-passed+1))) : '—'}</b><small>每日可用 Left/day</small></div>
+      <div><b>${isNow && dIn-passed>0 ? hkd(Math.max(0,(D.budget-bs)/(dIn-passed+1))) : '—'}</b><small>每日可用 Left/day</small></div>
     </div></div>
     <div class="card"><p class="label">各類支出 Expenses by category</p>${ex.length ? catRows(ex, '支出') : '<div class="empty">呢個月未有支出 No spending</div>'}</div>`;
   if (what === 'inc') return `<div class="card" id="sumMain">
