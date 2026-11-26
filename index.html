@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V4.2（離線優先；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V4.3（離線優先；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -281,6 +281,24 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .inv-tr .row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .inv-tr .meta{font-size:11px;color:var(--sub);margin-top:2px}
 .inv-open{background:#f8fafc;border-radius:10px;padding:8px 10px;margin:6px 0}
+.inv-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;padding:6px 0;border:0;background:none;color:var(--brand);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.inv-detail{margin-top:4px;padding-top:8px;border-top:1px solid var(--line)}
+.inv-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.inv-stat{background:#f8fafc;border-radius:10px;padding:8px 10px;min-width:0}
+.inv-stat .k{font-size:11px;color:var(--sub)}
+.inv-stat .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px;letter-spacing:-.02em;word-break:break-word}
+.inv-stat .s{font-size:11px;color:var(--sub);margin-top:2px;line-height:1.35}
+.inv-filt{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;min-width:0}
+.inv-filt label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--sub);min-width:0}
+.inv-filt select,.inv-filt input[type=date]{width:100%;max-width:100%;box-sizing:border-box;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:#fff;min-width:0;color:var(--text)}
+.inv-filt .span2{grid-column:1/-1}
+.inv-dates{display:flex;gap:6px;align-items:center;min-width:0}
+.inv-dates input{flex:1;min-width:0}
+.inv-clear{flex:0 0 auto;border:0;background:none;color:var(--brand);font-size:12px;font-weight:600;padding:0 2px;cursor:pointer}
+.inv-badge{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;background:#eef2ff;color:#3730a3;vertical-align:middle}
+.inv-badge.opt{background:#fef3c7;color:#92400e}
+.inv-pct{font-variant-numeric:tabular-nums;font-weight:700}
+.inv-reset{border:0;background:none;color:var(--brand);font-size:12px;font-weight:600;padding:0;cursor:pointer;margin-left:8px}
 </style>
 </head>
 <body>
@@ -313,7 +331,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
-    <!-- V4.2 投資 -->
+    <!-- V4.3 投資 -->
     <section class="view" id="v-inv">
       <div id="invBody"></div>
     </section>
@@ -347,7 +365,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V4.2';
+const APP_VERSION = 'V4.3';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -1593,7 +1611,7 @@ function renderBal(){
   };
 }
 
-/* ---------- V3.20 投資頁 ---------- */
+/* ---------- V4.3 投資頁 ---------- */
 const INV_EVENT_ZH = {
   deposit: '存入 出入金', withdrawal: '提取', fx: '貨幣兌換',
   stock_trade: '股票成交', option_trade: '期權成交',
@@ -1608,77 +1626,282 @@ function clockHel(iso){
   const m = s.match(/T(\d{2}:\d{2})/);
   return m ? m[1] : '';
 }
+function invMoney(n, ccy, signed){
+  const v = Number(n);
+  if (!Number.isFinite(v)) return '—';
+  const prefix = ccy === 'HKD' ? 'HK$' : 'US$';
+  const sign = signed === false ? (v < 0 ? '-' : '') : (v > 0 ? '+' : (v < 0 ? '-' : ''));
+  const abs = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return sign + prefix + ' ' + abs;
+}
+function invMoneyPair(usd, hkd, signed){
+  const su = Number(usd), sh = Number(hkd);
+  const hasU = Number.isFinite(su), hasH = Number.isFinite(sh);
+  if (!hasU && !hasH) return '<span class="inv-amt" style="color:var(--sub)">—</span>';
+  const v = hasU ? su : sh;
+  const cls = !Number.isFinite(v) || Math.abs(v) < 0.005 ? '' : (v > 0 ? 'inv-pos' : 'inv-neg');
+  const s = signed !== false;
+  return `<span class="${cls} inv-amt">${hasU ? invMoney(su, 'USD', s) : ''}${hasU && hasH ? '<br>' : ''}${hasH ? invMoney(sh, 'HKD', s) : ''}</span>`;
+}
+function invDetailOpen(){
+  try { return localStorage.getItem('vault.invDetailOpen') === '1'; } catch (e) { return false; }
+}
+function setInvDetailOpen(on){
+  try { localStorage.setItem('vault.invDetailOpen', on ? '1' : ''); } catch (e) {}
+  renderInv();
+}
+function invFiltDefault(){
+  return { type: 'all', ticker: '', hold: 'all', from: '', to: '', outcome: 'all', sort: 'date_desc' };
+}
+function invFilt(){
+  try { return Object.assign(invFiltDefault(), JSON.parse(localStorage.getItem('vault.invFilters') || '{}')); }
+  catch (e) { return invFiltDefault(); }
+}
+function setInvFilt(k, v){
+  const o = invFilt(); o[k] = v;
+  try { localStorage.setItem('vault.invFilters', JSON.stringify(o)); } catch (e) {}
+  renderInv();
+}
+function resetInvFilt(kind){
+  const o = kind === 'dates' ? Object.assign(invFilt(), { from: '', to: '' }) : invFiltDefault();
+  try { localStorage.setItem('vault.invFilters', JSON.stringify(o)); } catch (e) {}
+  renderInv();
+}
+function invHoldSecs(r){
+  const hs = Number(r && r.holding_seconds);
+  if (Number.isFinite(hs) && hs >= 0) return hs;
+  const a = Date.parse(r && r.open_time_helsinki);
+  const b = (r && r.close_time_helsinki) ? Date.parse(r.close_time_helsinki) : Date.now();
+  if (Number.isFinite(a) && Number.isFinite(b) && b >= a) return (b - a) / 1000;
+  return null;
+}
+function invHoldShort(secs, fallback){
+  const s = Number(secs);
+  if (!Number.isFinite(s) || s < 0) return fallback || '—';
+  if (s < 60) return Math.max(0, Math.round(s)) + '秒';
+  if (s < 3600) return Math.round(s / 60) + '分';
+  if (s < 86400) {
+    const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60);
+    return m ? (h + '小時 ' + m + '分') : (h + '小時');
+  }
+  const d = Math.floor(s / 86400), h = Math.round((s % 86400) / 3600);
+  return h ? (d + '日 ' + h + '小時') : (d + '日');
+}
+function invQtyTxt(r){
+  const q = r && r.quantity;
+  if (q == null || q === undefined) return '';
+  const n = Number(q);
+  const txt = Number.isFinite(n) ? (Math.abs(n % 1) < 1e-9 ? String(Math.round(Math.abs(n))) : String(Math.abs(n))) : String(q);
+  return (r.instrument_type === 'option') ? (txt + ' 張') : (txt + ' 股');
+}
+function invPartsRows(inv, mode){
+  const days = (mode === 'mtm') ? (inv.dailyMtm || []) : (inv.dailyRealized || inv.daily || []);
+  const p = ((days.length ? days[days.length - 1] : null) || {}).parts || {};
+  const rows = [];
+  function add(label, usd, hkd){
+    const u = usd == null ? NaN : Number(usd), h = hkd == null ? NaN : Number(hkd);
+    const u0 = !Number.isFinite(u) || Math.abs(u) < 0.005;
+    const h0 = !Number.isFinite(h) || Math.abs(h) < 0.005;
+    if (u0 && h0) return;
+    rows.push({ label: label, usd: Number.isFinite(u) ? u : null, hkd: Number.isFinite(h) ? h : null });
+  }
+  if (mode === 'mtm') {
+    add('股票已實現', p.stockRealized, null);
+    add('期權已實現', p.optionRealized, null);
+    add('股息淨額', p.dividendNet, null);
+    add('MMF 已實現（USD）', p.mmfRealizedUsd, null);
+    add('MMF 已實現（HKD）', null, p.mmfRealizedHkd);
+    add('優惠／卡券', p.couponUsd, p.couponHkd);
+    add('股票未實現', p.stockUnrealized, null);
+    add('MMF 未實現（USD）', p.mmfUnrealizedUsd, null);
+    add('MMF 未實現（HKD）', null, p.mmfUnrealizedHkd);
+  } else {
+    add('股票', p.stock, null);
+    add('期權', p.option, null);
+    add('股息淨額', p.dividendNet, null);
+    add('MMF（USD）', p.mmfUsd, null);
+    add('MMF（HKD）', null, p.mmfHkd);
+    add('優惠／卡券', p.couponUsd, p.couponHkd);
+  }
+  return rows;
+}
+function invTripDate(r, isOpen){
+  return investHelDateSafe(isOpen ? r.open_time_helsinki : (r.close_time_helsinki || r.open_time_helsinki));
+}
+function invPassFilt(r, f, isOpen){
+  const isOpt = r.instrument_type === 'option';
+  if (f.type === 'stock' && isOpt) return false;
+  if (f.type === 'option' && !isOpt) return false;
+  if (f.ticker && r.ticker !== f.ticker) return false;
+  const secs = invHoldSecs(r);
+  if (f.hold === 'intraday' && !(secs != null && secs < 86400)) return false;
+  if (f.hold === 'd1_7' && !(secs != null && secs >= 86400 && secs < 7 * 86400)) return false;
+  if (f.hold === 'ge7' && !(secs != null && secs >= 7 * 86400)) return false;
+  if (f.hold === 'ge30' && !(secs != null && secs >= 30 * 86400)) return false;
+  const d = invTripDate(r, isOpen);
+  if (f.from && d && d < f.from) return false;
+  if (f.to && d && d > f.to) return false;
+  if (!isOpen) {
+    const pnl = Number(r.pnl_usd);
+    if (f.outcome === 'win' && !(Number.isFinite(pnl) && pnl > 0.005)) return false;
+    if (f.outcome === 'loss' && !(Number.isFinite(pnl) && pnl < -0.005)) return false;
+  }
+  return true;
+}
+function invSortClosed(arr, sort){
+  const copy = arr.slice();
+  const dateOf = r => String(r.close_time_helsinki || r.open_time_helsinki || '');
+  const numOrNull = v => Number.isFinite(Number(v)) ? Number(v) : null;
+  const cmp = (a, b, dir) => (a < b ? -dir : a > b ? dir : 0);
+  copy.sort((a, b) => {
+    if (sort === 'date_asc') return cmp(dateOf(a), dateOf(b), 1);
+    if (sort === 'pnl_desc' || sort === 'pnl_asc') {
+      const dir = sort === 'pnl_desc' ? 1 : -1;
+      const pa = numOrNull(a.pnl_usd), pb = numOrNull(b.pnl_usd);
+      if (pa == null && pb == null) return cmp(dateOf(b), dateOf(a), 1);
+      if (pa == null) return 1;
+      if (pb == null) return -1;
+      return cmp(pa, pb, dir) || cmp(dateOf(b), dateOf(a), 1);
+    }
+    if (sort === 'pct_desc' || sort === 'pct_asc') {
+      const dir = sort === 'pct_desc' ? 1 : -1;
+      const pa = numOrNull(a.pct_return), pb = numOrNull(b.pct_return);
+      if (pa == null && pb == null) return cmp(dateOf(b), dateOf(a), 1);
+      if (pa == null) return 1;
+      if (pb == null) return -1;
+      return cmp(pa, pb, dir) || cmp(dateOf(b), dateOf(a), 1);
+    }
+    if (sort === 'hold_desc' || sort === 'hold_asc') {
+      const dir = sort === 'hold_desc' ? 1 : -1;
+      const pa = invHoldSecs(a), pb = invHoldSecs(b);
+      const sa = pa == null ? -1 : pa, sb = pb == null ? -1 : pb;
+      return cmp(sa, sb, dir) || cmp(dateOf(b), dateOf(a), 1);
+    }
+    return cmp(dateOf(a), dateOf(b), -1);
+  });
+  return copy;
+}
+function invSel(name, val, opts){
+  return `<select data-invf="${esc(name)}">${opts.map(o => `<option value="${esc(o.v)}"${String(o.v) === String(val) ? ' selected' : ''}>${esc(o.t)}</option>`).join('')}</select>`;
+}
 function renderInv(){
   const el = $('invBody'); if (!el) return;
   const inv = investData();
   if (!inv) {
-    el.innerHTML = `<div class="card"><p class="label">投資 Invest</p><p class="empty" style="padding:24px 0">未有資料。有網時會由 Trade Log 同步；之後離線都睇得上次快取。<br><small>No Trade Log data yet. It will appear after the next sync.</small></p></div>`;
+    el.innerHTML = `<div class="card"><p class="label">投資</p><p class="empty" style="padding:24px 0">未有資料。有網時會同步。</p></div>`;
     return;
   }
-  const cov = inv.coverage || {}, fx = inv.fx || {};
+  const cov = inv.coverage || {};
   const mode = investMode();
   const view = investView();
   const cum = (inv.cumulative && inv.cumulative[mode]) || (mode === 'mtm' && inv.cumulative && inv.cumulative.mtm) || inv.cumulative || {};
   const stmt = cov.statementDate || (inv.cumulative && inv.cumulative.asOfDate) || '—';
-  const lastFill = cov.lastFill || '—';
+  const lastFill = cov.lastFill || '';
+  const lastFillTxt = lastFill ? (investHelDateSafe(lastFill) + (clockHel(lastFill) ? ' ' + clockHel(lastFill) : '')) : '—';
   const days = investSeries();
   const timeline = inv.timeline || [];
   const trades = inv.trades || [];
   const today = todayHel();
   const todayDay = days.find(d => d.date === today) || days.filter(d => d.date <= today).slice(-1)[0];
-  const modeBtns = `<div class="seg seg2 inv-switch" id="invMode"><button type="button" class="${mode==='realized'?'on':''}" data-im="realized">已實現 Realized</button><button type="button" class="${mode==='mtm'?'on':''}" data-im="mtm">市值 Mark-to-market</button></div>`;
-  const viewBtns = `<div class="seg seg2 inv-switch" id="invView"><button type="button" class="${view==='timeline'?'on':''}" data-iv="timeline">時間線 Timeline</button><button type="button" class="${view==='trades'?'on':''}" data-iv="trades">每單交易 Trades</button></div>`;
-  const fxNote = `來源：每日投資追蹤 Futu Trade Log（戶口 8306）。已實現＝成交 pnl_net＋股息淨預扣稅＋MMF 已實現贖回增益＋優惠／卡券收入。市值＝已實現＋股票／ETF 未實現（每日收市價；該日有結單市值就用結單）＋ MMF 未實現（Trade Log 基金快照，兩次快照之間沿用上一次）。期權喺兩個 mode 都只計已實現。優惠／卡券當收入（兩個 mode 都計入，只加一次；唔當本金）。費用已包喺 pnl_net，唔會扣第二次。冇 OpenD。冇新價嘅日子沿用上一次。匯率：${esc(fx.source || 'Frankfurter')} ${esc(fx.pair || 'USD→HKD')}，現金項目用事件當日歷史匯率（假日用前一個工作日）；市值未實現用當日匯率。最新成交視乎 Stockie 更新結單；11/25 及之後未入表嘅成交唔會發明。`;
+  const modeBtns = `<div class="seg seg2 inv-switch" id="invMode"><button type="button" class="${mode==='realized'?'on':''}" data-im="realized">已實現</button><button type="button" class="${mode==='mtm'?'on':''}" data-im="mtm">市值</button></div>`;
+  const viewBtns = `<div class="seg seg2 inv-switch" id="invView"><button type="button" class="${view==='timeline'?'on':''}" data-iv="timeline">時間線</button><button type="button" class="${view==='trades'?'on':''}" data-iv="trades">每單交易</button></div>`;
   const promo = inv.promos || {};
   const promoRows = (promo.rows || []).slice().sort((a,b) => String(a.date||a.time_helsinki).localeCompare(String(b.date||b.time_helsinki)));
   const promoLines = promoRows.map(c => {
-    const fxBit = c.fx_rate ? ` · FX ${c.fx_rate}${c.fx_rate_date ? ' @ '+c.fx_rate_date : ''}` : '';
-    return `<div class="kv" style="margin-top:2px"><span style="color:var(--sub)">${esc(c.date || '')} ${esc(c.remark || c.type_zh || '卡券')}</span><span>${signedUsdHkd(c.amount_usd, c.amount_hkd)}<small style="color:var(--sub)">${esc(fxBit)}</small></span></div>`;
+    const fxBit = c.fx_rate ? `FX ${c.fx_rate}${c.fx_rate_date ? ' @ ' + c.fx_rate_date : ''}` : '';
+    return `<div class="kv" style="margin-top:2px"><span style="color:var(--sub)">${esc(c.date || '')} ${esc(c.remark || c.type_zh || '卡券')}</span><span>${invMoneyPair(c.amount_usd, c.amount_hkd)}${fxBit ? `<div class="meta">${esc(fxBit)}</div>` : ''}</span></div>`;
   }).join('');
-  const promoBlock = (promo.count || promo.usd || promo.hkd)
-    ? `<div class="kv" style="margin-top:8px"><span>優惠／卡券 Promo</span><span>${signedUsdHkd(promo.usd, promo.hkd)}</span></div>${promoLines}`
-    : '';
+  const partLines = invPartsRows(inv, mode).map(r =>
+    `<div class="kv" style="margin-top:2px"><span>${esc(r.label)}</span><span>${invMoneyPair(r.usd, r.hkd)}</span></div>`
+  ).join('');
+  const detailOpen = invDetailOpen();
+  const detailInner = `<div class="inv-detail">
+      ${partLines}
+      ${(promo.count || promo.usd || promo.hkd) ? `<div class="kv" style="margin-top:8px"><span>優惠／卡券</span><span>${invMoneyPair(promo.usd, promo.hkd)}</span></div>${promoLines}` : ''}
+      <div class="kv" style="margin-top:8px"><span>結單至今</span><span>${esc(stmt)}</span></div>
+      <div class="kv" style="margin-top:4px"><span>最後成交</span><span>${esc(lastFillTxt)}</span></div>
+    </div>`;
   const head = `<div class="card">
-      <p class="label">累計 ${mode==='mtm'?'市值':'已實現'} Cumulative ${mode==='mtm'?'MTM':'realized'}</p>
+      <p class="label">累計 ${mode==='mtm'?'市值':'已實現'}</p>
       ${modeBtns}
-      <div class="ytop" style="margin-top:8px"><div class="big">${signedUsdHkd(cum.usd, cum.hkd)}</div><small style="color:var(--sub)">${mode==='mtm'?'股票市值＋已實現期權／股息／MMF／優惠／卡券':'FIFO 成交＋股息淨額＋MMF 已實現＋優惠／卡券'} · 費用已扣</small></div>
-      <div class="kv" style="margin-top:8px"><span>今日 ${today}</span><span>${todayDay ? signedUsdHkd(todayDay.usd, todayDay.hkd) : '<span style="color:var(--sub)">未有變動</span>'}</span></div>
-      ${promoBlock}
-      <div class="kv" style="margin-top:4px"><span>結單至今 Statement through</span><span>${esc(stmt)}</span></div>
-      <div class="kv" style="margin-top:4px"><span>最後成交 Last fill</span><span>${esc(lastFill)}</span></div>
-      <p class="inv-fx">${fxNote}</p>
+      <div class="ytop" style="margin-top:8px"><div class="big">${invMoneyPair(cum.usd, cum.hkd)}</div></div>
+      <div class="kv" style="margin-top:8px"><span>今日</span><span>${todayDay ? invMoneyPair(todayDay.usd, todayDay.hkd) : '<span style="color:var(--sub)">—</span>'}</span></div>
+      <button type="button" class="inv-toggle" data-invdetail="1">${detailOpen ? '收起 ▴' : '明細 ▾'}</button>
+      ${detailOpen ? detailInner : ''}
     </div>`;
 
   let body = '';
   if (view === 'trades') {
-    const rows = (inv.roundTrips || []).slice();
-    const open = rows.filter(r => r.status === 'open');
-    const closed = rows.filter(r => r.status !== 'open').sort((a,b) => String(b.close_time_helsinki).localeCompare(String(a.close_time_helsinki)));
+    const f = invFilt();
+    const allRows = (inv.roundTrips || []).slice();
+    const tickers = Array.from(new Set(allRows.map(r => r.ticker).filter(Boolean))).sort();
+    const open = allRows.filter(r => r.status === 'open' && invPassFilt(r, f, true));
+    const closedRaw = allRows.filter(r => r.status !== 'open' && invPassFilt(r, f, false));
+    const closed = invSortClosed(closedRaw, f.sort);
     const showUr = mode === 'mtm';
+    const wins = closed.filter(r => Number(r.pnl_usd) > 0.005).length;
+    const losses = closed.filter(r => Number(r.pnl_usd) < -0.005).length;
+    const known = closed.filter(r => Number.isFinite(Number(r.pnl_usd))).length;
+    const winRate = known ? (Math.round(wins / known * 1000) / 10).toFixed(1) + '%' : '—';
+    const stkQty = closed.filter(r => r.instrument_type !== 'option').reduce((s, r) => s + (Number(r.quantity) || 0), 0);
+    const optQty = closed.filter(r => r.instrument_type === 'option').reduce((s, r) => s + (Number(r.quantity) || 0), 0);
+    const qtyBits = [];
+    if (stkQty) qtyBits.push('股票 ' + (Math.abs(stkQty % 1) < 1e-9 ? Math.round(stkQty) : stkQty) + ' 股');
+    if (optQty) qtyBits.push('期權 ' + (Math.abs(optQty % 1) < 1e-9 ? Math.round(optQty) : optQty) + ' 張');
+    const sumU = closed.reduce((s, r) => s + (Number.isFinite(Number(r.pnl_usd)) ? Number(r.pnl_usd) : 0), 0);
+    const sumH = closed.reduce((s, r) => s + (Number.isFinite(Number(r.pnl_hkd)) ? Number(r.pnl_hkd) : 0), 0);
+    const pcts = closed.map(r => Number(r.pct_return)).filter(Number.isFinite);
+    const avgPct = pcts.length ? (Math.round(pcts.reduce((s, n) => s + n, 0) / pcts.length * 100) / 100) : null;
+    const holds = closed.map(invHoldSecs).filter(s => s != null && Number.isFinite(s));
+    const avgHold = holds.length ? (holds.reduce((s, n) => s + n, 0) / holds.length) : null;
+    const filtDirty = f.type !== 'all' || f.ticker || f.hold !== 'all' || f.from || f.to || f.outcome !== 'all' || f.sort !== 'date_desc';
+    const stats = `<div class="inv-stats">
+        <div class="inv-stat"><div class="k">勝率</div><div class="v">${esc(winRate)}</div><div class="s">${known ? (wins + '勝／' + losses + '負') : '—'}</div></div>
+        <div class="inv-stat"><div class="k">交易數</div><div class="v">${closed.length} 單</div><div class="s">${qtyBits.join(' · ') || '—'}</div></div>
+        <div class="inv-stat"><div class="k">篩選後總賺蝕</div><div class="v ${sumU>0.005?'inv-pos':(sumU<-0.005?'inv-neg':'')}">${invMoney(sumU, 'USD')}</div><div class="s">${invMoney(sumH, 'HKD')}</div></div>
+        <div class="inv-stat"><div class="k">平均回報</div><div class="v">${avgPct == null ? '—' : ((avgPct>0?'+':'') + avgPct.toFixed(2) + '%')}</div><div class="s">平均持倉 ${esc(invHoldShort(avgHold, '—'))}</div></div>
+      </div>`;
+    const filtBar = `<div class="inv-filt">
+        <label>資產${invSel('type', f.type, [{v:'all',t:'全部'},{v:'stock',t:'股票'},{v:'option',t:'期權'}])}</label>
+        <label>代號${invSel('ticker', f.ticker, [{v:'',t:'全部代號'}].concat(tickers.map(x => ({v:x,t:x}))))}</label>
+        <label>持倉時間${invSel('hold', f.hold, [{v:'all',t:'全部'},{v:'intraday',t:'日內（<1日）'},{v:'d1_7',t:'1–7日'},{v:'ge7',t:'≥7日'},{v:'ge30',t:'≥30日'}])}</label>
+        <label>賺蝕${invSel('outcome', f.outcome, [{v:'all',t:'全部'},{v:'win',t:'賺'},{v:'loss',t:'蝕'}])}</label>
+        <label class="span2">排序${invSel('sort', f.sort, [
+          {v:'date_desc',t:'日期（新→舊）'},{v:'date_asc',t:'日期（舊→新）'},
+          {v:'pnl_desc',t:'賺蝕（高→低）'},{v:'pnl_asc',t:'賺蝕（低→高）'},
+          {v:'pct_desc',t:'回報率（高→低）'},{v:'pct_asc',t:'回報率（低→高）'},
+          {v:'hold_desc',t:'持倉時間（長→短）'},{v:'hold_asc',t:'持倉時間（短→長）'}
+        ])}</label>
+        <label class="span2">日期<div class="inv-dates"><input type="date" data-invf="from" value="${esc(f.from || '')}"><input type="date" data-invf="to" value="${esc(f.to || '')}">${(f.from || f.to) ? '<button type="button" class="inv-clear" data-invclr="dates">清除</button>' : ''}</div></label>
+      </div>${filtDirty ? '<div style="margin:-2px 0 8px"><button type="button" class="inv-reset" data-invclr="all">重設篩選</button></div>' : ''}`;
     const one = r => {
       const isOpen = r.status === 'open';
       const isOpt = r.instrument_type === 'option';
       let pnlU = r.pnl_usd, pnlH = r.pnl_hkd, pct = r.pct_return;
       if (isOpen && (isOpt || !showUr)) { pnlU = null; pnlH = null; pct = null; }
-      const pnl = (pnlU == null && pnlH == null) ? (isOpen ? '<span class="inv-amt" style="color:var(--sub)">未平倉</span>' : '—') : signedUsdHkd(pnlU, pnlH);
-      const hold = esc(r.holding_human || '');
-      const oc = isOpen
-        ? `開倉 ${esc(r.open_time_helsinki || '')} · 持有至今 ${hold}`
-        : `開 ${esc(r.open_time_helsinki || '')} → 平 ${esc(r.close_time_helsinki || '')} · 持有 ${hold}`;
-      const typ = isOpt ? '期權' : '股票／ETF';
-      const pctTxt = pct == null ? '' : ` · ${pct>=0?'+':''}${Number(pct).toLocaleString('en-US',{maximumFractionDigits:2})}%`;
+      const pnl = (pnlU == null && pnlH == null) ? (isOpen ? '<span class="inv-amt" style="color:var(--sub)">未平倉</span>' : '—') : invMoneyPair(pnlU, pnlH);
+      const hold = invHoldShort(invHoldSecs(r), r.holding_human || '');
+      const od = investHelDateSafe(r.open_time_helsinki);
+      const cd = investHelDateSafe(r.close_time_helsinki);
+      const dates = isOpen ? (`開倉 ${esc(od || '')} · ${esc(hold)}`) : (`${esc(od || '')} → ${esc(cd || '')} · ${esc(hold)}`);
+      const badge = `<span class="inv-badge${isOpt?' opt':''}">${isOpt?'期權':'股票'}</span>`;
+      const qty = invQtyTxt(r);
+      const pctCls = !Number.isFinite(Number(pct)) ? '' : (Number(pct) >= 0 ? 'inv-pos' : 'inv-neg');
+      const pctTxt = !Number.isFinite(Number(pct)) ? '' : `<span class="inv-pct ${pctCls}">${Number(pct)>0?'+':''}${Number(pct).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}%</span>`;
       return `<div class="inv-tr${isOpen?' inv-open':''}">
-        <div class="row"><div><b>${isOpen?'未平倉 ':'已平倉 '}${esc(r.ticker)}</b> <span class="meta">${typ}</span>
-          <div class="meta">${esc(r.instrument_name || '')}</div>
-          <div class="meta">${oc}</div>
-          <div class="meta">數量 ${r.quantity}${r.multiplier && r.multiplier!==1 ? ' × '+r.multiplier : ''} · 均開 ${r.avg_open ?? '—'} / 均平 ${isOpen ? '—' : (r.avg_close ?? '—')} · 費用 ${r.fees ?? '—'}${pctTxt}</div>
+        <div class="row"><div><b>${esc(r.ticker)}</b> ${badge}${isOpen ? ' <span class="meta">未平倉</span>' : ''}
+          <div class="meta">${[qty, pctTxt].filter(Boolean).join(' · ')}</div>
+          <div class="meta">${dates}</div>
         </div><div>${pnl}</div></div>
       </div>`;
     };
-    body = `<div class="card"><p class="label">每單交易 Round trips（FIFO）${viewBtns}</p>
-      ${open.length ? '<p class="bal-note">未平倉 ' + open.length + ' 單' + (showUr ? '（股票／ETF 顯示市值未實現；期權只顯示持倉，唔計未實現）' : '（已實現模式唔顯示未實現）') + '</p>' : ''}
-      ${open.map(one).join('') || ''}
-      ${closed.map(one).join('') || '<div class="empty">未有已平倉記錄</div>'}
+    body = `<div class="card"><p class="label">每單交易</p>
+      ${viewBtns}
+      ${stats}
+      ${filtBar}
+      ${open.length ? `<div class="meta" style="margin:4px 0 2px">未平倉 ${open.length} 單</div>` : ''}
+      ${open.map(one).join('')}
+      ${closed.map(one).join('') || '<div class="empty">未有符合篩選嘅已平倉記錄</div>'}
     </div>`;
   } else {
     const groups = {};
@@ -1692,7 +1915,7 @@ function renderInv(){
     const dayBlocks = allDates.map(date => {
       const evs = (groups[date] || []).slice().sort((a,b) => String(a.time_helsinki).localeCompare(String(b.time_helsinki)));
       const dPnl = pnlMap[date];
-      const headPnl = dPnl ? signedUsdHkd(dPnl.usd, dPnl.hkd) : `<span class="inv-amt" style="color:var(--sub)">—</span>`;
+      const headPnl = dPnl ? invMoneyPair(dPnl.usd, dPnl.hkd) : `<span class="inv-amt" style="color:var(--sub)">—</span>`;
       const rows = evs.map(ev => {
         const isTrade = ev.event_type === 'stock_trade' || ev.event_type === 'option_trade';
         let tr = null;
@@ -1702,24 +1925,20 @@ function renderInv(){
         const label = INV_EVENT_ZH[ev.event_type] || ev.event_type;
         const time = ev.time_precision === 'second' ? clockHel(ev.time_helsinki) : '';
         let amt = '';
-        if (tr && tr.pnl_net !== null && tr.pnl_net !== undefined) amt = signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd);
+        if (tr && tr.pnl_net !== null && tr.pnl_net !== undefined) amt = invMoneyPair(tr.pnl_net, tr.pnl_net_hkd);
         else if (ev.amount !== null && ev.amount !== undefined) {
-          const cur = ev.currency || '';
-          const n = Number(ev.amount);
-          const cls = n > 0 ? 'inv-pos' : (n < 0 ? 'inv-neg' : '');
-          amt = `<span class="${cls} inv-amt">${n>0?'+':''}${n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(cur)}</span>`;
+          amt = `<span class="${Number(ev.amount)>0?'inv-pos':(Number(ev.amount)<0?'inv-neg':'')} inv-amt">${invMoney(ev.amount, ev.currency === 'HKD' ? 'HKD' : 'USD')}</span>`;
         }
         const key = tr ? tr.time_helsinki + '|' + tr.ticker : ev.time_helsinki + '|' + ev.event_type;
         const open = invOpen && tr && invOpen === key;
         const det = (open && tr) ? `<div class="inv-det">
           <div><span>方向</span><span>${esc(tr.direction_zh || tr.direction)} · ${esc(tr.side)}</span></div>
-          <div><span>數量 × 價格</span><span>${tr.quantity} × ${tr.price} ${esc(tr.currency || 'USD')}${tr.multiplier && tr.multiplier!==1 ? ' × ' + tr.multiplier : ''}</span></div>
-          <div><span>成交／淨額</span><span>${tr.gross ?? '—'} / ${tr.net ?? '—'}</span></div>
-          <div><span>費用 fees</span><span>${tr.fee_total ?? '—'}</span></div>
-          <div><span>FIFO 已實現</span><span>${tr.pnl_net === null || tr.pnl_net === undefined ? '仍開倉 open' : signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd)}</span></div>
+          <div><span>數量 × 價格</span><span>${esc(invQtyTxt(tr) || String(tr.quantity ?? '—'))} × ${invMoney(tr.price, tr.currency === 'HKD' ? 'HKD' : 'USD', false)}${tr.multiplier && tr.multiplier!==1 ? ' × ' + tr.multiplier : ''}</span></div>
+          <div><span>成交／淨額</span><span>${tr.gross != null ? invMoney(tr.gross, tr.currency === 'HKD' ? 'HKD' : 'USD', false) : '—'} / ${tr.net != null ? invMoney(tr.net, tr.currency === 'HKD' ? 'HKD' : 'USD') : '—'}</span></div>
+          <div><span>費用</span><span>${tr.fee_total != null ? invMoney(tr.fee_total, tr.currency === 'HKD' ? 'HKD' : 'USD', false) : '—'}</span></div>
+          <div><span>FIFO 已實現</span><span>${tr.pnl_net === null || tr.pnl_net === undefined ? '仍開倉' : invMoneyPair(tr.pnl_net, tr.pnl_net_hkd)}</span></div>
           ${tr.fifo_holding_human ? `<div><span>持有</span><span>${esc(tr.fifo_holding_human)}</span></div>` : ''}
-          ${tr.fx_rate ? `<div><span>匯率 ${esc(tr.fx_rate_date || '')}</span><span>1 USD = ${tr.fx_rate} HKD</span></div>` : ''}
-          <div><span>來源</span><span>${esc(tr.source || ev.source || '')}</span></div>
+          ${tr.fx_rate ? `<div><span>匯率 ${esc(tr.fx_rate_date || '')}</span><span>US$ 1 ＝ HK$ ${tr.fx_rate}</span></div>` : ''}
         </div>` : '';
         return `<div class="inv-ev${isTrade?' trade':''}" ${isTrade && tr ? `data-invk="${esc(key)}"` : ''}>
           <div class="row"><div><b>${esc(label)}</b>${time ? ` <span class="meta">${time}</span>` : ''}<div class="meta">${esc(ev.description || ev.ticker || '')}</div></div><div>${amt}</div></div>
@@ -1727,21 +1946,31 @@ function renderInv(){
         </div>`;
       }).join('');
       const wkStr = (() => { try { return wk(date); } catch (e) { return ''; } })();
-      return `<div class="inv-dayh"><div class="d">${esc(date)}${wkStr ? '（'+wkStr+'）' : ''}</div><div>${headPnl}</div></div>${rows || '<p class="bal-note">呢日冇時間線事件</p>'}`;
+      return `<div class="inv-dayh"><div class="d">${esc(date)}${wkStr ? '（'+wkStr+'）' : ''}</div><div>${headPnl}</div></div>${rows || ''}`;
     }).join('');
-    body = `<div class="card"><p class="label">時間線 Timeline（新 → 舊）· 撳成交睇詳情${viewBtns}</p>
+    body = `<div class="card"><p class="label">時間線</p>
+      ${viewBtns}
       ${dayBlocks || '<div class="empty">未有時間線</div>'}
     </div>`;
   }
 
   el.innerHTML = head + body;
   el.onclick = ev => {
+    const det = ev.target.closest('[data-invdetail]');
+    if (det) { setInvDetailOpen(!invDetailOpen()); return; }
+    const clr = ev.target.closest('[data-invclr]');
+    if (clr) { resetInvFilt(clr.getAttribute('data-invclr')); return; }
     const mb = ev.target.closest('[data-im]'); if (mb) { setInvestMode(mb.getAttribute('data-im')); return; }
     const vb = ev.target.closest('[data-iv]'); if (vb) { setInvestView(vb.getAttribute('data-iv')); return; }
     const b = ev.target.closest('[data-invk]'); if (!b) return;
     const k = b.getAttribute('data-invk');
     invOpen = invOpen === k ? '' : k;
     renderInv();
+  };
+  el.onchange = ev => {
+    const s = ev.target.closest('[data-invf]');
+    if (!s) return;
+    setInvFilt(s.getAttribute('data-invf'), s.value);
   };
 }
 function investHelDateSafe(iso){
@@ -1764,7 +1993,7 @@ function show(v, keepScroll){
   const q = V ? V.status().pending : 0;
   const inv = investData();
   const stmt = inv && inv.coverage && inv.coverage.statementDate;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : v==='inv' ? (`Trade Log ${investMode()==='mtm'?'市值':'已實現'} · 結單至今 ${stmt || '—'}（Helsinki）`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : v==='inv' ? (`${investMode()==='mtm'?'市值':'已實現'} · 結單 ${stmt || '—'}`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
