@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V4.1（離線優先；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V4.2（離線優先；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -313,7 +313,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
-    <!-- V4.1 投資 -->
+    <!-- V4.2 投資 -->
     <section class="view" id="v-inv">
       <div id="invBody"></div>
     </section>
@@ -347,7 +347,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V4.1';
+const APP_VERSION = 'V4.2';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -1429,7 +1429,7 @@ function balancesAsOf(asOf){
     const adDate = ad.date || asOf;
     if (adDate <= asOf) bal[a] += Number(ad.amount) || 0;
   });
-  // V4.1：所選模式嘅盈虧（HKD）全部加喺 Personal-investment；Retirement-investment 唔郁
+  // V4.2：所選模式嘅盈虧（HKD，含優惠／卡券）全部加喺 Personal-investment；Retirement-investment 唔郁
   bal['Personal-investment'] += realizedPnlHkdAsOf(asOf);
   const cd = cdAsOf(asOf);
   bal.C = cd.C; bal.D = cd.D;
@@ -1599,7 +1599,8 @@ const INV_EVENT_ZH = {
   stock_trade: '股票成交', option_trade: '期權成交',
   mmf_subscription: '基金申購', mmf_redemption: '基金贖回',
   dividend: '股息', withholding_tax: '預扣稅', interest: '利息',
-  corporate_action: '公司行動'
+  corporate_action: '公司行動',
+  coupon: '優惠／卡券', promo: '優惠／卡券'
 };
 let invOpen = '';   // time_helsinki of expanded trade
 function clockHel(iso){
@@ -1627,12 +1628,22 @@ function renderInv(){
   const todayDay = days.find(d => d.date === today) || days.filter(d => d.date <= today).slice(-1)[0];
   const modeBtns = `<div class="seg seg2 inv-switch" id="invMode"><button type="button" class="${mode==='realized'?'on':''}" data-im="realized">已實現 Realized</button><button type="button" class="${mode==='mtm'?'on':''}" data-im="mtm">市值 Mark-to-market</button></div>`;
   const viewBtns = `<div class="seg seg2 inv-switch" id="invView"><button type="button" class="${view==='timeline'?'on':''}" data-iv="timeline">時間線 Timeline</button><button type="button" class="${view==='trades'?'on':''}" data-iv="trades">每單交易 Trades</button></div>`;
-  const fxNote = `來源：每日投資追蹤 Futu Trade Log（戶口 8306）。已實現＝成交 pnl_net＋股息淨預扣稅＋MMF 已實現贖回增益。市值＝已實現＋股票／ETF 未實現（每日收市價；該日有結單市值就用結單）＋ MMF 未實現（Trade Log 基金快照，兩次快照之間沿用上一次）。期權喺兩個 mode 都只計已實現。卡券當本金。費用已包喺 pnl_net，唔會扣第二次。冇 OpenD。冇新價嘅日子沿用上一次。匯率：${esc(fx.source || 'Frankfurter')} ${esc(fx.pair || 'USD→HKD')}，現金項目用事件當日歷史匯率（假日用前一個工作日）；市值未實現用當日匯率。最新成交視乎 Stockie 更新結單；11/25 及之後未入表嘅成交唔會發明。`;
+  const fxNote = `來源：每日投資追蹤 Futu Trade Log（戶口 8306）。已實現＝成交 pnl_net＋股息淨預扣稅＋MMF 已實現贖回增益＋優惠／卡券收入。市值＝已實現＋股票／ETF 未實現（每日收市價；該日有結單市值就用結單）＋ MMF 未實現（Trade Log 基金快照，兩次快照之間沿用上一次）。期權喺兩個 mode 都只計已實現。優惠／卡券當收入（兩個 mode 都計入，只加一次；唔當本金）。費用已包喺 pnl_net，唔會扣第二次。冇 OpenD。冇新價嘅日子沿用上一次。匯率：${esc(fx.source || 'Frankfurter')} ${esc(fx.pair || 'USD→HKD')}，現金項目用事件當日歷史匯率（假日用前一個工作日）；市值未實現用當日匯率。最新成交視乎 Stockie 更新結單；11/25 及之後未入表嘅成交唔會發明。`;
+  const promo = inv.promos || {};
+  const promoRows = (promo.rows || []).slice().sort((a,b) => String(a.date||a.time_helsinki).localeCompare(String(b.date||b.time_helsinki)));
+  const promoLines = promoRows.map(c => {
+    const fxBit = c.fx_rate ? ` · FX ${c.fx_rate}${c.fx_rate_date ? ' @ '+c.fx_rate_date : ''}` : '';
+    return `<div class="kv" style="margin-top:2px"><span style="color:var(--sub)">${esc(c.date || '')} ${esc(c.remark || c.type_zh || '卡券')}</span><span>${signedUsdHkd(c.amount_usd, c.amount_hkd)}<small style="color:var(--sub)">${esc(fxBit)}</small></span></div>`;
+  }).join('');
+  const promoBlock = (promo.count || promo.usd || promo.hkd)
+    ? `<div class="kv" style="margin-top:8px"><span>優惠／卡券 Promo</span><span>${signedUsdHkd(promo.usd, promo.hkd)}</span></div>${promoLines}`
+    : '';
   const head = `<div class="card">
       <p class="label">累計 ${mode==='mtm'?'市值':'已實現'} Cumulative ${mode==='mtm'?'MTM':'realized'}</p>
       ${modeBtns}
-      <div class="ytop" style="margin-top:8px"><div class="big">${signedUsdHkd(cum.usd, cum.hkd)}</div><small style="color:var(--sub)">${mode==='mtm'?'股票市值＋已實現期權／股息／MMF':'FIFO 成交＋股息淨額＋MMF 已實現'} · 費用已扣</small></div>
+      <div class="ytop" style="margin-top:8px"><div class="big">${signedUsdHkd(cum.usd, cum.hkd)}</div><small style="color:var(--sub)">${mode==='mtm'?'股票市值＋已實現期權／股息／MMF／優惠／卡券':'FIFO 成交＋股息淨額＋MMF 已實現＋優惠／卡券'} · 費用已扣</small></div>
       <div class="kv" style="margin-top:8px"><span>今日 ${today}</span><span>${todayDay ? signedUsdHkd(todayDay.usd, todayDay.hkd) : '<span style="color:var(--sub)">未有變動</span>'}</span></div>
+      ${promoBlock}
       <div class="kv" style="margin-top:4px"><span>結單至今 Statement through</span><span>${esc(stmt)}</span></div>
       <div class="kv" style="margin-top:4px"><span>最後成交 Last fill</span><span>${esc(lastFill)}</span></div>
       <p class="inv-fx">${fxNote}</p>
