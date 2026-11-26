@@ -1,4 +1,4 @@
-/* Vault V3.16 — 離線優先資料層（V3.16：forcePull 升版重拉；V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
+/* Vault V3.20 — 離線優先資料層（V3.20：快取 getInvestData；V3.16：forcePull 升版重拉；V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
  *  - 所有新增／修改／刪除／設定：先寫 IndexedDB（transaction complete）先回覆，畫面即刻更新，唔使等網絡
  *  - 背景同步：single-flight、按次序清隊、指數退避、拉 getData 合併（唔會蓋過未同步嘅改動）
  *  - 改緊「同步緊」嘅記錄：開新 op 串住（client id 或者預計嘅 fingerprint），唔會阻用戶
@@ -60,7 +60,7 @@
     const listeners = [];
     if (o.onChange) listeners.push(o.onChange);
     let api = o.api;
-    let server = null, rows = [], queue = [], failed = [], rates = {};
+    let server = null, rows = [], queue = [], failed = [], rates = {}, invest = null;
     let cfg = Object.assign({ url: '', token: '' }, o.defaults || {});
     let meta = { syncedAt: 0, lastPullAt: 0, failCount: 0, nextAttemptAt: 0, lastError: '', lastOkAt: 0 };
     let inflight = new Set(), running = null, rerun = null, state = 'idle', lastSeq = 0;
@@ -114,6 +114,7 @@
       queue = q.sort(bySeq); lastSeq = queue.reduce((a, b) => Math.max(a, b.seq), 0);
       failed = f.sort((a, b) => a.at - b.at);
       rates = {}; rs.forEach(x => { rates[x.cur] = x; });
+      invest = m.invest || null;
       if (!api) api = fetchApi(() => cfg);
       emit(true);
       return { migrated: migrated };
@@ -383,6 +384,18 @@
             if (wantPull && !sum.pulled && (manual || !server || sum.skipped > 0 || now() - meta.lastPullAt > opt.pullGapMs)) {
               await setServer(await api('getData', [])); sum.pulled = true;
             }
+            if (wantPull && (sum.pulled || !invest || manual)) {
+              try {
+                const inv = await api('getInvestData', [], 60000);
+                invest = inv || null;
+                await putMeta('invest', invest);
+                emit(true);
+                sum.invest = true;
+              } catch (ie) {
+                sum.investError = String(ie && ie.message || ie);
+                /* 保留本機快取；唔好連累 getData 同步 */
+              }
+            }
             if (queue.length) await flushAll(sum);               // 拉資料期間用戶加嘅
           });
           meta.failCount = 0; meta.nextAttemptAt = 0; meta.lastError = ''; meta.lastOkAt = now(); state = 'idle';
@@ -435,7 +448,7 @@
       setCfg(url, token) { cfg = { url: String(url || '').trim(), token: String(token || '').trim() }; resetBackoff(); return putMeta('cfg', cfg).then(emit); },
       forcePull() { meta.lastPullAt = 0; return putMeta('lastPullAt', 0).then(() => syncAll({ trigger: 'manual', pull: true })); },
       clearFailed() { failed = []; return db.clear('failed').then(() => emit(true)); },
-      get cfg() { return cfg; }, get ver() { return ver; }, get server() { return server; }, get queue() { return queue; }, get failed() { return failed; }, get rows() { return rows; },
+      get cfg() { return cfg; }, get ver() { return ver; }, get server() { return server; }, get queue() { return queue; }, get failed() { return failed; }, get rows() { return rows; }, get invest() { return invest; },
       get api() { return api; }, OFFLINE_SRC
     };
   }

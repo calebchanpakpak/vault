@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.19（離線優先；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V3.20（離線優先；V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -36,8 +36,11 @@ main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px 20px
 /* tab bar */
 nav{display:flex;background:rgba(255,255,255,.96);border-top:1px solid var(--line);
   padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:0;background:none;padding:4px 0;color:#9ca3af;font-size:10.5px;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button{flex:1;border:0;background:none;padding:4px 0;color:#9ca3af;font-size:10.5px;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
 nav button .i{font-size:22px;line-height:1;filter:grayscale(1);opacity:.6}
+nav.tabs5 button{font-size:10px;padding:3px 1px;gap:1px}
+nav.tabs5 button .i{font-size:19px}
+nav.tabs5 button .en{display:block;font-size:8.5px;margin-left:0;letter-spacing:0;opacity:.75}
 nav button.on{color:var(--brand);font-weight:600}
 nav button.on .i{filter:none;opacity:1}
 .view{display:none}.view.on{display:block}
@@ -259,6 +262,20 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .bal-adj{font-size:11px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.4}
 .cdrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
 .cdrow .bal-card{padding:10px}
+/* V3.20 投資頁 */
+.inv-pos{color:var(--inc);font-weight:700}
+.inv-neg{color:var(--warn);font-weight:700}
+.inv-fx{font-size:11px;color:var(--sub);line-height:1.45;margin:6px 0 0}
+.inv-amt{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.inv-dayh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding:10px 0 4px;position:sticky;top:0;background:var(--bg);z-index:1}
+.inv-dayh .d{font-weight:700;font-size:14px}
+.inv-ev{padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.35}
+.inv-ev .row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.inv-ev .meta{font-size:11px;color:var(--sub);margin-top:2px}
+.inv-ev.trade{cursor:pointer}
+.inv-det{font-size:12px;color:var(--sub);background:#fff;border-radius:10px;padding:8px 10px;margin-top:6px;line-height:1.45;border:1px solid var(--line)}
+.inv-det div{display:flex;justify-content:space-between;gap:8px;padding:1px 0}
+.inv-pillrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
 </style>
 </head>
 <body>
@@ -280,6 +297,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="seg seg3" id="sumWhat"></div>
       <div class="seg seg3 per" id="sumPer"></div>
       <div class="pills filter" id="sumAcct" style="margin:6px 0 2px"></div>
+      <div id="sumInvest"></div>
       <div id="sumBody"></div>
       <button class="btn ghost" onclick="openSettings()">⚙️ 設定 Settings（貨幣、付款方式、預設值、同步）</button>
     </section>
@@ -290,6 +308,10 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
+    <!-- V3.20 投資 -->
+    <section class="view" id="v-inv">
+      <div id="invBody"></div>
+    </section>
     <!-- V3.12 資產負債表 -->
     <section class="view" id="v-bal">
       <div class="seg seg3" id="balMode"></div>
@@ -297,10 +319,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div id="balBody"></div>
     </section>
   </main>
-  <nav>
+  <nav class="tabs5">
     <button data-v="add" class="on"><span class="i">✏️</span>記帳<span class="en">Add</span></button>
     <button data-v="sum"><span class="i">📊</span>總覽<span class="en">Summary</span></button>
     <button data-v="bal"><span class="i">🏦</span>資產<span class="en">Balance</span></button>
+    <button data-v="inv"><span class="i">📈</span>投資<span class="en">Invest</span></button>
     <button data-v="list"><span class="i">🧾</span>記錄<span class="en">Records</span></button>
   </nav>
 </div>
@@ -319,7 +342,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.19';
+const APP_VERSION = 'V3.20';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -346,7 +369,7 @@ function xferCatOf(r){
   if (/trip|tai\s*wan|taiwan|sanya|singapore|guang\s*zhou|guangzhou|nagoya|wedding|gift|旅遊|人情/i.test(item)) return 'Year End 支出';
   return '其他';
 }
-const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], bal:['資產負債表','Balance'], list:['記錄','Records']};
+const TITLES = {add:['記帳','Add'], sum:['總覽','Summary'], bal:['資產負債表','Balance'], inv:['投資','Invest'], list:['記錄','Records']};
 const TYPE_EN = {支出:'Expense', 收入:'Income', 轉帳:'Transfer'};
 const TYPE_BTNS = [['支出','支出 Expense'],['收入','收入 Income'],['轉帳','帳戶 Transfer']];
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
@@ -971,6 +994,38 @@ function dayView(what){
     <div class="kv" style="margin-top:6px"><span>1日</span><span>${Math.ceil(dIn/2)}日</span><span>${dIn}日</span></div>
     <div class="dlist">${list || `<div class="empty" style="grid-column:1/-1;padding:16px 0">呢個月未有${what==='inc'?'收入 No income':what==='exp'?'支出 No spending':'記錄 No records'}</div>`}</div></div>`;
 }
+function renderSumInvest(){
+  const el = $('sumInvest'); if (!el) return;
+  const today = todayHel();
+  const ym = (sumView.per === 'year') ? viewMonth.slice(0,4) : viewMonth;
+  const asOf = today;
+  const inv = investData();
+  const pi = balancesAsOf(today)['Personal-investment'];
+  const ri = balancesAsOf(today)['Retirement-investment'];
+  const pnlH = realizedPnlHkdAsOf(today);
+  const pnlU = realizedPnlUsdAsOf(today);
+  let periodH = 0, periodU = 0, periodLabel = '今個月 This month';
+  if (inv && Array.isArray(inv.daily)) {
+    inv.daily.forEach(d => {
+      const dt = String(d.date || '');
+      if (sumView.per === 'year' && dt.slice(0,4) === ym) { periodH += Number(d.hkd) || 0; periodU += Number(d.usd) || 0; periodLabel = ym + '年'; }
+      else if (sumView.per !== 'year' && dt.slice(0,7) === viewMonth) { periodH += Number(d.hkd) || 0; periodU += Number(d.usd) || 0; }
+    });
+  }
+  if (!inv) {
+    el.innerHTML = `<div class="card"><p class="label">投資 Personal-investment</p><p class="bal-note">未有 Trade Log 資料（第一次同步後會出現；離線會用上次快取）。</p></div>`;
+    return;
+  }
+  const cov = (inv.coverage && inv.coverage.statementDate) || (inv.cumulative && inv.cumulative.asOfDate) || '';
+  el.innerHTML = `<div class="card">
+    <p class="label">投資盈虧（已實現）Realized P&amp;L · Personal-investment</p>
+    <div class="ytop"><div class="big">${signedUsdHkd(pnlU, pnlH)}</div><small style="color:var(--sub)">累計 Cumulative</small></div>
+    <div class="kv" style="margin-top:8px"><span>今期 ${periodLabel}</span><span>${signedUsdHkd(periodU, periodH)}</span></div>
+    <div class="kv" style="margin-top:4px"><span>Personal-investment 今日</span><span>HK$ ${fmtBal(pi)}</span></div>
+    <div class="kv" style="margin-top:4px"><span>Retirement-investment（借出，唔計賺蝕）</span><span>HK$ ${fmtBal(ri)}</span></div>
+    <p class="inv-fx">賺蝕全部記入 Personal-investment（期初＋轉帳＋已實現盈虧 HKD）。Retirement-investment 維持轉帳餘額，當借俾 Personal-investment。設定期初同舊轉帳唔會改。結單至今 ${esc(cov) || '—'}。匯率：${esc((inv.fx && (inv.fx.source + ' ' + inv.fx.pair)) || 'Frankfurter USD→HKD')}。</p>
+  </div>`;
+}
 function renderSum(){
   const { what, per } = sumView;
   $('mLabel').textContent = per === 'year' ? viewMonth.slice(0,4) + '年' : monthLabel(viewMonth);
@@ -978,6 +1033,7 @@ function renderSum(){
   $('sumPer').innerHTML = SUM_PER.map(([k,zh,en]) => `<button type="button" data-p="${k}" class="${k===per?'on':''}">${zh} ${en}</button>`).join('');
   $('sumAcct').innerHTML = `<span style="font-size:12px;color:var(--sub);align-self:center">戶口 Accts</span>` +
     ACCTS.map(a => `<button type="button" class="pill${sumAccts.includes(a)?' on':''}" data-sa="${a}">${sumAccts.includes(a)?'☑':'☐'} ${a}</button>`).join('');
+  renderSumInvest();
   $('sumBody').innerHTML = per === 'year' ? yearView(what) : per === 'month' ? monthView(what) : dayView(what);
 }
 function bindSum(){
@@ -1237,6 +1293,41 @@ function normOpenDate(s){
   }
   return '2024-10-31';
 }
+function investData(){ return (V && V.invest) || null; }
+/** 截至 asOf（Helsinki 日）累計已實現盈虧，已換算 HKD。Trade Log 空白 pnl 唔計。 */
+function realizedPnlHkdAsOf(asOf){
+  const inv = investData();
+  if (!inv || !Array.isArray(inv.daily)) return 0;
+  const openD = openingsOf().date;
+  let s = 0;
+  inv.daily.forEach(d => {
+    const dt = String(d.date || '');
+    if (!dt || dt <= openD || dt > asOf) return;
+    const n = Number(d.hkd);
+    if (Number.isFinite(n)) s += n;
+  });
+  return Math.round(s * 100) / 100;
+}
+function realizedPnlUsdAsOf(asOf){
+  const inv = investData();
+  if (!inv || !Array.isArray(inv.daily)) return 0;
+  const openD = openingsOf().date;
+  let s = 0;
+  inv.daily.forEach(d => {
+    const dt = String(d.date || '');
+    if (!dt || dt <= openD || dt > asOf) return;
+    const n = Number(d.usd);
+    if (Number.isFinite(n)) s += n;
+  });
+  return Math.round(s * 100) / 100;
+}
+function signedUsdHkd(usd, hkd){
+  const su = Number(usd), sh = Number(hkd);
+  const usdTxt = (Number.isFinite(su) ? (su>0?'+':'') + su.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—') + ' USD';
+  const hkdTxt = Number.isFinite(sh) ? ('HK$ ' + (sh>0?'+':'') + fmtBal(sh)) : '';
+  const cls = !Number.isFinite(su) || Math.abs(su) < 0.005 ? '' : (su > 0 ? 'inv-pos' : 'inv-neg');
+  return `<span class="${cls} inv-amt">${usdTxt}${hkdTxt ? '<br>' + hkdTxt : ''}</span>`;
+}
 function openingsOf(){
   const st = (D.settings && D.settings.openings) || {};
   const am = st.amounts || {};
@@ -1302,6 +1393,8 @@ function balancesAsOf(asOf){
     const adDate = ad.date || asOf;
     if (adDate <= asOf) bal[a] += Number(ad.amount) || 0;
   });
+  // V3.20：已實現盈虧（HKD）全部加喺 Personal-investment；Retirement-investment 唔郁
+  bal['Personal-investment'] += realizedPnlHkdAsOf(asOf);
   const cd = cdAsOf(asOf);
   bal.C = cd.C; bal.D = cd.D;
   bal.totalWealth = BAL_ACCTS.reduce((s,a) => s + bal[a], 0) + bal.C - bal.D;
@@ -1360,8 +1453,13 @@ function adjNotesHTML(b){
 function renderBalToday(){
   const today = todayHel();
   const b = balancesAsOf(today);
+  const pnlH = realizedPnlHkdAsOf(today);
+  const pnlU = realizedPnlUsdAsOf(today);
   const cards = BAL_ACCTS.map(a => {
-    return `<div class="bal-card"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div></div>`;
+    let sub = '';
+    if (a === 'Personal-investment') sub = `<div class="bal-note">含已實現 ${pnlH>=0?'+':''}${fmtBal(pnlH)} HKD（${pnlU>=0?'+':''}${Number(pnlU).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} USD）</div>`;
+    if (a === 'Retirement-investment') sub = `<div class="bal-note">固定：當借俾 Personal-investment，唔計賺蝕</div>`;
+    return `<div class="bal-card"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div>${sub}</div>`;
   }).join('');
   return `<div class="bal-cards">${cards}
       <div class="bal-card total"><div class="n">總財富 Total wealth（五帳戶 + C − D）</div><div class="v">${fmtBal(b.totalWealth)} HKD</div></div>
@@ -1371,6 +1469,7 @@ function renderBalToday(){
       <div class="bal-card"><div class="n">D 未付 Liabilities</div><div class="v">${fmtBal(b.D)}</div></div>
     </div>
     <p class="bal-note">截至今日 ${today}（Europe/Helsinki）。期初 ${openingsOf().date}。</p>
+    <p class="bal-note">Personal-investment = 期初＋轉帳淨額＋設定調整（如有）＋ Trade Log 已實現盈虧（每筆 pnl_net × 當日 Frankfurter USD→HKD）。Retirement-investment 唔加賺蝕。設定期初同舊轉帳列唔會改。</p>
     ${adjNotesHTML(b)}`;
 }
 function renderBalMonth(){
@@ -1458,8 +1557,111 @@ function renderBal(){
   };
 }
 
+/* ---------- V3.20 投資頁 ---------- */
+const INV_EVENT_ZH = {
+  deposit: '存入 出入金', withdrawal: '提取', fx: '貨幣兌換',
+  stock_trade: '股票成交', option_trade: '期權成交',
+  mmf_subscription: '基金申購', mmf_redemption: '基金贖回',
+  dividend: '股息', withholding_tax: '預扣稅', interest: '利息',
+  corporate_action: '公司行動'
+};
+let invOpen = '';   // time_helsinki of expanded trade
+function clockHel(iso){
+  const s = String(iso || '');
+  const m = s.match(/T(\d{2}:\d{2})/);
+  return m ? m[1] : '';
+}
+function renderInv(){
+  const el = $('invBody'); if (!el) return;
+  const inv = investData();
+  if (!inv) {
+    el.innerHTML = `<div class="card"><p class="label">投資 Invest</p><p class="empty" style="padding:24px 0">未有資料。有網時會由 Trade Log 同步；之後離線都睇得上次快取。<br><small>No Trade Log data yet. It will appear after the next sync.</small></p></div>`;
+    return;
+  }
+  const cov = inv.coverage || {}, fx = inv.fx || {}, cum = inv.cumulative || {};
+  const stmt = cov.statementDate || cum.asOfDate || '—';
+  const lastFill = cov.lastFill || '—';
+  const days = inv.daily || [];
+  const timeline = inv.timeline || [];
+  const trades = inv.trades || [];
+  const tradeByKey = {};
+  trades.forEach(tr => { tradeByKey[tr.time_helsinki + '|' + tr.ticker + '|' + tr.net] = tr; });
+  const today = todayHel();
+  const todayDay = days.find(d => d.date === today);
+  const groups = {};
+  timeline.forEach(ev => {
+    const d = ev.date || investHelDateSafe(ev.time_helsinki);
+    if (!d) return;
+    (groups[d] || (groups[d] = [])).push(ev);
+  });
+  // trades that might not be on timeline shouldn't happen; still show daily P&L headers for P&L days
+  const allDates = Array.from(new Set(Object.keys(groups).concat(days.map(d => d.date)))).sort().reverse();
+  const pnlMap = {}; days.forEach(d => { pnlMap[d.date] = d; });
+  const dayBlocks = allDates.map(date => {
+    const evs = (groups[date] || []).slice().sort((a,b) => String(a.time_helsinki).localeCompare(String(b.time_helsinki)));
+    const dPnl = pnlMap[date];
+    const headPnl = dPnl ? signedUsdHkd(dPnl.usd, dPnl.hkd) : `<span class="inv-amt" style="color:var(--sub)">—</span>`;
+    const rows = evs.map(ev => {
+      const isTrade = ev.event_type === 'stock_trade' || ev.event_type === 'option_trade';
+      let tr = null;
+      if (isTrade) {
+        tr = trades.find(x => x.time_helsinki === ev.time_helsinki && (!ev.ticker || x.ticker === ev.ticker));
+      }
+      const label = INV_EVENT_ZH[ev.event_type] || ev.event_type;
+      const time = ev.time_precision === 'second' ? clockHel(ev.time_helsinki) : '';
+      let amt = '';
+      if (tr && tr.pnl_net !== null && tr.pnl_net !== undefined) amt = signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd);
+      else if (ev.amount !== null && ev.amount !== undefined) {
+        const cur = ev.currency || '';
+        const n = Number(ev.amount);
+        const cls = n > 0 ? 'inv-pos' : (n < 0 ? 'inv-neg' : '');
+        amt = `<span class="${cls} inv-amt">${n>0?'+':''}${n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(cur)}</span>`;
+      }
+      const key = tr ? tr.time_helsinki + '|' + tr.ticker : ev.time_helsinki + '|' + ev.event_type;
+      const open = invOpen && tr && invOpen === key;
+      const det = (open && tr) ? `<div class="inv-det">
+        <div><span>方向</span><span>${esc(tr.direction_zh || tr.direction)} · ${esc(tr.side)}</span></div>
+        <div><span>數量 × 價格</span><span>${tr.quantity} × ${tr.price} ${esc(tr.currency || 'USD')}${tr.multiplier && tr.multiplier!==1 ? ' × ' + tr.multiplier : ''}</span></div>
+        <div><span>成交／淨額</span><span>${tr.gross ?? '—'} / ${tr.net ?? '—'}</span></div>
+        <div><span>費用 fees</span><span>${tr.fee_total ?? '—'}</span></div>
+        <div><span>FIFO 已實現</span><span>${tr.pnl_net === null || tr.pnl_net === undefined ? '仍開倉 open' : signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd)}</span></div>
+        ${tr.fifo_holding_human ? `<div><span>持有</span><span>${esc(tr.fifo_holding_human)}</span></div>` : ''}
+        ${tr.fx_rate ? `<div><span>匯率 ${esc(tr.fx_rate_date || '')}</span><span>1 USD = ${tr.fx_rate} HKD</span></div>` : ''}
+        <div><span>來源</span><span>${esc(tr.source || ev.source || '')}</span></div>
+      </div>` : '';
+      return `<div class="inv-ev${isTrade?' trade':''}" ${isTrade && tr ? `data-invk="${esc(key)}"` : ''}>
+        <div class="row"><div><b>${esc(label)}</b>${time ? ` <span class="meta">${time}</span>` : ''}<div class="meta">${esc(ev.description || ev.ticker || '')}</div></div><div>${amt}</div></div>
+        ${det}
+      </div>`;
+    }).join('');
+    const wkStr = (() => { try { return wk(date); } catch (e) { return ''; } })();
+    return `<div class="inv-dayh"><div class="d">${esc(date)}${wkStr ? '（'+wkStr+'）' : ''}</div><div>${headPnl}</div></div>${rows || '<p class="bal-note">呢日冇時間線事件</p>'}`;
+  }).join('');
+  el.innerHTML = `<div class="card">
+      <p class="label">累計已實現 Cumulative realized</p>
+      <div class="ytop"><div class="big">${signedUsdHkd(cum.usd, cum.hkd)}</div><small style="color:var(--sub)">FIFO · 費用已扣</small></div>
+      <div class="kv" style="margin-top:8px"><span>今日 ${today}</span><span>${todayDay ? signedUsdHkd(todayDay.usd, todayDay.hkd) : '<span style="color:var(--sub)">未有成交</span>'}</span></div>
+      <div class="kv" style="margin-top:4px"><span>結單至今 Statement through</span><span>${esc(stmt)}</span></div>
+      <div class="kv" style="margin-top:4px"><span>最後成交 Last fill</span><span>${esc(lastFill)}</span></div>
+      <p class="inv-fx">來源：每日投資追蹤 Futu Trade Log（戶口 8306）。已實現盈虧按 Helsinki 日期加總 pnl_net。匯率：${esc(fx.source || 'Frankfurter')} ${esc(fx.pair || 'USD→HKD')}，用成交當日歷史匯率（假日用前一個工作日）${fx.fallbackFills ? '；其中 ' + fx.fallbackFills + ' 筆用咗最新匯率' : ''}。唔包未實現／市值。最新資料視乎 Stockie 更新結單；11/25 及之後未入表嘅唔會發明。</p>
+    </div>
+    <div class="card"><p class="label">時間線 Timeline（新 → 舊）· 撳成交睇詳情</p>
+      ${dayBlocks || '<div class="empty">未有時間線</div>'}
+    </div>`;
+  el.onclick = ev => {
+    const b = ev.target.closest('[data-invk]'); if (!b) return;
+    const k = b.getAttribute('data-invk');
+    invOpen = invOpen === k ? '' : k;
+    renderInv();
+  };
+}
+function investHelDateSafe(iso){
+  const m = String(iso || '').match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : '';
+}
+
 /* ---------- 導航（純本機；只畫而家睇緊嗰頁，其他頁轉過去先畫）---------- */
-const dirty = { sum: true, list: true, bal: true };
+const dirty = { sum: true, list: true, bal: true, inv: true };
 const curView = () => document.querySelector('nav .on').dataset.v;
 function show(v, keepScroll){
   const t0 = performance.now(), changed = v !== curView();
@@ -1468,9 +1670,12 @@ function show(v, keepScroll){
   if (v === 'sum' && dirty.sum) { renderSum(); dirty.sum = false; }
   if (v === 'list' && dirty.list) { renderList(); dirty.list = false; }
   if (v === 'bal' && dirty.bal) { renderBal(); dirty.bal = false; }
+  if (v === 'inv' && dirty.inv) { renderInv(); dirty.inv = false; }
   $('title').innerHTML = `${TITLES[v][0]}<span class="en">${TITLES[v][1]}</span>`;
   const q = V ? V.status().pending : 0;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  const inv = investData();
+  const stmt = inv && inv.coverage && inv.coverage.statementDate;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : v==='inv' ? (`Trade Log 已實現盈虧 · 結單至今 ${stmt || '—'}（Helsinki）`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
@@ -1483,7 +1688,7 @@ function renderNotice(){
 }
 function renderAll(keepScroll){
   renderPill(); renderNotice(); renderMini();
-  dirty.sum = dirty.list = dirty.bal = true;
+  dirty.sum = dirty.list = dirty.bal = dirty.inv = true;
   show(curView(), keepScroll);
 }
 
