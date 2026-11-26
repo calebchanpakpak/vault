@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V3.20（離線優先；V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V4.1（離線優先；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f766e">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -276,6 +276,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .inv-det{font-size:12px;color:var(--sub);background:#fff;border-radius:10px;padding:8px 10px;margin-top:6px;line-height:1.45;border:1px solid var(--line)}
 .inv-det div{display:flex;justify-content:space-between;gap:8px;padding:1px 0}
 .inv-pillrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.inv-switch{margin:8px 0 0}
+.inv-tr{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.4}
+.inv-tr .row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.inv-tr .meta{font-size:11px;color:var(--sub);margin-top:2px}
+.inv-open{background:#f8fafc;border-radius:10px;padding:8px 10px;margin:6px 0}
 </style>
 </head>
 <body>
@@ -308,7 +313,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
-    <!-- V3.20 投資 -->
+    <!-- V4.1 投資 -->
     <section class="view" id="v-inv">
       <div id="invBody"></div>
     </section>
@@ -342,7 +347,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V3.20';
+const APP_VERSION = 'V4.1';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -1005,12 +1010,15 @@ function renderSumInvest(){
   const pnlH = realizedPnlHkdAsOf(today);
   const pnlU = realizedPnlUsdAsOf(today);
   let periodH = 0, periodU = 0, periodLabel = '今個月 This month';
-  if (inv && Array.isArray(inv.daily)) {
-    inv.daily.forEach(d => {
-      const dt = String(d.date || '');
-      if (sumView.per === 'year' && dt.slice(0,4) === ym) { periodH += Number(d.hkd) || 0; periodU += Number(d.usd) || 0; periodLabel = ym + '年'; }
-      else if (sumView.per !== 'year' && dt.slice(0,7) === viewMonth) { periodH += Number(d.hkd) || 0; periodU += Number(d.usd) || 0; }
-    });
+  const series = investSeries();
+  if (series.length) {
+    const startExcl = (sumView.per === 'year') ? (String(Number(ym) - 1) + '-12-31') : ymdAdd(viewMonth + '-01', -1);
+    const endIncl = (sumView.per === 'year')
+      ? (ym + (today.slice(0,4) === ym ? today.slice(4) : '-12-31'))
+      : (viewMonth === today.slice(0,7) ? today : lastDayOfMonth(viewMonth));
+    periodU = Math.round((investPnlAsOf(endIncl, 'usd') - investPnlAsOf(startExcl, 'usd')) * 100) / 100;
+    periodH = Math.round((investPnlAsOf(endIncl, 'hkd') - investPnlAsOf(startExcl, 'hkd')) * 100) / 100;
+    if (sumView.per === 'year') periodLabel = ym + '年';
   }
   if (!inv) {
     el.innerHTML = `<div class="card"><p class="label">投資 Personal-investment</p><p class="bal-note">未有 Trade Log 資料（第一次同步後會出現；離線會用上次快取）。</p></div>`;
@@ -1018,12 +1026,12 @@ function renderSumInvest(){
   }
   const cov = (inv.coverage && inv.coverage.statementDate) || (inv.cumulative && inv.cumulative.asOfDate) || '';
   el.innerHTML = `<div class="card">
-    <p class="label">投資盈虧（已實現）Realized P&amp;L · Personal-investment</p>
-    <div class="ytop"><div class="big">${signedUsdHkd(pnlU, pnlH)}</div><small style="color:var(--sub)">累計 Cumulative</small></div>
+    <p class="label">投資盈虧 ${investMode()==='mtm'?'（市值）Mark-to-market':'（已實現）Realized'} · Personal-investment</p>
+    <div class="ytop"><div class="big">${signedUsdHkd(pnlU, pnlH)}</div><small style="color:var(--sub)">累計 Cumulative · ${investMode()==='mtm'?'市值':'已實現'}</small></div>
     <div class="kv" style="margin-top:8px"><span>今期 ${periodLabel}</span><span>${signedUsdHkd(periodU, periodH)}</span></div>
     <div class="kv" style="margin-top:4px"><span>Personal-investment 今日</span><span>HK$ ${fmtBal(pi)}</span></div>
     <div class="kv" style="margin-top:4px"><span>Retirement-investment（借出，唔計賺蝕）</span><span>HK$ ${fmtBal(ri)}</span></div>
-    <p class="inv-fx">賺蝕全部記入 Personal-investment（期初＋轉帳＋已實現盈虧 HKD）。Retirement-investment 維持轉帳餘額，當借俾 Personal-investment。設定期初同舊轉帳唔會改。結單至今 ${esc(cov) || '—'}。匯率：${esc((inv.fx && (inv.fx.source + ' ' + inv.fx.pair)) || 'Frankfurter USD→HKD')}。</p>
+    <p class="inv-fx">賺蝕全部記入 Personal-investment（期初＋轉帳＋所選模式盈虧 HKD）。開關喺「投資」頁。Retirement-investment 維持轉帳餘額，當借俾 Personal-investment。設定期初同舊轉帳唔會改。結單至今 ${esc(cov) || '—'}。匯率：${esc((inv.fx && (inv.fx.source + ' ' + inv.fx.pair)) || 'Frankfurter USD→HKD')}。</p>
   </div>`;
 }
 function renderSum(){
@@ -1294,32 +1302,60 @@ function normOpenDate(s){
   return '2024-10-31';
 }
 function investData(){ return (V && V.invest) || null; }
-/** 截至 asOf（Helsinki 日）累計已實現盈虧，已換算 HKD。Trade Log 空白 pnl 唔計。 */
-function realizedPnlHkdAsOf(asOf){
+function investMode(){
+  try { return localStorage.getItem('vault.investMode') === 'mtm' ? 'mtm' : 'realized'; } catch (e) { return 'realized'; }
+}
+function setInvestMode(m){
+  try { localStorage.setItem('vault.investMode', m === 'mtm' ? 'mtm' : 'realized'); } catch (e) {}
+  dirty.sum = dirty.bal = dirty.inv = true;
+  renderAll(true);
+}
+function investView(){
+  try { return localStorage.getItem('vault.investView') === 'trades' ? 'trades' : 'timeline'; } catch (e) { return 'timeline'; }
+}
+function setInvestView(v){
+  try { localStorage.setItem('vault.investView', v === 'trades' ? 'trades' : 'timeline'); } catch (e) {}
+  dirty.inv = true;
+  renderInv();
+}
+function ymdAdd(ymd, n){
+  const p = String(ymd || '').split('-').map(Number);
+  if (p.length < 3 || !p[0]) return ymd;
+  const d = new Date(Date.UTC(p[0], p[1] - 1, p[2] + n));
+  return d.toISOString().slice(0, 10);
+}
+function investSeries(){
   const inv = investData();
-  if (!inv || !Array.isArray(inv.daily)) return 0;
-  const openD = openingsOf().date;
-  let s = 0;
-  inv.daily.forEach(d => {
-    const dt = String(d.date || '');
-    if (!dt || dt <= openD || dt > asOf) return;
-    const n = Number(d.hkd);
-    if (Number.isFinite(n)) s += n;
-  });
-  return Math.round(s * 100) / 100;
+  if (!inv) return [];
+  if (investMode() === 'mtm') return inv.dailyMtm || inv.daily || [];
+  return inv.dailyRealized || inv.daily || [];
+}
+/** 截至 asOf（Helsinki 日）累計盈虧（跟投資模式），已換算 HKD／USD。 */
+function realizedPnlHkdAsOf(asOf){
+  return investPnlAsOf(asOf, 'hkd');
 }
 function realizedPnlUsdAsOf(asOf){
-  const inv = investData();
-  if (!inv || !Array.isArray(inv.daily)) return 0;
+  return investPnlAsOf(asOf, 'usd');
+}
+function investPnlAsOf(asOf, field){
+  const series = investSeries();
+  if (!series.length) return 0;
   const openD = openingsOf().date;
-  let s = 0;
-  inv.daily.forEach(d => {
+  const keyCum = field === 'usd' ? 'cumUsd' : 'cumHkd';
+  const keyInc = field === 'usd' ? 'usd' : 'hkd';
+  let lastCum = null, sum = 0;
+  const hasCum = series.some(d => d && d[keyCum] != null);
+  series.forEach(d => {
     const dt = String(d.date || '');
     if (!dt || dt <= openD || dt > asOf) return;
-    const n = Number(d.usd);
-    if (Number.isFinite(n)) s += n;
+    if (hasCum && d[keyCum] != null && Number.isFinite(Number(d[keyCum]))) lastCum = Number(d[keyCum]);
+    else {
+      const n = Number(d[keyInc]);
+      if (Number.isFinite(n)) sum += n;
+    }
   });
-  return Math.round(s * 100) / 100;
+  const v = hasCum && lastCum != null ? lastCum : sum;
+  return Math.round(v * 100) / 100;
 }
 function signedUsdHkd(usd, hkd){
   const su = Number(usd), sh = Number(hkd);
@@ -1393,7 +1429,7 @@ function balancesAsOf(asOf){
     const adDate = ad.date || asOf;
     if (adDate <= asOf) bal[a] += Number(ad.amount) || 0;
   });
-  // V3.20：已實現盈虧（HKD）全部加喺 Personal-investment；Retirement-investment 唔郁
+  // V4.1：所選模式嘅盈虧（HKD）全部加喺 Personal-investment；Retirement-investment 唔郁
   bal['Personal-investment'] += realizedPnlHkdAsOf(asOf);
   const cd = cdAsOf(asOf);
   bal.C = cd.C; bal.D = cd.D;
@@ -1457,7 +1493,7 @@ function renderBalToday(){
   const pnlU = realizedPnlUsdAsOf(today);
   const cards = BAL_ACCTS.map(a => {
     let sub = '';
-    if (a === 'Personal-investment') sub = `<div class="bal-note">含已實現 ${pnlH>=0?'+':''}${fmtBal(pnlH)} HKD（${pnlU>=0?'+':''}${Number(pnlU).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} USD）</div>`;
+    if (a === 'Personal-investment') sub = `<div class="bal-note">含${investMode()==='mtm'?'市值':'已實現'} ${pnlH>=0?'+':''}${fmtBal(pnlH)} HKD（${pnlU>=0?'+':''}${Number(pnlU).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} USD）</div>`;
     if (a === 'Retirement-investment') sub = `<div class="bal-note">固定：當借俾 Personal-investment，唔計賺蝕</div>`;
     return `<div class="bal-card"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div>${sub}</div>`;
   }).join('');
@@ -1469,7 +1505,7 @@ function renderBalToday(){
       <div class="bal-card"><div class="n">D 未付 Liabilities</div><div class="v">${fmtBal(b.D)}</div></div>
     </div>
     <p class="bal-note">截至今日 ${today}（Europe/Helsinki）。期初 ${openingsOf().date}。</p>
-    <p class="bal-note">Personal-investment = 期初＋轉帳淨額＋設定調整（如有）＋ Trade Log 已實現盈虧（每筆 pnl_net × 當日 Frankfurter USD→HKD）。Retirement-investment 唔加賺蝕。設定期初同舊轉帳列唔會改。</p>
+    <p class="bal-note">Personal-investment = 期初＋轉帳淨額＋設定調整（如有）＋「投資」頁所選模式嘅盈虧 HKD（已實現：成交 pnl_net＋股息淨預扣稅＋MMF 已實現贖回；市值：再加股票／ETF 未實現同 MMF 未實現；期權兩邊都只計已實現）。Retirement-investment 唔加賺蝕。設定期初同舊轉帳列唔會改。</p>
     ${adjNotesHTML(b)}`;
 }
 function renderBalMonth(){
@@ -1578,77 +1614,119 @@ function renderInv(){
     el.innerHTML = `<div class="card"><p class="label">投資 Invest</p><p class="empty" style="padding:24px 0">未有資料。有網時會由 Trade Log 同步；之後離線都睇得上次快取。<br><small>No Trade Log data yet. It will appear after the next sync.</small></p></div>`;
     return;
   }
-  const cov = inv.coverage || {}, fx = inv.fx || {}, cum = inv.cumulative || {};
-  const stmt = cov.statementDate || cum.asOfDate || '—';
+  const cov = inv.coverage || {}, fx = inv.fx || {};
+  const mode = investMode();
+  const view = investView();
+  const cum = (inv.cumulative && inv.cumulative[mode]) || (mode === 'mtm' && inv.cumulative && inv.cumulative.mtm) || inv.cumulative || {};
+  const stmt = cov.statementDate || (inv.cumulative && inv.cumulative.asOfDate) || '—';
   const lastFill = cov.lastFill || '—';
-  const days = inv.daily || [];
+  const days = investSeries();
   const timeline = inv.timeline || [];
   const trades = inv.trades || [];
-  const tradeByKey = {};
-  trades.forEach(tr => { tradeByKey[tr.time_helsinki + '|' + tr.ticker + '|' + tr.net] = tr; });
   const today = todayHel();
-  const todayDay = days.find(d => d.date === today);
-  const groups = {};
-  timeline.forEach(ev => {
-    const d = ev.date || investHelDateSafe(ev.time_helsinki);
-    if (!d) return;
-    (groups[d] || (groups[d] = [])).push(ev);
-  });
-  // trades that might not be on timeline shouldn't happen; still show daily P&L headers for P&L days
-  const allDates = Array.from(new Set(Object.keys(groups).concat(days.map(d => d.date)))).sort().reverse();
-  const pnlMap = {}; days.forEach(d => { pnlMap[d.date] = d; });
-  const dayBlocks = allDates.map(date => {
-    const evs = (groups[date] || []).slice().sort((a,b) => String(a.time_helsinki).localeCompare(String(b.time_helsinki)));
-    const dPnl = pnlMap[date];
-    const headPnl = dPnl ? signedUsdHkd(dPnl.usd, dPnl.hkd) : `<span class="inv-amt" style="color:var(--sub)">—</span>`;
-    const rows = evs.map(ev => {
-      const isTrade = ev.event_type === 'stock_trade' || ev.event_type === 'option_trade';
-      let tr = null;
-      if (isTrade) {
-        tr = trades.find(x => x.time_helsinki === ev.time_helsinki && (!ev.ticker || x.ticker === ev.ticker));
-      }
-      const label = INV_EVENT_ZH[ev.event_type] || ev.event_type;
-      const time = ev.time_precision === 'second' ? clockHel(ev.time_helsinki) : '';
-      let amt = '';
-      if (tr && tr.pnl_net !== null && tr.pnl_net !== undefined) amt = signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd);
-      else if (ev.amount !== null && ev.amount !== undefined) {
-        const cur = ev.currency || '';
-        const n = Number(ev.amount);
-        const cls = n > 0 ? 'inv-pos' : (n < 0 ? 'inv-neg' : '');
-        amt = `<span class="${cls} inv-amt">${n>0?'+':''}${n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(cur)}</span>`;
-      }
-      const key = tr ? tr.time_helsinki + '|' + tr.ticker : ev.time_helsinki + '|' + ev.event_type;
-      const open = invOpen && tr && invOpen === key;
-      const det = (open && tr) ? `<div class="inv-det">
-        <div><span>方向</span><span>${esc(tr.direction_zh || tr.direction)} · ${esc(tr.side)}</span></div>
-        <div><span>數量 × 價格</span><span>${tr.quantity} × ${tr.price} ${esc(tr.currency || 'USD')}${tr.multiplier && tr.multiplier!==1 ? ' × ' + tr.multiplier : ''}</span></div>
-        <div><span>成交／淨額</span><span>${tr.gross ?? '—'} / ${tr.net ?? '—'}</span></div>
-        <div><span>費用 fees</span><span>${tr.fee_total ?? '—'}</span></div>
-        <div><span>FIFO 已實現</span><span>${tr.pnl_net === null || tr.pnl_net === undefined ? '仍開倉 open' : signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd)}</span></div>
-        ${tr.fifo_holding_human ? `<div><span>持有</span><span>${esc(tr.fifo_holding_human)}</span></div>` : ''}
-        ${tr.fx_rate ? `<div><span>匯率 ${esc(tr.fx_rate_date || '')}</span><span>1 USD = ${tr.fx_rate} HKD</span></div>` : ''}
-        <div><span>來源</span><span>${esc(tr.source || ev.source || '')}</span></div>
-      </div>` : '';
-      return `<div class="inv-ev${isTrade?' trade':''}" ${isTrade && tr ? `data-invk="${esc(key)}"` : ''}>
-        <div class="row"><div><b>${esc(label)}</b>${time ? ` <span class="meta">${time}</span>` : ''}<div class="meta">${esc(ev.description || ev.ticker || '')}</div></div><div>${amt}</div></div>
-        ${det}
-      </div>`;
-    }).join('');
-    const wkStr = (() => { try { return wk(date); } catch (e) { return ''; } })();
-    return `<div class="inv-dayh"><div class="d">${esc(date)}${wkStr ? '（'+wkStr+'）' : ''}</div><div>${headPnl}</div></div>${rows || '<p class="bal-note">呢日冇時間線事件</p>'}`;
-  }).join('');
-  el.innerHTML = `<div class="card">
-      <p class="label">累計已實現 Cumulative realized</p>
-      <div class="ytop"><div class="big">${signedUsdHkd(cum.usd, cum.hkd)}</div><small style="color:var(--sub)">FIFO · 費用已扣</small></div>
-      <div class="kv" style="margin-top:8px"><span>今日 ${today}</span><span>${todayDay ? signedUsdHkd(todayDay.usd, todayDay.hkd) : '<span style="color:var(--sub)">未有成交</span>'}</span></div>
+  const todayDay = days.find(d => d.date === today) || days.filter(d => d.date <= today).slice(-1)[0];
+  const modeBtns = `<div class="seg seg2 inv-switch" id="invMode"><button type="button" class="${mode==='realized'?'on':''}" data-im="realized">已實現 Realized</button><button type="button" class="${mode==='mtm'?'on':''}" data-im="mtm">市值 Mark-to-market</button></div>`;
+  const viewBtns = `<div class="seg seg2 inv-switch" id="invView"><button type="button" class="${view==='timeline'?'on':''}" data-iv="timeline">時間線 Timeline</button><button type="button" class="${view==='trades'?'on':''}" data-iv="trades">每單交易 Trades</button></div>`;
+  const fxNote = `來源：每日投資追蹤 Futu Trade Log（戶口 8306）。已實現＝成交 pnl_net＋股息淨預扣稅＋MMF 已實現贖回增益。市值＝已實現＋股票／ETF 未實現（每日收市價；該日有結單市值就用結單）＋ MMF 未實現（Trade Log 基金快照，兩次快照之間沿用上一次）。期權喺兩個 mode 都只計已實現。卡券當本金。費用已包喺 pnl_net，唔會扣第二次。冇 OpenD。冇新價嘅日子沿用上一次。匯率：${esc(fx.source || 'Frankfurter')} ${esc(fx.pair || 'USD→HKD')}，現金項目用事件當日歷史匯率（假日用前一個工作日）；市值未實現用當日匯率。最新成交視乎 Stockie 更新結單；11/25 及之後未入表嘅成交唔會發明。`;
+  const head = `<div class="card">
+      <p class="label">累計 ${mode==='mtm'?'市值':'已實現'} Cumulative ${mode==='mtm'?'MTM':'realized'}</p>
+      ${modeBtns}
+      <div class="ytop" style="margin-top:8px"><div class="big">${signedUsdHkd(cum.usd, cum.hkd)}</div><small style="color:var(--sub)">${mode==='mtm'?'股票市值＋已實現期權／股息／MMF':'FIFO 成交＋股息淨額＋MMF 已實現'} · 費用已扣</small></div>
+      <div class="kv" style="margin-top:8px"><span>今日 ${today}</span><span>${todayDay ? signedUsdHkd(todayDay.usd, todayDay.hkd) : '<span style="color:var(--sub)">未有變動</span>'}</span></div>
       <div class="kv" style="margin-top:4px"><span>結單至今 Statement through</span><span>${esc(stmt)}</span></div>
       <div class="kv" style="margin-top:4px"><span>最後成交 Last fill</span><span>${esc(lastFill)}</span></div>
-      <p class="inv-fx">來源：每日投資追蹤 Futu Trade Log（戶口 8306）。已實現盈虧按 Helsinki 日期加總 pnl_net。匯率：${esc(fx.source || 'Frankfurter')} ${esc(fx.pair || 'USD→HKD')}，用成交當日歷史匯率（假日用前一個工作日）${fx.fallbackFills ? '；其中 ' + fx.fallbackFills + ' 筆用咗最新匯率' : ''}。唔包未實現／市值。最新資料視乎 Stockie 更新結單；11/25 及之後未入表嘅唔會發明。</p>
-    </div>
-    <div class="card"><p class="label">時間線 Timeline（新 → 舊）· 撳成交睇詳情</p>
+      <p class="inv-fx">${fxNote}</p>
+    </div>`;
+
+  let body = '';
+  if (view === 'trades') {
+    const rows = (inv.roundTrips || []).slice();
+    const open = rows.filter(r => r.status === 'open');
+    const closed = rows.filter(r => r.status !== 'open').sort((a,b) => String(b.close_time_helsinki).localeCompare(String(a.close_time_helsinki)));
+    const showUr = mode === 'mtm';
+    const one = r => {
+      const isOpen = r.status === 'open';
+      const isOpt = r.instrument_type === 'option';
+      let pnlU = r.pnl_usd, pnlH = r.pnl_hkd, pct = r.pct_return;
+      if (isOpen && (isOpt || !showUr)) { pnlU = null; pnlH = null; pct = null; }
+      const pnl = (pnlU == null && pnlH == null) ? (isOpen ? '<span class="inv-amt" style="color:var(--sub)">未平倉</span>' : '—') : signedUsdHkd(pnlU, pnlH);
+      const hold = esc(r.holding_human || '');
+      const oc = isOpen
+        ? `開倉 ${esc(r.open_time_helsinki || '')} · 持有至今 ${hold}`
+        : `開 ${esc(r.open_time_helsinki || '')} → 平 ${esc(r.close_time_helsinki || '')} · 持有 ${hold}`;
+      const typ = isOpt ? '期權' : '股票／ETF';
+      const pctTxt = pct == null ? '' : ` · ${pct>=0?'+':''}${Number(pct).toLocaleString('en-US',{maximumFractionDigits:2})}%`;
+      return `<div class="inv-tr${isOpen?' inv-open':''}">
+        <div class="row"><div><b>${isOpen?'未平倉 ':'已平倉 '}${esc(r.ticker)}</b> <span class="meta">${typ}</span>
+          <div class="meta">${esc(r.instrument_name || '')}</div>
+          <div class="meta">${oc}</div>
+          <div class="meta">數量 ${r.quantity}${r.multiplier && r.multiplier!==1 ? ' × '+r.multiplier : ''} · 均開 ${r.avg_open ?? '—'} / 均平 ${isOpen ? '—' : (r.avg_close ?? '—')} · 費用 ${r.fees ?? '—'}${pctTxt}</div>
+        </div><div>${pnl}</div></div>
+      </div>`;
+    };
+    body = `<div class="card"><p class="label">每單交易 Round trips（FIFO）${viewBtns}</p>
+      ${open.length ? '<p class="bal-note">未平倉 ' + open.length + ' 單' + (showUr ? '（股票／ETF 顯示市值未實現；期權只顯示持倉，唔計未實現）' : '（已實現模式唔顯示未實現）') + '</p>' : ''}
+      ${open.map(one).join('') || ''}
+      ${closed.map(one).join('') || '<div class="empty">未有已平倉記錄</div>'}
+    </div>`;
+  } else {
+    const groups = {};
+    timeline.forEach(ev => {
+      const d = ev.date || investHelDateSafe(ev.time_helsinki);
+      if (!d) return;
+      (groups[d] || (groups[d] = [])).push(ev);
+    });
+    const allDates = Array.from(new Set(Object.keys(groups).concat(days.map(d => d.date)))).sort().reverse();
+    const pnlMap = {}; days.forEach(d => { pnlMap[d.date] = d; });
+    const dayBlocks = allDates.map(date => {
+      const evs = (groups[date] || []).slice().sort((a,b) => String(a.time_helsinki).localeCompare(String(b.time_helsinki)));
+      const dPnl = pnlMap[date];
+      const headPnl = dPnl ? signedUsdHkd(dPnl.usd, dPnl.hkd) : `<span class="inv-amt" style="color:var(--sub)">—</span>`;
+      const rows = evs.map(ev => {
+        const isTrade = ev.event_type === 'stock_trade' || ev.event_type === 'option_trade';
+        let tr = null;
+        if (isTrade) {
+          tr = trades.find(x => x.time_helsinki === ev.time_helsinki && (!ev.ticker || x.ticker === ev.ticker));
+        }
+        const label = INV_EVENT_ZH[ev.event_type] || ev.event_type;
+        const time = ev.time_precision === 'second' ? clockHel(ev.time_helsinki) : '';
+        let amt = '';
+        if (tr && tr.pnl_net !== null && tr.pnl_net !== undefined) amt = signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd);
+        else if (ev.amount !== null && ev.amount !== undefined) {
+          const cur = ev.currency || '';
+          const n = Number(ev.amount);
+          const cls = n > 0 ? 'inv-pos' : (n < 0 ? 'inv-neg' : '');
+          amt = `<span class="${cls} inv-amt">${n>0?'+':''}${n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} ${esc(cur)}</span>`;
+        }
+        const key = tr ? tr.time_helsinki + '|' + tr.ticker : ev.time_helsinki + '|' + ev.event_type;
+        const open = invOpen && tr && invOpen === key;
+        const det = (open && tr) ? `<div class="inv-det">
+          <div><span>方向</span><span>${esc(tr.direction_zh || tr.direction)} · ${esc(tr.side)}</span></div>
+          <div><span>數量 × 價格</span><span>${tr.quantity} × ${tr.price} ${esc(tr.currency || 'USD')}${tr.multiplier && tr.multiplier!==1 ? ' × ' + tr.multiplier : ''}</span></div>
+          <div><span>成交／淨額</span><span>${tr.gross ?? '—'} / ${tr.net ?? '—'}</span></div>
+          <div><span>費用 fees</span><span>${tr.fee_total ?? '—'}</span></div>
+          <div><span>FIFO 已實現</span><span>${tr.pnl_net === null || tr.pnl_net === undefined ? '仍開倉 open' : signedUsdHkd(tr.pnl_net, tr.pnl_net_hkd)}</span></div>
+          ${tr.fifo_holding_human ? `<div><span>持有</span><span>${esc(tr.fifo_holding_human)}</span></div>` : ''}
+          ${tr.fx_rate ? `<div><span>匯率 ${esc(tr.fx_rate_date || '')}</span><span>1 USD = ${tr.fx_rate} HKD</span></div>` : ''}
+          <div><span>來源</span><span>${esc(tr.source || ev.source || '')}</span></div>
+        </div>` : '';
+        return `<div class="inv-ev${isTrade?' trade':''}" ${isTrade && tr ? `data-invk="${esc(key)}"` : ''}>
+          <div class="row"><div><b>${esc(label)}</b>${time ? ` <span class="meta">${time}</span>` : ''}<div class="meta">${esc(ev.description || ev.ticker || '')}</div></div><div>${amt}</div></div>
+          ${det}
+        </div>`;
+      }).join('');
+      const wkStr = (() => { try { return wk(date); } catch (e) { return ''; } })();
+      return `<div class="inv-dayh"><div class="d">${esc(date)}${wkStr ? '（'+wkStr+'）' : ''}</div><div>${headPnl}</div></div>${rows || '<p class="bal-note">呢日冇時間線事件</p>'}`;
+    }).join('');
+    body = `<div class="card"><p class="label">時間線 Timeline（新 → 舊）· 撳成交睇詳情${viewBtns}</p>
       ${dayBlocks || '<div class="empty">未有時間線</div>'}
     </div>`;
+  }
+
+  el.innerHTML = head + body;
   el.onclick = ev => {
+    const mb = ev.target.closest('[data-im]'); if (mb) { setInvestMode(mb.getAttribute('data-im')); return; }
+    const vb = ev.target.closest('[data-iv]'); if (vb) { setInvestView(vb.getAttribute('data-iv')); return; }
     const b = ev.target.closest('[data-invk]'); if (!b) return;
     const k = b.getAttribute('data-invk');
     invOpen = invOpen === k ? '' : k;
@@ -1675,7 +1753,7 @@ function show(v, keepScroll){
   const q = V ? V.status().pending : 0;
   const inv = investData();
   const stmt = inv && inv.coverage && inv.coverage.statementDate;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : v==='inv' ? (`Trade Log 已實現盈虧 · 結單至今 ${stmt || '—'}（Helsinki）`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : v==='inv' ? (`Trade Log ${investMode()==='mtm'?'市值':'已實現'} · 結單至今 ${stmt || '—'}（Helsinki）`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
