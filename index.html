@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V4.5（離線優先；V4.5：全 App 深色交易終端配色、顯示層去掉全部 emoji（含類別）、資產按月／按年改多帳戶堆疊柱＋總財富金線同即時觸控掃讀；V4.4：資產按月／按年互動圖、專業配色、去掉介面 emoji、全 App 統一 US$/HK$ 前綴、刪走各頁長篇說明；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V4.6（離線優先；V4.6：資產圖所選帳戶合計（大數字／金線／Y 軸跟 filter pills）；V4.5：全 App 深色交易終端配色、顯示層去掉全部 emoji（含類別）、資產按月／按年改多帳戶堆疊柱＋總財富金線同即時觸控掃讀；V4.4：資產按月／按年互動圖、專業配色、去掉介面 emoji、全 App 統一 US$/HK$ 前綴、刪走各頁長篇說明；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -263,8 +263,10 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .bal-spark i.on{opacity:1;background:var(--brand2)}
 .bal-ichart{margin:2px 0 14px}
 .bal-readout{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
-.bal-ro-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.bal-ro-period{font-weight:700;font-size:15px}
+.bal-ro-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.bal-ro-period{font-weight:700;font-size:15px;padding-top:2px}
+.bal-ro-total-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:1px;min-width:0}
+.bal-ro-kind{font-size:10px;font-weight:600;color:var(--sub);letter-spacing:.02em;line-height:1}
 .bal-ro-total{font-weight:700;font-size:16px;letter-spacing:-.02em;white-space:nowrap}
 .bal-ro-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:12px}
 .bal-ro-grid div{display:flex;justify-content:space-between;gap:8px;min-width:0}
@@ -393,7 +395,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V4.5';
+const APP_VERSION = 'V4.6';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -1594,9 +1596,12 @@ function visTotal(pt, keys){
 }
 function balReadoutInner(label, pt, keys){
   keys = keys || balKeys();
-  const rows = BAL_SERIES.map(s => [s, Number(pt[s.id]) || 0]);
-  return `<div class="bal-ro-head"><span class="bal-ro-period">${esc(label)}</span><span class="bal-ro-total">${esc(moneyTxt(pt.total, 'HKD', false))}</span></div>
-    <div class="bal-ro-grid">${rows.map(([s,v]) => `<div class="${keys.includes(s.id)?'':'off'}"><span><i class="bal-ro-sw" style="background:${s.color}"></i>${esc(s.id === 'C' ? 'C 待還' : s.id === 'D' ? 'D 未付' : s.id)}</span><span>${esc(moneyTxt(v, 'HKD', false))}</span></div>`).join('')}</div>`;
+  const allOn = keys.length === BAL_SERIES.length;
+  const sum = allOn ? (Number(pt.total) || visTotal(pt, keys)) : visTotal(pt, keys);
+  const kind = allOn ? '總財富' : '所選合計';
+  const rows = BAL_SERIES.filter(s => keys.includes(s.id)).map(s => [s, Number(pt[s.id]) || 0]);
+  return `<div class="bal-ro-head"><span class="bal-ro-period">${esc(label)}</span><span class="bal-ro-total-wrap"><small class="bal-ro-kind">${kind}</small><span class="bal-ro-total">${esc(moneyTxt(sum, 'HKD', false))}</span></span></div>
+    <div class="bal-ro-grid">${rows.map(([s,v]) => `<div><span><i class="bal-ro-sw" style="background:${s.color}"></i>${esc(s.id === 'C' ? 'C 待還' : s.id === 'D' ? 'D 未付' : s.id)}</span><span>${esc(moneyTxt(v, 'HKD', false))}</span></div>`).join('')}</div>`;
 }
 function balFiltersHTML(keys){
   const allOn = keys.length === BAL_SERIES.length;
