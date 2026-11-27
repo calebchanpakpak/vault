@@ -4,38 +4,38 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V4.4（離線優先；V4.4：資產按月／按年互動圖、專業配色、去掉介面 emoji、全 App 統一 US$/HK$ 前綴、刪走各頁長篇說明；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V4.5（離線優先；V4.5：全 App 深色交易終端配色、顯示層去掉全部 emoji（含類別）、資產按月／按年改多帳戶堆疊柱＋總財富金線同即時觸控掃讀；V4.4：資產按月／按年互動圖、專業配色、去掉介面 emoji、全 App 統一 US$/HK$ 前綴、刪走各頁長篇說明；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1E3A5F">
+<meta name="theme-color" content="#0B0E14">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vault">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{
-  --bg:#F5F6F8; --card:#FFFFFF; --ink:#0F172A; --sub:#64748B; --line:#E5E7EB;
-  --brand:#1E3A5F; --inc:#059669; --brand2:#0F4C81; --warn:#DC2626; --amber:#B45309;
-  --muted:#64748B;
-  --r:16px;
+  --bg:#0B0E14; --card:#151922; --elev:#1A1F2B; --ink:#F3F4F6; --sub:#94A3B8; --line:#242B3A;
+  --brand:#3B82F6; --inc:#22C55E; --brand2:#2563EB; --warn:#EF4444; --amber:#E5A952;
+  --muted:#64748B; --nav:#11151E; --navline:#232A38;
+  --r:10px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","PingFang TC","Noto Sans CJK TC","Noto Sans TC",sans-serif;
-  -webkit-font-smoothing:antialiased;overscroll-behavior:none;font-variant-numeric:tabular-nums}
-button,input,select{font:inherit;color:inherit}
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none;font-variant-numeric:tabular-nums;color-scheme:dark}
+button,input,select,textarea{font:inherit;color:inherit;color-scheme:dark}
 #app{display:flex;flex-direction:column;height:100%}
 header{padding:14px 18px 10px;background:var(--bg)}
 header h1 .en{font-size:14px;font-weight:600;color:var(--sub);margin-left:6px;letter-spacing:0}
 header h1{margin:0;font-size:23px;font-weight:700;letter-spacing:.5px}
 header .sub{color:var(--sub);font-size:13px;margin-top:2px}
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px 20px}
-.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(15,23,42,.04)}
-.label{font-size:12px;color:var(--sub);margin:0 0 8px}
+.card{background:var(--card);border-radius:var(--r);padding:12px;margin-bottom:10px;border:1px solid var(--line);box-shadow:none}
+.label{font-size:12px;color:var(--sub);margin:0 0 8px;padding-left:8px;border-left:3px solid #3B82F6;line-height:1.2}
 .en{font-size:.82em;opacity:.8}
 /* tab bar */
-nav{display:flex;background:rgba(255,255,255,.96);border-top:1px solid var(--line);
+nav{display:flex;background:var(--nav);border-top:1px solid var(--navline);
   padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
 nav button{flex:1;border:0;background:none;padding:6px 0 4px;color:#94A3B8;font-size:10.5px;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
 nav button .i{width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:.7}
@@ -43,7 +43,7 @@ nav button .i svg{width:22px;height:22px;display:block}
 nav.tabs5 button{font-size:10px;padding:5px 1px 3px;gap:2px}
 nav.tabs5 button .i,nav.tabs5 button .i svg{width:20px;height:20px}
 nav.tabs5 button .en{display:block;font-size:8.5px;margin-left:0;letter-spacing:0;opacity:.75}
-nav button.on{color:var(--brand);font-weight:600}
+nav button.on{color:#3B82F6;font-weight:600}
 nav button.on .i{opacity:1}
 .view{display:none}.view.on{display:block}
 /* month strip */
@@ -55,7 +55,7 @@ nav button.on .i{opacity:1}
 .amt input{border:0;outline:0;font-size:40px;font-weight:700;width:100%;background:none;padding:0}
 .amt:focus-within{border-color:var(--brand)}
 .curs{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px}
-.cur{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:5px 0 4px;text-align:center;line-height:1.15}
+.cur{border:1.5px solid var(--line);background:var(--elev);border-radius:6px;padding:5px 0 4px;text-align:center;line-height:1.15}
 .cur b{display:block;font-size:13px;font-weight:700}
 .cur small{display:block;font-size:10px;color:var(--sub)}
 .cur.on{border-color:var(--brand);background:var(--brand);color:#fff}
@@ -63,80 +63,80 @@ nav button.on .i{opacity:1}
 .fxline{font-size:12px;color:var(--sub);margin-top:8px;min-height:16px}
 .fxline.err{color:var(--warn)}
 /* 支出 / 收入 */
-.seg{display:grid;grid-template-columns:1fr 1fr;background:#eef0f2;border-radius:12px;padding:3px;margin-bottom:12px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--elev);border-radius:8px;padding:3px;margin-bottom:12px}
 .seg.segtype{grid-template-columns:repeat(3,1fr)}
 .seg.segtype button{font-size:12.5px;padding:8px 2px}
 .seg button{border:0;background:none;border-radius:10px;padding:8px 0;font-size:14px;font-weight:600;color:var(--sub)}
-.seg button.on{background:#fff;color:var(--warn);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.seg button.on{background:var(--elev);color:var(--warn);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .seg button.on[data-type="收入"]{color:var(--inc)}
 .seg button.on[data-type="轉帳"]{color:var(--brand)}
 .inc{color:var(--inc)!important}
 .xfer{color:var(--brand)!important}
 .xferlist{margin-top:14px}
 .xferlist .label{margin-bottom:6px}
-.item.xfer .ic{background:#F1F5F9;font-size:12px;font-weight:700;color:var(--sub)}
-.item.xfer .a{color:#6b7280}
+.item.xfer .ic{background:var(--elev);font-size:12px;font-weight:700;color:var(--sub)}
+.item.xfer .a{color:var(--sub)}
 .assetseg{grid-template-columns:1fr}.assetseg button{font-size:12px;padding:8px 6px;text-align:left}
 .assetseg button{font-size:12.5px;padding:8px 4px}
 .netrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.netrow div{border-radius:12px;padding:8px 10px;background:var(--bg)}
+.netrow div{border-radius:8px;padding:8px 10px;background:var(--elev);border:1px solid var(--line)}
 .netrow small{display:block;font-size:11px;color:var(--sub)}.netrow b{font-size:16px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
 .modal.on{display:flex}
-.modal .box{background:var(--bg);border-radius:18px;padding:16px 14px;width:100%;max-width:360px}
-.modal h3{margin:0 0 10px;text-align:center;font-size:17px}
+.modal .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 14px;width:100%;max-width:360px}
+.modal h3{margin:0 0 10px;text-align:left;font-size:17px;padding-left:8px;border-left:3px solid #3B82F6}
 .emojis{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.emojis button{border:1.5px solid var(--line);background:#fff;border-radius:10px;width:38px;height:38px;font-size:19px;padding:0}
-.emojis button.on{border-color:var(--brand);background:#F1F5F9}
+.emojis button{border:1.5px solid var(--line);background:var(--elev);border-radius:10px;width:38px;height:38px;font-size:19px;padding:0}
+.emojis button.on{border-color:var(--brand);background:var(--elev)}
 /* 匯率提示 */
-.notice{margin:0 14px 10px;border-radius:12px;padding:9px 34px 9px 12px;font-size:12px;line-height:1.45;position:relative;background:#fef3c7;color:#92400e;border:1px solid #fde68a}
-.notice.perm{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.notice{margin:0 14px 10px;border-radius:12px;padding:9px 34px 9px 12px;font-size:12px;line-height:1.45;position:relative;background:rgba(229,169,82,.14);color:#E5A952;border:1px solid rgba(229,169,82,.35)}
+.notice.perm{background:rgba(239,68,68,.14);color:#FCA5A5;border-color:rgba(239,68,68,.45)}
 .notice b{display:block;font-size:13px;margin-bottom:2px}
 .notice button{position:absolute;right:6px;top:6px;border:0;background:none;font-size:16px;color:inherit;opacity:.7;padding:2px 6px}
 .fxline.est{color:var(--amber)}
 .esttag{color:var(--amber)}
 /* chips */
 .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.chip{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:6px 2px 5px;text-align:center;font-size:12px;line-height:1.15;min-height:62px}
+.chip{border:1.5px solid var(--line);background:var(--elev);border-radius:6px;padding:8px 4px 6px;text-align:center;font-size:12px;line-height:1.15;min-height:0}
 .chip small{display:block;font-size:9.5px;color:var(--sub);margin-top:1px;word-break:break-word}
 .chip.on small{color:var(--brand)}
 .chip.add{border-style:dashed;color:var(--brand)}
 .chip .e{display:block;font-size:20px;margin-bottom:2px}
-.chip.on{border-color:var(--brand);background:#F1F5F9;color:var(--brand);font-weight:600}
+.chip.on{border-color:var(--brand);background:var(--elev);color:var(--brand);font-weight:600}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
-.pill{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;white-space:nowrap}
+.pill{border:1.5px solid var(--line);background:var(--elev);border-radius:6px;padding:6px 10px;font-size:12px;white-space:nowrap}
 .pill.on{border-color:var(--brand);background:var(--brand);color:#fff}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{display:flex;flex-direction:column;gap:4px;margin-top:12px}
 .field label{font-size:12px;color:var(--sub)}
-.field input{border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;width:100%;min-height:46px;-webkit-appearance:none;appearance:none}
+.field input{border:1.5px solid var(--line);border-radius:6px;padding:11px 12px;font-size:16px;background:var(--elev);color:var(--ink);width:100%;min-height:44px;-webkit-appearance:none;appearance:none}
 .field input:focus{outline:0;border-color:var(--brand)}
 /* V3.4：項目建議（自訂 dropdown，唔用 datalist；iPhone Safari 唔會被鍵盤遮住） */
 .itemwrap{position:relative}
-.itemdd{display:none;position:fixed;z-index:40;background:#fff;border:1.5px solid var(--line);border-radius:12px;
+.itemdd{display:none;position:fixed;z-index:40;background:var(--elev);border:1.5px solid var(--line);border-radius:12px;
   box-shadow:0 10px 28px rgba(0,0,0,.14);max-height:min(240px,42vh);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px}
 .itemdd.on{display:block}
 .itemdd button{display:block;width:100%;text-align:left;border:0;background:none;padding:11px 12px;font-size:15px;border-radius:8px;color:var(--ink)}
-.itemdd button:active,.itemdd button.hi{background:#F1F5F9;color:var(--brand)}
+.itemdd button:active,.itemdd button.hi{background:var(--elev);color:var(--brand)}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;background:var(--brand);color:#fff;margin-top:14px}
 .btn:disabled{opacity:.5}
-#saveBtn,#edSave{position:sticky;bottom:10px;box-shadow:0 6px 18px rgba(15,118,110,.35);z-index:5}
-.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);font-weight:600}
-.btn.danger{background:#fff;color:var(--warn);border:1.5px solid #fecaca}
+#saveBtn,#edSave{position:sticky;bottom:10px;box-shadow:0 6px 18px rgba(37,99,235,.35);z-index:5}
+.btn.ghost{background:var(--elev);color:var(--ink);border:1.5px solid var(--line);font-weight:600}
+.btn.danger{background:var(--elev);color:var(--warn);border:1.5px solid rgba(239,68,68,.45)}
 /* summary */
 .monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.monthbar button{border:0;background:#fff;border-radius:10px;width:38px;height:38px;font-size:18px}
+.monthbar button{border:0;background:var(--elev);border-radius:10px;width:38px;height:38px;font-size:18px}
 .monthbar b{font-size:17px}
 .big{font-size:34px;font-weight:800;margin:2px 0}
-.prog{height:12px;background:#eef0f2;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.prog{height:12px;background:var(--elev);border-radius:99px;overflow:hidden;margin:10px 0 6px}
 .prog i{display:block;height:100%;background:var(--brand2);border-radius:99px}
 .prog.warn i{background:var(--amber)}.prog.over i{background:var(--warn)}
 .kv{display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
 .stats div{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
 .stats b{display:block;font-size:15px;overflow-wrap:anywhere}.stats small{font-size:10.5px;color:var(--sub);white-space:nowrap}
-.catrow{display:grid;grid-template-columns:22px 92px 1fr 92px;align-items:center;gap:8px;padding:5px 0;font-size:13px;line-height:1.2}
-.catrow .bar{height:10px;background:#eef0f2;border-radius:99px;overflow:hidden}
+.catrow{display:grid;grid-template-columns:92px 1fr 92px;align-items:center;gap:8px;padding:5px 0;font-size:13px;line-height:1.2}
+.catrow .bar{height:10px;background:var(--elev);border-radius:99px;overflow:hidden}
 .catrow .bar i{display:block;height:100%;border-radius:99px}
 .catrow .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 /* V3.2：總覽 toggles + 柱狀圖（支持負數） */
@@ -158,14 +158,14 @@ nav button.on .i{opacity:1}
 .chart{position:relative;display:flex;gap:3px;height:130px;margin-top:14px}
 .chart.dense{gap:2px;height:110px}
 .chart button{flex:1;position:relative;height:100%;border:0;background:none;padding:0;min-width:0}
-.chart button i{position:absolute;left:0;right:0;display:block;min-height:2px;border-radius:5px 5px 0 0;background:#99f6e4}
+.chart button i{position:absolute;left:0;right:0;display:block;min-height:2px;border-radius:5px 5px 0 0;background:#3B82F6}
 .chart.dense button i{border-radius:3px 3px 0 0}
-.chart button i.k-inc,.chart button i.k-net{background:#bbf7d0}
-.chart button.neg i{background:#fecaca;border-radius:0 0 5px 5px}
+.chart button i.k-inc,.chart button i.k-net{background:#22C55E}
+.chart button.neg i{background:#EF4444;border-radius:0 0 5px 5px}
 .chart button.now i.k-exp{background:var(--brand)}
 .chart button.now i.k-inc,.chart button.now i.k-net{background:var(--inc)}
 .chart button.now.neg i{background:var(--warn)}
-.chart button.fut i{background:#eef0f2}
+.chart button.fut i{background:var(--elev)}
 .chart button.sel::after{content:'';position:absolute;left:15%;right:15%;bottom:-6px;height:3px;border-radius:2px;background:var(--brand)}
 .chart .zero{position:absolute;left:0;right:0;height:1px;background:#9ca3af;z-index:1}
 .yaxis{display:flex;gap:3px;margin-top:8px;font-size:10px;color:var(--sub)}
@@ -175,88 +175,88 @@ nav button.on .i{opacity:1}
 .ylist button{display:flex;justify-content:space-between;border:0;background:none;padding:5px 2px;font-size:13px;border-radius:8px;text-align:left}
 .ylist button b,.dlist b{font-variant-numeric:tabular-nums;font-weight:600}
 .ylist button.now{color:var(--brand);font-weight:700}
-.ylist button.sel{background:#ecfdf9}
-.ylist button.fut{color:#c0c4cc}
+.ylist button.sel{background:rgba(59,130,246,.16)}
+.ylist button.fut{color:var(--muted)}
 .dlist{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;margin-top:10px;border-top:1px solid var(--line);padding-top:6px}
 .drow{display:flex;justify-content:space-between;padding:5px 2px;font-size:12.5px}
 .drow.now{color:var(--brand);font-weight:700}
 .vs{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-top:8px}
-.vs .bar{height:10px;background:#eef0f2;border-radius:99px;overflow:hidden}.vs .bar i{display:block;height:100%;border-radius:99px}
+.vs .bar{height:10px;background:var(--elev);border-radius:99px;overflow:hidden}.vs .bar i{display:block;height:100%;border-radius:99px}
 .link{border:0;background:none;color:var(--brand);font-size:13px;padding:0}
 .setrow{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
 .setrow small{color:var(--sub);font-size:11px}
 .link.del{color:var(--warn)}
 .tick{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--sub);margin:8px 0}
-select{width:100%;padding:9px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
+select{width:100%;padding:9px;border:1.5px solid var(--line);border-radius:6px;font-size:14px;background:var(--elev);color:var(--ink)}
 .hint{font-size:11.5px;color:var(--sub);margin:4px 2px 10px}
 /* list */
 .day{font-size:13px;color:var(--sub);margin:14px 4px 6px;display:flex;justify-content:space-between}
-.item{display:flex;align-items:center;gap:12px;background:#fff;padding:11px 12px;border-bottom:1px solid var(--line)}
+.item{display:flex;align-items:center;gap:12px;background:var(--elev);padding:11px 12px;border-bottom:1px solid var(--line)}
 .group{border-radius:var(--r);overflow:hidden}
 .group .item:last-child{border-bottom:0}
-.item .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.item .ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;border:1px solid var(--line);background:var(--elev);color:var(--ink)}
 .item .t{flex:1;min-width:0}
 .item .t b{display:block;font-weight:600;font-size:15px;white-space:normal;overflow-wrap:anywhere;line-height:1.3}
 .item .t small{display:block;color:var(--sub);font-size:12px;white-space:normal;overflow-wrap:anywhere}
-.more{display:block;width:100%;margin:14px 0 4px;padding:12px;border:1.5px solid var(--line);background:#fff;border-radius:var(--r);font-size:14px;font-weight:600;color:var(--brand)}
+.more{display:block;width:100%;margin:14px 0 4px;padding:12px;border:1.5px solid var(--line);background:var(--elev);border-radius:var(--r);font-size:14px;font-weight:600;color:var(--brand)}
 .item .a{flex:none;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
-.item .a small{display:block;font-weight:400;font-size:11px;color:#9ca3af;margin-top:1px}
-.tag{display:inline-block;font-size:10px;background:#fef3c7;color:#92400e;border-radius:6px;padding:1px 5px;margin-left:4px;vertical-align:1px}
+.item .a small{display:block;font-weight:400;font-size:11px;color:var(--muted);margin-top:1px}
+.tag{display:inline-block;font-size:10px;background:rgba(229,169,82,.14);color:#E5A952;border-radius:6px;padding:1px 5px;margin-left:4px;vertical-align:1px}
 .filter{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;margin:0 -14px;padding-left:14px;padding-right:14px}
 .empty{text-align:center;color:var(--sub);padding:40px 0}
 /* sheet */
 .mask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:20}
-.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 14px calc(20px + env(safe-area-inset-bottom));z-index:21;
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:16px 14px calc(20px + env(safe-area-inset-bottom));z-index:21;
   transform:translateY(105%);transition:transform .25s ease;max-height:92%;overflow-y:auto}
 .sheet.on{transform:none}.mask.on{display:block}
-.sheet h3{margin:0 0 10px;text-align:center}
+.sheet h3{margin:0 0 10px;text-align:left;padding-left:8px;border-left:3px solid #3B82F6}
 .toast{position:fixed;left:50%;top:18px;text-align:center;line-height:1.4;transform:translateX(-50%) translateY(-120px);background:#111827;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:50;transition:transform .25s;max-width:90%}
 .toast.on{transform:translateX(-50%) translateY(0)}
 .loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:40;color:var(--sub);flex-direction:column;gap:10px}
-.spin{width:28px;height:28px;border:3px solid #d1d5db;border-top-color:var(--brand);border-radius:50%;animation:s 1s linear infinite}
+.spin{width:28px;height:28px;border:3px solid #242B3A;border-top-color:var(--brand);border-radius:50%;animation:s 1s linear infinite}
 @keyframes s{to{transform:rotate(360deg)}}
 /* PWA：網絡狀態、排隊、更新 */
 header{padding-top:calc(14px + env(safe-area-inset-top))}
-.netbar{margin:0 14px 10px;border-radius:12px;padding:8px 12px;font-size:12px;line-height:1.45;background:#e0f2fe;color:#075985;border:1px solid #bae6fd;display:flex;gap:8px;align-items:center;justify-content:space-between}
-.netbar.off{background:#f3f4f6;color:#374151;border-color:#e5e7eb}
-.netbar.bad{background:#fee2e2;color:#991b1b;border-color:#fecaca}
-.netbar button{border:0;background:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--brand);white-space:nowrap}
-.tag.pend{background:#e0f2fe;color:#075985}
-.item.pend{background:#f8fafc}
+.netbar{margin:0 14px 10px;border-radius:12px;padding:8px 12px;font-size:12px;line-height:1.45;background:rgba(59,130,246,.14);color:#93C5FD;border:1px solid rgba(59,130,246,.35);display:flex;gap:8px;align-items:center;justify-content:space-between}
+.netbar.off{background:var(--elev);color:var(--ink);border-color:var(--line)}
+.netbar.bad{background:rgba(239,68,68,.14);color:#FCA5A5;border-color:rgba(239,68,68,.45)}
+.netbar button{border:0;background:var(--elev);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--brand);white-space:nowrap}
+.tag.pend{background:rgba(59,130,246,.14);color:#93C5FD}
+.item.pend{background:var(--elev)}
 /* V3.2：同步狀態 */
 header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.syncpill{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap;margin-top:2px;max-width:56vw;overflow:hidden;text-overflow:ellipsis}
-.syncpill.ok{color:var(--inc);border-color:#bbf7d0}
-.syncpill.pend{color:#075985;border-color:#bae6fd;background:#f0f9ff}
-.syncpill.off{color:#374151;background:#f3f4f6}
-.syncpill.bad{color:var(--warn);border-color:#fecaca;background:#fef2f2}
+.syncpill{flex:none;border:1.5px solid var(--line);background:var(--elev);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap;margin-top:2px;max-width:56vw;overflow:hidden;text-overflow:ellipsis}
+.syncpill.ok{color:var(--inc);border-color:rgba(34,197,94,.45)}
+.syncpill.pend{color:#93C5FD;border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.12)}
+.syncpill.off{color:var(--ink);background:var(--elev)}
+.syncpill.bad{color:var(--warn);border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.12)}
 .syncpill.busy{color:var(--brand)}
 .syncpill small{font-weight:400;opacity:.8}
 .loading.boot{background:var(--bg);font-size:13px}
 
 /* V3.12 Balance Sheet */
 .bal-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.bal-card{background:var(--card);border-radius:var(--r);padding:12px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.bal-card{background:var(--card);border-radius:var(--r);padding:12px;border:1px solid var(--line);box-shadow:none}
 .bal-card .n{font-size:12px;color:var(--muted);margin-bottom:4px}
 .bal-card .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .bal-card.total{grid-column:1/-1;background:var(--brand);color:#fff;border-color:var(--brand)}
 .bal-card.total .n{color:rgba(255,255,255,.85)}
-.bal-card.warn .n::after{content:' · 需期初';font-size:10px;color:#b45309}
+.bal-card.warn .n::after{content:' · 需期初';font-size:10px;color:var(--amber)}
 .bal-table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
 .bal-table th,.bal-table td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
 .bal-table th:first-child,.bal-table td:first-child{text-align:left;position:sticky;left:0;background:var(--bg);z-index:1}
 .bal-table th{font-size:10px;color:var(--muted);font-weight:600;text-transform:none}
 .bal-table .chg{font-size:10px;color:var(--muted)}
-.bal-table .chg.up{color:#059669}.bal-table .chg.dn{color:#dc2626}
+.bal-table .chg.up{color:var(--inc)}.bal-table .chg.dn{color:var(--warn)}
 .bal-scroll{overflow-x:auto;margin:0 -4px;padding:0 4px}
 .bal-note{font-size:11.5px;color:var(--muted);line-height:1.45;margin:8px 0 0}
 .bal-open .row2{gap:8px}
 
-.item.xfer{background:#f3f4f6}
-.item.xfer .ic{background:#F1F5F9;font-size:12px;font-weight:700;color:var(--sub)}
-.item.xfer .a{color:#6b7280!important;font-weight:600}
-.item.xfer .t b{color:#374151}
-.badge-c{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;vertical-align:middle}
+.item.xfer{background:var(--elev)}
+.item.xfer .ic{background:var(--elev);font-size:12px;font-weight:700;color:var(--sub)}
+.item.xfer .a{color:var(--sub)!important;font-weight:600}
+.item.xfer .t b{color:var(--ink)}
+.badge-c{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(229,169,82,.14);color:#E5A952;vertical-align:middle}
 .listmode{margin-bottom:10px}
 .bal-spark{display:flex;align-items:flex-end;gap:2px;height:48px;margin:8px 0 4px;padding:0 2px}
 .bal-spark i{flex:1;background:var(--brand);opacity:.75;border-radius:2px 2px 0 0;min-width:3px}
@@ -270,12 +270,12 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .bal-ro-grid div{display:flex;justify-content:space-between;gap:8px;min-width:0}
 .bal-ro-grid span:first-child{color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bal-ro-grid span:last-child{white-space:nowrap}
-.bal-chart-touch{position:relative;height:160px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.bal-chart-touch{position:relative;height:176px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .bal-chart-touch svg{width:100%;height:100%;display:block}
-.bal-cross{position:absolute;top:10px;bottom:24px;width:1px;background:var(--brand);opacity:.4;pointer-events:none;transform:translateX(-50%)}
-.bal-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid var(--brand);pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(30,58,95,.14)}
-.bal-table tr.on td,.bal-table tr.on td:first-child{background:#F1F5F9}
-.bal-adj{font-size:11px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.4}
+.bal-cross{position:absolute;top:10px;bottom:24px;width:1px;background:#E5A952;opacity:.85;pointer-events:none;transform:translateX(-50%)}
+.bal-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#E5A952;border:2px solid #0B0E14;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(229,169,82,.28)}
+.bal-table tr.on td,.bal-table tr.on td:first-child{background:var(--elev)}
+.bal-adj{font-size:11px;color:var(--amber);background:var(--elev)beb;border:1px solid rgba(229,169,82,.35);border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.4}
 .cdrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
 .cdrow .bal-card{padding:10px}
 /* V3.20 投資頁 */
@@ -289,32 +289,44 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .inv-ev .row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .inv-ev .meta{font-size:11px;color:var(--sub);margin-top:2px}
 .inv-ev.trade{cursor:pointer}
-.inv-det{font-size:12px;color:var(--sub);background:#fff;border-radius:10px;padding:8px 10px;margin-top:6px;line-height:1.45;border:1px solid var(--line)}
+.inv-det{font-size:12px;color:var(--sub);background:var(--elev);border-radius:10px;padding:8px 10px;margin-top:6px;line-height:1.45;border:1px solid var(--line)}
 .inv-det div{display:flex;justify-content:space-between;gap:8px;padding:1px 0}
 .inv-pillrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
 .inv-switch{margin:8px 0 0}
 .inv-tr{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.4}
 .inv-tr .row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .inv-tr .meta{font-size:11px;color:var(--sub);margin-top:2px}
-.inv-open{background:#f8fafc;border-radius:10px;padding:8px 10px;margin:6px 0}
+.inv-open{background:var(--elev);border-radius:10px;padding:8px 10px;margin:6px 0}
 .inv-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;padding:6px 0;border:0;background:none;color:var(--brand);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .inv-detail{margin-top:4px;padding-top:8px;border-top:1px solid var(--line)}
 .inv-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
-.inv-stat{background:#f8fafc;border-radius:10px;padding:8px 10px;min-width:0}
+.inv-stat{background:var(--elev);border-radius:10px;padding:8px 10px;min-width:0}
 .inv-stat .k{font-size:11px;color:var(--sub)}
 .inv-stat .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px;letter-spacing:-.02em;word-break:break-word}
 .inv-stat .s{font-size:11px;color:var(--sub);margin-top:2px;line-height:1.35}
 .inv-filt{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;min-width:0}
 .inv-filt label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--sub);min-width:0}
-.inv-filt select,.inv-filt input[type=date]{width:100%;max-width:100%;box-sizing:border-box;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:#fff;min-width:0;color:var(--text)}
+.inv-filt select,.inv-filt input[type=date]{width:100%;max-width:100%;box-sizing:border-box;font-size:16px;border:1px solid var(--line);border-radius:6px;padding:7px 8px;background:var(--elev);min-width:0;color:var(--ink)}
 .inv-filt .span2{grid-column:1/-1}
 .inv-dates{display:flex;gap:6px;align-items:center;min-width:0}
 .inv-dates input{flex:1;min-width:0}
 .inv-clear{flex:0 0 auto;border:0;background:none;color:var(--brand);font-size:12px;font-weight:600;padding:0 2px;cursor:pointer}
-.inv-badge{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;background:#eef2ff;color:#3730a3;vertical-align:middle}
-.inv-badge.opt{background:#fef3c7;color:#92400e}
+.inv-badge{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;background:rgba(59,130,246,.16);color:#93C5FD;vertical-align:middle}
+.inv-badge.opt{background:rgba(229,169,82,.14);color:#E5A952}
 .inv-pct{font-variant-numeric:tabular-nums;font-weight:700}
 .inv-reset{border:0;background:none;color:var(--brand);font-size:12px;font-weight:600;padding:0;cursor:pointer;margin-left:8px}
+
+.bal-filters{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}
+.bal-filters button{border:1px solid var(--line);background:var(--elev);color:var(--sub);border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.bal-filters button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+.bal-filters button .sw{width:8px;height:8px;border-radius:2px;flex:none}
+.bal-ro-grid div.off span{opacity:.45}
+.bal-ro-sw{width:7px;height:7px;border-radius:2px;display:inline-block;margin-right:5px;flex:none;vertical-align:middle}
+.bal-col rect{transition:opacity .08s linear}
+.bal-col{opacity:.72}
+.bal-col.on{opacity:1}
+.bal-col.on rect{stroke:#F3F4F6;stroke-width:.45}
+.group{background:var(--card);border:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -347,7 +359,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
-    <!-- V4.4 投資 -->
+    <!-- V4.5 投資 -->
     <section class="view" id="v-inv">
       <div id="invBody"></div>
     </section>
@@ -381,7 +393,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V4.4';
+const APP_VERSION = 'V4.5';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -414,7 +426,6 @@ const TYPE_BTNS = [['支出','支出 Expense'],['收入','收入 Income'],['轉�
 const curInfo = c => (D.curInfo||[]).find(x => x.code === c) || {code:c, name:'', sym:c+' ', dec:2};
 const payEn = p => ((D.payInfo||[]).find(x => x.name === p) || {}).en || '';
 const RATES = {HKD:{rate:1}};   // 預覽用（真正換算喺伺服器同步時做）
-const EMOJI_CHOICES = ['🏷️','💰','🎁','☕','🍰','🐶','🎮','🎵','📱','💻','🚕','🏥','💄','🧴','🎓','⚽','🏦','💼','🪙','🎉'];
 let D = {rows:[], budget:0, currencies:['HKD'], curInfo:[], categories:[], payments:[], payInfo:[], settings:{}, today:''};
 let viewMonth = '', listFilter = '全部', listAcct = '全部', listXferFilter = '全部', editing = null;   // V3.9：listAcct；V3.14：listXferFilter 轉帳類型
 let balMode = 'today', balMonth = '', balYear = '';   // V3.12：資產負債表檢視
@@ -509,6 +520,32 @@ function perfMark(kind, t0){
 }
 
 /* ---------- utils ---------- */
+/** Display-only: strip emoji / pictographs. Never use this when reading or writing Sheet fields. */
+function stripEmoji(str){
+  const s = String(str == null ? '' : str);
+  try {
+    return s
+      .replace(/\u200D/g, '')
+      .replace(/(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:\uFE0F)?(?:\u200D(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:\uFE0F)?)*/gu, '')
+      .replace(/[\u{1F1E6}-\u{1F1FF}]/gu, '')
+      .replace(/[\u2600-\u27BF\u2300-\u23FF\uFE00-\uFE0F]/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  } catch (e) {
+    return s.replace(/[\uFE00-\uFE0F\u200D]/g, '').replace(/\s{2,}/g, ' ').trim();
+  }
+}
+function catText(name){
+  const raw = String(name == null ? '' : name);
+  const t = stripEmoji(raw);
+  return t || raw;
+}
+function catMono(name, type){
+  const t = catText(name);
+  if (t) return t.slice(0, 1);
+  return type === '收入' ? '收' : (type === '轉帳' ? '轉' : '支');
+}
+
 const $ = id => document.getElementById(id);
 const fmtNum = (n, dec) => (Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:dec, maximumFractionDigits:dec});
 function moneyTxt(n, ccy, signed){
@@ -598,7 +635,7 @@ function bindItemSuggest(prefix, state){
   const render = list => {
     items = list;
     if (!list.length) { hide(true); return; }
-    dd.innerHTML = list.map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('');
+    dd.innerHTML = list.map((t, i) => `<button type="button" data-i="${i}">${esc(stripEmoji(t) || t)}</button>`).join('');
     dd.hidden = false; dd.classList.add('on'); open = true; placeItemDd_(inp, dd);
   };
   const refresh = () => { if (document.activeElement !== inp) return; render(itemSuggestions(state.type, state.cat, inp.value)); };
@@ -673,8 +710,8 @@ function formHTML(prefix, e){
 }
 function renderCats(prefix, state){
   $(prefix+'cats').innerHTML = catsOf(state.type).map(c =>
-    `<button type="button" class="chip${c.name===state.cat?' on':''}" data-cat="${esc(c.name)}"><span class="e">${c.icon}</span>${esc(c.name)}<small>${esc(c.en)}</small></button>`).join('') +
-    `<button type="button" class="chip add" data-addcat="1"><span class="e">＋</span>加類別<small>Add category</small></button>`;
+    `<button type="button" class="chip${c.name===state.cat?' on':''}" data-cat="${esc(c.name)}">${esc(catText(c.name))}<small>${esc(c.en)}</small></button>`).join('') +
+    `<button type="button" class="chip add" data-addcat="1">加類別<small>Add category</small></button>`;
 }
 function fxHint(prefix, state){
   const el = $(prefix+'fx'); if(!el) return;
@@ -819,24 +856,22 @@ function readForm(prefix, state){
 
 /* ---------- 加類別（即刻喺部機加，背景同步去「類別」分頁）---------- */
 function openAddCat(type, done){
-  let icon = type === '收入' ? '💰' : '🏷️', t = type;
+  let t = type;
   $('modalBox').innerHTML = `<h3>加類別 Add category</h3>
     <div class="seg" id="ac_type">${['支出','收入'].map(x => `<button type="button" data-type="${x}" class="${x===t?'on':''}">${x} ${TYPE_EN[x]}</button>`).join('')}</div>
     <div class="card">
       <div class="field" style="margin-top:0"><label>中文名 Name</label><input id="ac_name" maxlength="12" placeholder="例如：寵物"></div>
       <div class="field"><label>English（可以唔填 optional）</label><input id="ac_en" maxlength="30" placeholder="e.g. Pets"></div>
-      <div class="field"><label>圖示 Icon</label><div class="emojis" id="ac_icons">${EMOJI_CHOICES.map(e => `<button type="button" class="${e===icon?'on':''}" data-e="${e}">${e}</button>`).join('')}</div></div>
     </div>
     <button class="btn" id="ac_save">加入 Add</button><button class="btn ghost" id="ac_cancel">取消 Cancel</button>`;
   $('modal').classList.add('on');
   $('ac_type').onclick = ev => { const b = ev.target.closest('[data-type]'); if(!b) return; t = b.dataset.type;
     [...$('ac_type').children].forEach(x => x.classList.toggle('on', x===b)); };
-  $('ac_icons').onclick = ev => { const b = ev.target.closest('[data-e]'); if(!b) return; icon = b.dataset.e;
-    [...$('ac_icons').children].forEach(x => x.classList.toggle('on', x===b)); };
   $('ac_cancel').onclick = () => $('modal').classList.remove('on');
   $('ac_save').onclick = async () => {
     const name = $('ac_name').value.trim(); if (!name) return toast('請輸入類別名 Enter a name');
     if (D.categories.some(x => x.type === t && x.name === name)) return toast('已經有「' + name + '」呢個類別');
+    const icon = t === '收入' ? '💰' : '🏷️';   // Sheet 相容預設，介面唔顯示
     await V.enqueueCfg('addCategory', [{type: t, name, en: $('ac_en').value.trim(), icon}]);   // 只等本機 IndexedDB
     recompute(); $('modal').classList.remove('on'); toast(`已加「${name}」✓${isOff() ? '（有網自動同步）' : ''}`);
     renderAll(true); if (t === type) done(name);
@@ -929,7 +964,7 @@ function catRows(rs, type){
   const by = {}; rs.forEach(r => by[r.cat] = (by[r.cat]||0) + r.amount);
   const list = Object.entries(by).sort((a,b)=>b[1]-a[1]); const max = list.length ? list[0][1] : 1;
   return list.map(([c,v]) => { const m = catMeta(c, type); return `
-    <div class="catrow"><span>${m.icon}</span><span>${esc(c)}${m.en?`<br><span class="en" style="font-size:10px;color:var(--sub)">${esc(m.en)}</span>`:''}</span>
+    <div class="catrow"><span>${esc(catText(c))}${m.en?`<br><span class="en" style="font-size:10px;color:var(--sub)">${esc(m.en)}</span>`:''}</span>
       <div class="bar"><i style="width:${v/max*100}%;background:${m.color}"></i></div>
       <span class="v${type==='收入'?' inc':''}">${type==='收入'?'+':''}${hkd(v)}</span></div>`; }).join('');
 }
@@ -1088,7 +1123,7 @@ function renderSum(){
   $('sumWhat').innerHTML = SUM_WHAT.map(([k,zh,en]) => `<button type="button" data-w="${k}" class="${k===what?'on':''}">${zh} ${en}</button>`).join('');
   $('sumPer').innerHTML = SUM_PER.map(([k,zh,en]) => `<button type="button" data-p="${k}" class="${k===per?'on':''}">${zh} ${en}</button>`).join('');
   $('sumAcct').innerHTML = `<span style="font-size:12px;color:var(--sub);align-self:center">戶口 Accts</span>` +
-    ACCTS.map(a => `<button type="button" class="pill${sumAccts.includes(a)?' on':''}" data-sa="${a}">${sumAccts.includes(a)?'☑':'☐'} ${a}</button>`).join('');
+    ACCTS.map(a => `<button type="button" class="pill${sumAccts.includes(a)?' on':''}" data-sa="${a}">${a}</button>`).join('');
   renderSumInvest();
   $('sumBody').innerHTML = per === 'year' ? yearView(what) : per === 'month' ? monthView(what) : dayView(what);
 }
@@ -1231,7 +1266,7 @@ function renderList(){
   const fcats = D.categories.filter(c => used.has(c.type + '|' + c.name))
     .concat(unknownKeys.map(k => { const [t, n] = k.split('|'); return {...catMeta(n, t), type: t}; }));
   const pills = [['全部','全部 All'],['支出','支出 Expense'],['收入','收入 Income'],
-    ...fcats.map(c => ['c:'+c.type+'|'+c.name, `${c.icon} ${esc(c.name)}${c.en?' <span class="en">'+esc(c.en)+'</span>':''}`])];
+    ...fcats.map(c => ['c:'+c.type+'|'+c.name, `${esc(catText(c.name))}${c.en?' <span class="en">'+esc(c.en)+'</span>':''}`])];
   if (listFilter === '轉帳') listFilter = '全部';
   $('filter').innerHTML = pills.map(([k,l]) => `<button class="pill${k===listFilter?' on':''}" data-f="${esc(k)}">${l}</button>`).join('');
   $('filter').onclick = ev => { const b = ev.target.closest('[data-f]'); if(!b) return; listFilter = b.dataset.f; listDays = 60; renderList(); };
@@ -1254,9 +1289,9 @@ function renderList(){
     <div class="group">${items.map(r => { const m = catMeta(r.cat, r.type); const isC = String(r.acct||'').toUpperCase()==='C';
       return `
       <div class="item${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
-        <div class="ic" style="background:${m.color}22">${m.icon}</div>
-        <div class="t"><b>${esc(r.item)}${isC?'<span class="badge-c">C 待還</span>':''}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">未同步</span>':''}</b>
-          <small><span class="acctlbl">(${ACCTS.includes(r.acct) ? r.acct : 'A'}帳)</span>${isInc(r)?'收入 · ':''}${esc(r.cat)}${m.en?' '+esc(m.en):''}${r.pay?' · '+esc(r.pay):''}${r.note && r.note!=='示範' ? ' · '+esc(r.note):''}</small></div>
+        <div class="ic" style="background:${m.color}33;border-color:${m.color}66">${esc(catMono(r.cat, r.type))}</div>
+        <div class="t"><b>${esc(stripEmoji(r.item) || r.item)}${isC?'<span class="badge-c">C 待還</span>':''}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">未同步</span>':''}</b>
+          <small><span class="acctlbl">(${ACCTS.includes(r.acct) ? r.acct : 'A'}帳)</span>${isInc(r)?'收入 · ':''}${esc(catText(r.cat))}${m.en?' '+esc(m.en):''}${r.pay?' · '+esc(stripEmoji(r.pay)||r.pay):''}${r.note && r.note!=='示範' ? ' · '+esc(stripEmoji(r.note)||r.note):''}</small></div>
         <div class="a${isInc(r)?' inc':''}">${isInc(r)?'+':''}${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}${r.est ? ` <span class="esttag">· ${r.pending ? '離線估計' : '估計'}</span>` : ''}</small>` : ''}</div>
       </div>`; }).join('')}</div>`; }).join('') +
     (allDays.length > listDays ? `<button class="more" id="listMore">顯示更多 Show more（仲有 ${allDays.length - listDays} 日）</button>` : '');
@@ -1515,42 +1550,129 @@ function chgHtml(n){
   const cls = n > 0 ? 'up' : 'dn';
   return `<span class="chg ${cls}">${n>0?'+':'−'}${fmtBal(Math.abs(n))}</span>`;
 }
-function balReadoutInner(label, pt){
-  const rows = BAL_ACCTS.map(a => [a, pt[a]]).concat([['C 待還', pt.C], ['D 未付', pt.D]]);
+const BAL_SERIES = [
+  {id:'Personal-bank', short:'Pers-bk', color:'#3B82F6'},
+  {id:'Personal-investment', short:'Pers-inv', color:'#22D3EE'},
+  {id:'Retirement-bank', short:'Ret-bk', color:'#60A5FA'},
+  {id:'Retirement-investment', short:'Ret-inv', color:'#64748B'},
+  {id:'Year End', short:'Year End', color:'#14B8A6'},
+  {id:'C', short:'C 待還', color:'#34D399'},
+  {id:'D', short:'D 未付', color:'#FB7185'}
+];
+function balKeysAll(){ return BAL_SERIES.map(s => s.id); }
+function balKeys(){
+  try {
+    const v = JSON.parse(localStorage.getItem('vault.balChartKeys') || 'null');
+    if (Array.isArray(v)) {
+      const ok = v.filter(k => balKeysAll().includes(k));
+      if (ok.length) return ok;
+    }
+  } catch (e) {}
+  return balKeysAll();
+}
+function setBalKeys(keys){
+  const all = balKeysAll();
+  const ok = (keys || []).filter(k => all.includes(k));
+  try { localStorage.setItem('vault.balChartKeys', JSON.stringify(ok.length ? ok : all)); } catch (e) {}
+}
+function toggleBalKey(id){
+  const all = balKeysAll();
+  if (id === '*') { setBalKeys(all); return; }
+  let cur = balKeys();
+  if (cur.length === all.length) { setBalKeys([id]); return; }
+  if (cur.includes(id)) cur = cur.filter(k => k !== id);
+  else cur = all.filter(k => cur.includes(k) || k === id);
+  setBalKeys(cur.length ? cur : all);
+}
+function visTotal(pt, keys){
+  let s = 0;
+  (keys || []).forEach(k => {
+    const v = Number(pt[k]) || 0;
+    s += (k === 'D') ? -v : v;
+  });
+  return s;
+}
+function balReadoutInner(label, pt, keys){
+  keys = keys || balKeys();
+  const rows = BAL_SERIES.map(s => [s, Number(pt[s.id]) || 0]);
   return `<div class="bal-ro-head"><span class="bal-ro-period">${esc(label)}</span><span class="bal-ro-total">${esc(moneyTxt(pt.total, 'HKD', false))}</span></div>
-    <div class="bal-ro-grid">${rows.map(([k,v]) => `<div><span>${esc(k)}</span><span>${esc(moneyTxt(v, 'HKD', false))}</span></div>`).join('')}</div>`;
+    <div class="bal-ro-grid">${rows.map(([s,v]) => `<div class="${keys.includes(s.id)?'':'off'}"><span><i class="bal-ro-sw" style="background:${s.color}"></i>${esc(s.id === 'C' ? 'C 待還' : s.id === 'D' ? 'D 未付' : s.id)}</span><span>${esc(moneyTxt(v, 'HKD', false))}</span></div>`).join('')}</div>`;
+}
+function balFiltersHTML(keys){
+  const allOn = keys.length === BAL_SERIES.length;
+  return `<div class="bal-filters" id="balFilters">
+    <button type="button" data-bk="*" class="${allOn?'on':''}">全部 All</button>
+    ${BAL_SERIES.map(s => `<button type="button" data-bk="${esc(s.id)}" class="${keys.includes(s.id)?'on':''}"><i class="sw" style="background:${s.color}"></i>${esc(s.short)}</button>`).join('')}
+  </div>`;
 }
 function balInteractiveHTML(kind, labels, points, idx){
   const n = labels.length;
-  const totals = points.map(p => p.total);
-  const min = Math.min.apply(null, totals.concat([0]));
-  const max = Math.max.apply(null, totals.concat([1]));
-  const span = (max - min) || 1;
-  const W = 320, H = 160, padL = 16, padR = 16, padT = 14, padB = 26;
-  const xAt = i => n <= 1 ? W/2 : padL + i * (W - padL - padR) / (n - 1);
+  const keys = balKeys();
+  const series = BAL_SERIES.filter(s => keys.includes(s.id));
+  let min = 0, max = 0;
+  const vis = points.map(pt => visTotal(pt, keys));
+  points.forEach((pt, i) => {
+    let pos = 0, neg = 0;
+    series.forEach(s => {
+      const v = Number(pt[s.id]) || 0;
+      if (v >= 0) pos += v; else neg += v;
+    });
+    max = Math.max(max, pos, vis[i]);
+    min = Math.min(min, neg, vis[i]);
+  });
+  if (!(max > min)) max = min + 1;
+  const span = max - min;
+  const W = 320, H = 176, padL = 10, padR = 10, padT = 12, padB = 24;
+  const inner = W - padL - padR;
+  const gap = n > 18 ? 1.2 : (n > 10 ? 2 : 3);
+  const bw = Math.max(2, inner / n - gap);
+  const xAt = i => n <= 1 ? W/2 : padL + (i + 0.5) * (inner / n);
+  const barX = i => xAt(i) - bw / 2;
   const yAt = v => padT + (1 - (v - min) / span) * (H - padT - padB);
+  const y0 = yAt(0);
+  let bars = '';
+  points.forEach((pt, i) => {
+    let posAcc = 0, negAcc = 0;
+    const segs = [];
+    series.forEach(s => {
+      const v = Number(pt[s.id]) || 0;
+      if (!v) return;
+      if (v >= 0) {
+        const y2 = yAt(posAcc + v), y1 = yAt(posAcc);
+        segs.push(`<rect x="${barX(i).toFixed(2)}" y="${y2.toFixed(2)}" width="${bw.toFixed(2)}" height="${Math.max(0.8, y1 - y2).toFixed(2)}" fill="${s.color}" rx="0.8"></rect>`);
+        posAcc += v;
+      } else {
+        const y1 = yAt(negAcc), y2 = yAt(negAcc + v);
+        segs.push(`<rect x="${barX(i).toFixed(2)}" y="${y1.toFixed(2)}" width="${bw.toFixed(2)}" height="${Math.max(0.8, y2 - y1).toFixed(2)}" fill="${s.color}" rx="0.8"></rect>`);
+        negAcc += v;
+      }
+    });
+    bars += `<g class="bal-col${i===idx?' on':''}" data-bi="${i}">${segs.join('')}</g>`;
+  });
   let d = '';
-  totals.forEach((v, i) => { d += (i ? ' L' : 'M') + xAt(i).toFixed(2) + ',' + yAt(v).toFixed(2); });
-  const area = d + ' L' + xAt(n-1).toFixed(2) + ',' + (H-padB) + ' L' + xAt(0).toFixed(2) + ',' + (H-padB) + ' Z';
+  vis.forEach((v, i) => { d += (i ? ' L' : 'M') + xAt(i).toFixed(2) + ',' + yAt(v).toFixed(2); });
   const step = n > 14 ? 3 : (n > 8 ? 2 : 1);
   const ticks = labels.map((lab, i) => {
     if (i !== n-1 && i !== 0 && i % step) return '';
     const short = kind === 'year' ? lab : (lab.slice(0,4) === labels[0].slice(0,4) && i !== 0 && labels[i-1] && labels[i-1].slice(0,4)===lab.slice(0,4) ? lab.slice(5) : lab.slice(2));
-    return `<text x="${xAt(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="8" fill="#64748B">${esc(short)}</text>`;
+    return `<text x="${xAt(i).toFixed(1)}" y="${H-7}" text-anchor="middle" font-size="8" fill="#64748B">${esc(short)}</text>`;
   }).join('');
   const i0 = Math.max(0, Math.min(n-1, idx));
-  const x0 = xAt(i0)/W*100, y0 = yAt(points[i0].total)/H*100;
-  window.__balChart = { kind, labels, points, idx: i0, min, span, W, H, padL, padR, padT, padB };
+  const x0 = xAt(i0)/W*100, yDot = yAt(vis[i0])/H*100;
+  const zero = (min < 0 && max > 0) ? `<line class="bal-zero" x1="${padL}" x2="${W-padR}" y1="${y0.toFixed(2)}" y2="${y0.toFixed(2)}" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"></line>` : '';
+  window.__balChart = { kind, labels, points, idx: i0, min, span, W, H, padL, padR, padT, padB, keys, vis, xAt, yAt, barW: bw };
   return `<div class="bal-ichart" id="balIChart">
-      <div class="bal-readout" id="balReadout">${balReadoutInner(labels[i0], points[i0])}</div>
+      <div class="bal-readout" id="balReadout">${balReadoutInner(labels[i0], points[i0], keys)}</div>
+      ${balFiltersHTML(keys)}
       <div class="bal-chart-touch" id="balChartHit">
         <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
-          <path d="${area}" fill="#1E3A5F" fill-opacity="0.12"></path>
-          <path d="${d}" fill="none" stroke="#1E3A5F" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+          ${zero}
+          ${bars}
+          <path d="${d}" fill="none" stroke="#E5A952" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
           ${ticks}
         </svg>
         <div class="bal-cross" id="balCross" style="left:${x0}%"></div>
-        <div class="bal-dot" id="balDot" style="left:${x0}%;top:${y0}%"></div>
+        <div class="bal-dot" id="balDot" style="left:${x0}%;top:${yDot}%"></div>
       </div>
     </div>`;
 }
@@ -1558,17 +1680,18 @@ function bindBalChart(){
   const el = $('balChartHit');
   if (!el || !window.__balChart) return;
   const data = window.__balChart;
-  const xAt = i => data.labels.length <= 1 ? data.W/2 : data.padL + i * (data.W - data.padL - data.padR) / (data.labels.length - 1);
-  const yAt = v => data.padT + (1 - (v - data.min) / data.span) * (data.H - data.padT - data.padB);
+  const xAt = i => data.xAt(i);
+  const yAt = v => data.yAt(v);
   const apply = (i, commit) => {
     i = Math.max(0, Math.min(data.labels.length - 1, i));
     const lab = data.labels[i], pt = data.points[i];
     data.idx = i;
-    const ro = $('balReadout'); if (ro) ro.innerHTML = balReadoutInner(lab, pt);
-    const xpct = xAt(i) / data.W * 100, ypct = yAt(pt.total) / data.H * 100;
+    const ro = $('balReadout'); if (ro) ro.innerHTML = balReadoutInner(lab, pt, data.keys);
+    const xpct = xAt(i) / data.W * 100, ypct = yAt(data.vis[i]) / data.H * 100;
     const c = $('balCross'), d = $('balDot');
     if (c) c.style.left = xpct + '%';
     if (d) { d.style.left = xpct + '%'; d.style.top = ypct + '%'; }
+    el.querySelectorAll('.bal-col').forEach(g => g.classList.toggle('on', Number(g.getAttribute('data-bi')) === i));
     document.querySelectorAll('#balBody .bal-table tbody tr').forEach(tr => tr.classList.toggle('on', tr.getAttribute('data-balp') === lab));
     if (commit) {
       if (data.kind === 'month') balMonth = lab;
@@ -1576,36 +1699,57 @@ function bindBalChart(){
       if ($('balLabel')) $('balLabel').textContent = data.kind === 'month' ? monthLabel(lab) : (lab + '年');
     }
   };
+  const clientXOf = ev => {
+    if (ev.touches && ev.touches[0]) return ev.touches[0].clientX;
+    if (ev.changedTouches && ev.changedTouches[0]) return ev.changedTouches[0].clientX;
+    return ev.clientX;
+  };
   const idxFromX = clientX => {
     const rect = el.getBoundingClientRect();
     const t = rect.width ? (clientX - rect.left) / rect.width : 0;
-    const x = Math.max(data.padL, Math.min(data.W - data.padR, t * data.W));
     const n = data.labels.length;
     if (n <= 1) return 0;
-    return Math.round((x - data.padL) / (data.W - data.padL - data.padR) * (n - 1));
+    const i = Math.floor(t * n);
+    return Math.max(0, Math.min(n - 1, i));
   };
-  let pid = null, sx = 0, sy = 0, armed = false, scrolling = false;
-  const down = ev => { pid = ev.pointerId; sx = ev.clientX; sy = ev.clientY; armed = false; scrolling = false; };
-  const move = ev => {
-    if (pid == null || ev.pointerId !== pid) return;
-    const dx = ev.clientX - sx, dy = ev.clientY - sy;
-    if (!armed && !scrolling) {
-      if (dx * dx + dy * dy < 64) return;
-      if (Math.abs(dy) > Math.abs(dx)) { scrolling = true; pid = null; return; }
-      armed = true;
-      try { el.setPointerCapture(ev.pointerId); } catch (e) {}
-    }
-    if (armed) { ev.preventDefault(); apply(idxFromX(ev.clientX), false); }
+  let tracking = false, usingTouch = false;
+  const start = (ev, isTouch) => {
+    if (isTouch) usingTouch = true;
+    else if (usingTouch) return;
+    if (ev.cancelable) ev.preventDefault();
+    tracking = true;
+    apply(idxFromX(clientXOf(ev)), false);
+    if (!isTouch && ev.pointerId != null) { try { el.setPointerCapture(ev.pointerId); } catch (e) {} }
   };
-  const end = ev => {
-    if (pid == null || (ev && ev.pointerId !== pid)) return;
-    if (!scrolling) apply(idxFromX((ev && ev.clientX) || sx), true);
-    pid = null; armed = false; scrolling = false;
+  const move = (ev, isTouch) => {
+    if (isTouch) usingTouch = true;
+    else if (usingTouch) return;
+    if (!tracking && !isTouch) return;
+    if (ev.cancelable) ev.preventDefault();
+    tracking = true;
+    apply(idxFromX(clientXOf(ev)), false);
   };
-  el.addEventListener('pointerdown', down);
-  el.addEventListener('pointermove', move, { passive: false });
-  el.addEventListener('pointerup', end);
-  el.addEventListener('pointercancel', () => { pid = null; armed = false; scrolling = false; });
+  const end = (ev, isTouch) => {
+    if (!isTouch && usingTouch) return;
+    if (tracking) apply(idxFromX(clientXOf(ev)), true);
+    tracking = false;
+    if (isTouch) setTimeout(() => { usingTouch = false; }, 50);
+  };
+  el.addEventListener('touchstart', ev => start(ev, true), { passive: false });
+  el.addEventListener('touchmove', ev => move(ev, true), { passive: false });
+  el.addEventListener('touchend', ev => end(ev, true));
+  el.addEventListener('touchcancel', ev => end(ev, true));
+  el.addEventListener('pointerdown', ev => start(ev, false));
+  el.addEventListener('pointermove', ev => move(ev, false), { passive: false });
+  el.addEventListener('pointerup', ev => end(ev, false));
+  el.addEventListener('pointercancel', ev => end(ev, false));
+  const filt = $('balFilters');
+  if (filt) filt.onclick = ev => {
+    const b = ev.target.closest('[data-bk]'); if (!b) return;
+    toggleBalKey(b.dataset.bk);
+    dirty.bal = true;
+    renderBal();
+  };
 }
 
 function sparkHTML(values, highlightIdx){
@@ -1736,7 +1880,7 @@ function renderBal(){
   };
 }
 
-/* ---------- V4.4 投資頁 ---------- */
+/* ---------- V4.5 投資頁 ---------- */
 const INV_EVENT_ZH = {
   deposit: '存入 出入金', withdrawal: '提取', fx: '貨幣兌換',
   stock_trade: '股票成交', option_trade: '期權成交',
