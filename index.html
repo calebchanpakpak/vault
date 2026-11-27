@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vault</title>
-<!-- Vault V4.3（離線優先；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
+<!-- Vault V4.4（離線優先；V4.4：資產按月／按年互動圖、專業配色、去掉介面 emoji、全 App 統一 US$/HK$ 前綴、刪走各頁長篇說明；V4.3：投資頁整理（明細收合、統一 US$/HK$、每單交易篩選統計）；V4.2：優惠／卡券當收入計入已實現同市值；V4.1：投資頁已實現／市值開關（股票ETF每日收市價，結單市值優先；期權兩邊都只計已實現；MMF 快照；股息淨預扣稅；每單交易 FIFO）；V4.0／V3.20：投資頁（Trade Log 已實現盈虧時間線；Personal-investment 加 FIFO P&L HKD；Retirement-investment 唔計賺蝕）；V3.19：每月預算（已使／仲剩／超支／每日可用）只計 A 戶口；V3.18：總覽加戶口剔選（A／B／C／D／F），只計剔咗嘅戶口；V3.17：資產頁移除 Retirement-bank 7 月底綠色備註；V3.16：修正期初日期 Date locale 令資產頁跳過全部轉帳／流水；Personal-bank 期初 −4.97＝今日 −1,322.24；按月／按年趨勢圖覆蓋五帳戶＋總財富；升版強制重拉 getData；V3.15：資產頁移除 C 待還 vs 749.33 ⚠️ 提示（C 985 已確認正確）；V3.14：轉帳四類型篩選（每月收入供款／投資轉帳／Year End 支出／其他）＋備註；轉帳表單改類型掣；舊轉帳 display-only 對應；V3.13：轉帳畫面完全收埋 A–F 帳戶揀選（修正 hidden 被 CSS 蓋過）；V3.12：資產負債表五帳戶 Personal-bank／Personal-investment／Retirement-bank／Retirement-investment／Year End＋C−D；紀錄分 收支／轉帳；轉帳🔁灰階 From→To；C 待還徽章；V3.11：帳戶 Transfer（唔計支出／收入；主記錄列表唔顯示；轉帳畫面下列出轉帳記錄可改刪）；Sheet 加「轉入帳戶」欄；V3.10：記帳／修改畫面嘅帳戶揀選（A／B／C／D／F）移到 支出／收入 正下面；V3.9：記錄列表加戶口篩選；V3.8：加帳戶 F；V3.7：記錄列表項目名完整顯示＋「顯示更多」；V3.6：記錄列表日期加年份；V3.5：底欄「記帳」；V3.4：項目輸入建議；V3.3：帳戶 A／B／C／D；V3.2／V3.1：總覽）：靜態檔（GitHub Pages 等）+ IndexedDB + 背景同步 Apps Script JSON API -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#1E3A5F">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,14 +15,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 :root{
-  --bg:#f4f5f7; --card:#fff; --ink:#1d1f23; --sub:#6b7280; --line:#e6e8eb;
-  --brand:#0f766e; --inc:#16a34a; --brand2:#14b8a6; --warn:#dc2626; --amber:#d97706;
+  --bg:#F5F6F8; --card:#FFFFFF; --ink:#0F172A; --sub:#64748B; --line:#E5E7EB;
+  --brand:#1E3A5F; --inc:#059669; --brand2:#0F4C81; --warn:#DC2626; --amber:#B45309;
+  --muted:#64748B;
   --r:16px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","PingFang TC","Noto Sans CJK TC","Noto Sans TC",sans-serif;
-  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none;font-variant-numeric:tabular-nums}
 button,input,select{font:inherit;color:inherit}
 #app{display:flex;flex-direction:column;height:100%}
 header{padding:14px 18px 10px;background:var(--bg)}
@@ -30,23 +31,24 @@ header h1 .en{font-size:14px;font-weight:600;color:var(--sub);margin-left:6px;le
 header h1{margin:0;font-size:23px;font-weight:700;letter-spacing:.5px}
 header .sub{color:var(--sub);font-size:13px;margin-top:2px}
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px 20px}
-.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(15,23,42,.04)}
 .label{font-size:12px;color:var(--sub);margin:0 0 8px}
 .en{font-size:.82em;opacity:.8}
 /* tab bar */
 nav{display:flex;background:rgba(255,255,255,.96);border-top:1px solid var(--line);
   padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:0;background:none;padding:4px 0;color:#9ca3af;font-size:10.5px;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
-nav button .i{font-size:22px;line-height:1;filter:grayscale(1);opacity:.6}
-nav.tabs5 button{font-size:10px;padding:3px 1px;gap:1px}
-nav.tabs5 button .i{font-size:19px}
+nav button{flex:1;border:0;background:none;padding:6px 0 4px;color:#94A3B8;font-size:10.5px;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+nav button .i{width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:.7}
+nav button .i svg{width:22px;height:22px;display:block}
+nav.tabs5 button{font-size:10px;padding:5px 1px 3px;gap:2px}
+nav.tabs5 button .i,nav.tabs5 button .i svg{width:20px;height:20px}
 nav.tabs5 button .en{display:block;font-size:8.5px;margin-left:0;letter-spacing:0;opacity:.75}
 nav button.on{color:var(--brand);font-weight:600}
-nav button.on .i{filter:none;opacity:1}
+nav button.on .i{opacity:1}
 .view{display:none}.view.on{display:block}
 /* month strip */
-.mini{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
-.mini b{font-size:19px}.mini small{opacity:.85;font-size:12px}
+.mini{display:flex;justify-content:space-between;align-items:center;background:var(--brand);color:#fff;border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
+.mini b{font-size:19px;font-variant-numeric:tabular-nums}.mini small{opacity:.85;font-size:12px}
 /* amount */
 .amt{display:flex;align-items:center;gap:6px;border-bottom:2px solid var(--line);padding:4px 2px 8px}
 .amt span{font-size:26px;color:var(--sub);font-weight:600;white-space:nowrap}
@@ -57,7 +59,7 @@ nav button.on .i{filter:none;opacity:1}
 .cur b{display:block;font-size:13px;font-weight:700}
 .cur small{display:block;font-size:10px;color:var(--sub)}
 .cur.on{border-color:var(--brand);background:var(--brand);color:#fff}
-.cur.on small{color:#d1fae5}
+.cur.on small{color:rgba(255,255,255,.8)}
 .fxline{font-size:12px;color:var(--sub);margin-top:8px;min-height:16px}
 .fxline.err{color:var(--warn)}
 /* 支出 / 收入 */
@@ -67,12 +69,12 @@ nav button.on .i{filter:none;opacity:1}
 .seg button{border:0;background:none;border-radius:10px;padding:8px 0;font-size:14px;font-weight:600;color:var(--sub)}
 .seg button.on{background:#fff;color:var(--warn);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .seg button.on[data-type="收入"]{color:var(--inc)}
-.seg button.on[data-type="轉帳"]{color:#6366f1}
+.seg button.on[data-type="轉帳"]{color:var(--brand)}
 .inc{color:var(--inc)!important}
-.xfer{color:#6366f1!important}
+.xfer{color:var(--brand)!important}
 .xferlist{margin-top:14px}
 .xferlist .label{margin-bottom:6px}
-.item.xfer .ic{background:#9ca3af33}
+.item.xfer .ic{background:#F1F5F9;font-size:12px;font-weight:700;color:var(--sub)}
 .item.xfer .a{color:#6b7280}
 .assetseg{grid-template-columns:1fr}.assetseg button{font-size:12px;padding:8px 6px;text-align:left}
 .assetseg button{font-size:12.5px;padding:8px 4px}
@@ -85,7 +87,7 @@ nav button.on .i{filter:none;opacity:1}
 .modal h3{margin:0 0 10px;text-align:center;font-size:17px}
 .emojis{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .emojis button{border:1.5px solid var(--line);background:#fff;border-radius:10px;width:38px;height:38px;font-size:19px;padding:0}
-.emojis button.on{border-color:var(--brand);background:#ecfdf9}
+.emojis button.on{border-color:var(--brand);background:#F1F5F9}
 /* 匯率提示 */
 .notice{margin:0 14px 10px;border-radius:12px;padding:9px 34px 9px 12px;font-size:12px;line-height:1.45;position:relative;background:#fef3c7;color:#92400e;border:1px solid #fde68a}
 .notice.perm{background:#fee2e2;color:#991b1b;border-color:#fecaca}
@@ -100,7 +102,7 @@ nav button.on .i{filter:none;opacity:1}
 .chip.on small{color:var(--brand)}
 .chip.add{border-style:dashed;color:var(--brand)}
 .chip .e{display:block;font-size:20px;margin-bottom:2px}
-.chip.on{border-color:var(--brand);background:#ecfdf9;color:var(--brand);font-weight:600}
+.chip.on{border-color:var(--brand);background:#F1F5F9;color:var(--brand);font-weight:600}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
 .pill{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;white-space:nowrap}
 .pill.on{border-color:var(--brand);background:var(--brand);color:#fff}
@@ -115,7 +117,7 @@ nav button.on .i{filter:none;opacity:1}
   box-shadow:0 10px 28px rgba(0,0,0,.14);max-height:min(240px,42vh);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px}
 .itemdd.on{display:block}
 .itemdd button{display:block;width:100%;text-align:left;border:0;background:none;padding:11px 12px;font-size:15px;border-radius:8px;color:var(--ink)}
-.itemdd button:active,.itemdd button.hi{background:#ecfdf9;color:var(--brand)}
+.itemdd button:active,.itemdd button.hi{background:#F1F5F9;color:var(--brand)}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;background:var(--brand);color:#fff;margin-top:14px}
 .btn:disabled{opacity:.5}
 #saveBtn,#edSave{position:sticky;bottom:10px;box-shadow:0 6px 18px rgba(15,118,110,.35);z-index:5}
@@ -148,7 +150,7 @@ nav button.on .i{filter:none;opacity:1}
 [hidden]{display:none!important}   /* V3.13：hidden 屬性要真係收埋（之前 .acctrow 嘅 display:flex 蓋過咗） */
 .acctrow{display:flex;align-items:center;gap:10px;margin:8px 0 12px}.acctrow .seg{flex:1}
 .acctlab{font-size:13px;font-weight:600;color:var(--sub);line-height:1.1;text-align:center}.acctlab small{font-size:10px;font-weight:400}
-.acctlbl{color:#6366f1;font-weight:600;font-size:11px;margin-right:4px}
+.acctlbl{color:var(--brand);font-weight:600;font-size:11px;margin-right:4px}
 .seg button.on[data-w="exp"]{color:var(--warn)}.seg button.on[data-w="inc"]{color:var(--inc)}
 .seg button.on[data-w="net"],.seg button.on[data-p]{color:var(--brand)}
 .ytop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
@@ -234,10 +236,10 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 
 /* V3.12 Balance Sheet */
 .bal-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.bal-card{background:var(--card);border-radius:var(--r);padding:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.bal-card{background:var(--card);border-radius:var(--r);padding:12px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(15,23,42,.04)}
 .bal-card .n{font-size:12px;color:var(--muted);margin-bottom:4px}
 .bal-card .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.bal-card.total{grid-column:1/-1;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.bal-card.total{grid-column:1/-1;background:var(--brand);color:#fff;border-color:var(--brand)}
 .bal-card.total .n{color:rgba(255,255,255,.85)}
 .bal-card.warn .n::after{content:' · 需期初';font-size:10px;color:#b45309}
 .bal-table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
@@ -251,7 +253,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .bal-open .row2{gap:8px}
 
 .item.xfer{background:#f3f4f6}
-.item.xfer .ic{background:#9ca3af33;font-size:18px}
+.item.xfer .ic{background:#F1F5F9;font-size:12px;font-weight:700;color:var(--sub)}
 .item.xfer .a{color:#6b7280!important;font-weight:600}
 .item.xfer .t b{color:#374151}
 .badge-c{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;vertical-align:middle}
@@ -259,6 +261,20 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 .bal-spark{display:flex;align-items:flex-end;gap:2px;height:48px;margin:8px 0 4px;padding:0 2px}
 .bal-spark i{flex:1;background:var(--brand);opacity:.75;border-radius:2px 2px 0 0;min-width:3px}
 .bal-spark i.on{opacity:1;background:var(--brand2)}
+.bal-ichart{margin:2px 0 14px}
+.bal-readout{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.bal-ro-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bal-ro-period{font-weight:700;font-size:15px}
+.bal-ro-total{font-weight:700;font-size:16px;letter-spacing:-.02em;white-space:nowrap}
+.bal-ro-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:12px}
+.bal-ro-grid div{display:flex;justify-content:space-between;gap:8px;min-width:0}
+.bal-ro-grid span:first-child{color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bal-ro-grid span:last-child{white-space:nowrap}
+.bal-chart-touch{position:relative;height:160px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.bal-chart-touch svg{width:100%;height:100%;display:block}
+.bal-cross{position:absolute;top:10px;bottom:24px;width:1px;background:var(--brand);opacity:.4;pointer-events:none;transform:translateX(-50%)}
+.bal-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid var(--brand);pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(30,58,95,.14)}
+.bal-table tr.on td,.bal-table tr.on td:first-child{background:#F1F5F9}
 .bal-adj{font-size:11px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.4}
 .cdrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
 .cdrow .bal-card{padding:10px}
@@ -322,7 +338,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="sumAcct" style="margin:6px 0 2px"></div>
       <div id="sumInvest"></div>
       <div id="sumBody"></div>
-      <button class="btn ghost" onclick="openSettings()">⚙️ 設定 Settings（貨幣、付款方式、預設值、同步）</button>
+      <button class="btn ghost" onclick="openSettings()">設定</button>
     </section>
     <!-- 記錄 -->
     <section class="view" id="v-list">
@@ -331,7 +347,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
       <div class="pills filter" id="acctFilter" style="margin-top:6px"></div>
       <div id="list"></div>
     </section>
-    <!-- V4.3 投資 -->
+    <!-- V4.4 投資 -->
     <section class="view" id="v-inv">
       <div id="invBody"></div>
     </section>
@@ -343,11 +359,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
     </section>
   </main>
   <nav class="tabs5">
-    <button data-v="add" class="on"><span class="i">✏️</span>記帳<span class="en">Add</span></button>
-    <button data-v="sum"><span class="i">📊</span>總覽<span class="en">Summary</span></button>
-    <button data-v="bal"><span class="i">🏦</span>資產<span class="en">Balance</span></button>
-    <button data-v="inv"><span class="i">📈</span>投資<span class="en">Invest</span></button>
-    <button data-v="list"><span class="i">🧾</span>記錄<span class="en">Records</span></button>
+    <button data-v="add" class="on"><span class="i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4.5" width="15" height="15" rx="3"/><path d="M12 8.5v7M8.5 12h7"/></svg></span>記帳<span class="en">Add</span></button>
+    <button data-v="sum"><span class="i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V10M12 19V5M19 19v-6"/><path d="M4 19h16"/></svg></span>總覽<span class="en">Summary</span></button>
+    <button data-v="bal"><span class="i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M6 19V9.5L12 5l6 4.5V19M10 19v-4.5h4V19"/></svg></span>資產<span class="en">Balance</span></button>
+    <button data-v="inv"><span class="i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M5 14l4.5-5.5 3.5 3 6-7"/></svg></span>投資<span class="en">Invest</span></button>
+    <button data-v="list"><span class="i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h11M8 12h11M8 17h11M5 7h.01M5 12h.01M5 17h.01"/></svg></span>記錄<span class="en">Records</span></button>
   </nav>
 </div>
 
@@ -365,7 +381,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:10p
 const PERF = window.__vaultPerf = { taps: [], boot: {} };
 const ACCTS = ['A','B','C','D','F'];   // V3.8：加 F（爸爸扣賬卡・Finland exchange）                       // V3.3：帳戶（舊記錄冇 acct = A）
 const ASSET_ACCTS = ['Personal-bank','Personal-investment','Retirement-bank','Retirement-investment','Year End'];  // V3.11：總資產帳戶（轉帳 From／To）
-const APP_VERSION = 'V4.3';
+const APP_VERSION = 'V4.4';
 /* V3.14：轉帳類型（存做 項目 item；類別 cat 仍係「轉帳」） */
 const XFER_CATS = [
   {id:'每月收入供款', zh:'每月收入供款', en:'Monthly contribution', icon:'📥'},
@@ -433,13 +449,13 @@ function renderPill(){
   const s = V.status(), last = s.syncedAt ? ` <small>· ${fmtHM(s.syncedAt)}</small>` : '';
   const off = s.state === 'offline' || navigator.onLine === false;
   let cls = 'ok', txt;
-  if (!s.configured) { cls = 'bad'; txt = '🔗 未連線 Connect'; }
-  else if (s.failed) { cls = 'bad'; txt = `⚠️ ${s.failed} 筆失敗`; }
-  else if (s.state === 'syncing') { cls = 'busy'; txt = `🔄 同步緊${s.pending ? ' ' + s.pending : ''}`; }
-  else if (off) { cls = 'off'; txt = `📴 離線${s.pending ? ' · ' + s.pending + ' 待同步' : ''}` + last; }
-  else if (s.state === 'error') { cls = 'bad'; txt = '⚠️ 同步出錯' + (s.pending ? ' · ' + s.pending + ' 待同步' : ''); }
-  else if (s.pending) { cls = 'pend'; txt = `⏳ ${s.pending} 待同步` + last; }
-  else txt = '✓ 已同步' + last;
+  if (!s.configured) { cls = 'bad'; txt = '未連線'; }
+  else if (s.failed) { cls = 'bad'; txt = `${s.failed} 筆失敗`; }
+  else if (s.state === 'syncing') { cls = 'busy'; txt = `同步緊${s.pending ? ' ' + s.pending : ''}`; }
+  else if (off) { cls = 'off'; txt = `離線${s.pending ? ' · ' + s.pending + ' 待同步' : ''}` + last; }
+  else if (s.state === 'error') { cls = 'bad'; txt = '同步出錯' + (s.pending ? ' · ' + s.pending + ' 待同步' : ''); }
+  else if (s.pending) { cls = 'pend'; txt = `${s.pending} 待同步` + last; }
+  else txt = '已同步' + last;
   el.className = 'syncpill ' + cls; el.innerHTML = txt;
   el.title = '上次同步 Last sync：' + agoTxt(s.syncedAt) + (s.lastError ? '\n' + s.lastError : '') + '\n撳一下即刻同步 Tap to sync now';
 }
@@ -457,8 +473,8 @@ function bgSync(trigger){
   if (trigger === 'online') V.resetBackoff();
   return V.syncAll({ trigger, manual }).then(r => {
     if (!r) return;
-    if (r.failed && r.failed.length) toast(`⚠️ ${r.failed.length} 筆同步失敗，撳右上角睇`, 4000);
-    else if (manual && r.error) toast((r.network ? '📴 連唔到伺服器，改動已安全存喺部機，遲啲自動再試' : '同步失敗：' + r.error), 4000);
+    if (r.failed && r.failed.length) toast(`${r.failed.length} 筆同步失敗，撳右上角睇`, 4000);
+    else if (manual && r.error) toast((r.network ? '連唔到伺服器，改動已安全存喺部機，遲啲自動再試' : '同步失敗：' + r.error), 4000);
     else if (manual && !r.skipped) toast(r.sent ? `已同步 ${r.sent} 筆 ✓` : '已經係最新 ✓');
   });
 }
@@ -495,8 +511,23 @@ function perfMark(kind, t0){
 /* ---------- utils ---------- */
 const $ = id => document.getElementById(id);
 const fmtNum = (n, dec) => (Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:dec, maximumFractionDigits:dec});
-const hkd = n => (n < 0 ? '-' : '') + 'HK$' + fmtNum(Math.abs(n), 2);
-const origTxt = (cur, n) => cur + ' ' + fmtNum(n, curInfo(cur).dec===0 && Math.round(n)===n ? 0 : 2);
+function moneyTxt(n, ccy, signed){
+  const v = Number(n);
+  if (!Number.isFinite(v)) return '—';
+  const prefix = ccy === 'HKD' ? 'HK$' : (ccy === 'USD' ? 'US$' : String(ccy || ''));
+  const sign = signed === false ? (v < 0 ? '-' : '') : (v > 0 ? '+' : (v < 0 ? '-' : ''));
+  const abs = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return sign + prefix + ' ' + abs;
+}
+const hkd = n => moneyTxt(n, 'HKD', false);
+function origTxt(cur, n){
+  const code = String(cur || '');
+  if (code === 'USD' || code === 'HKD') return moneyTxt(n, code, false);
+  const dec = curInfo(code).dec === 0 && Math.round(n) === n ? 0 : 2;
+  const sym = String((curInfo(code).sym || code) + '').trim() || code;
+  const sign = n < 0 ? '-' : '';
+  return sign + sym + ' ' + fmtNum(Math.abs(n), dec);
+}
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const bi = (zh, en) => en ? `${zh} <span class="en">${en}</span>` : zh;
 function todayHel(){ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Helsinki'}).format(new Date()); }
@@ -653,11 +684,11 @@ function fxHint(prefix, state){
   const r = RATES[c];
   if (!r) { el.textContent = '攞緊 ' + c + ' 匯率… Getting rate…'; return; }
   el.classList.remove('est');
-  if (r.err) { el.classList.add('err'); el.textContent = '⚠️ 暫時攞唔到 ' + c + ' 匯率，儲存時會再試'; return; }
+  if (r.err) { el.classList.add('err'); el.textContent = '暫時攞唔到 ' + c + ' 匯率，儲存時會再試'; return; }
   if (r.offline) { el.classList.add('est');
-    el.textContent = `📴 離線估計 1 ${c} ≈ HK$${Number(r.rate).toFixed(r.rate<0.1?5:4)}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') + (r.date ? `（${r.date} 匯率）` : '') + '，同步時伺服器會重新計'; return; }
+    el.textContent = `離線估計 1 ${c} ≈ HK$ ${Number(r.rate).toFixed(r.rate<0.1?5:4)}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') + (r.date ? `（${r.date} 匯率）` : '') + '，同步時伺服器會重新計'; return; }
   if (r.est) { el.classList.add(r.perm ? 'err' : 'est');
-    el.textContent = `⚠️ 估計匯率 1 ${c} ≈ HK$${r.rate}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') +
+    el.textContent = `估計匯率 1 ${c} ≈ HK$ ${r.rate}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') +
       (r.perm ? '（未授權：請喺 Apps Script 執行 authorize → 允許）' : '（匯率網站暫時連唔到）'); return; }
   el.textContent = `1 ${c} ≈ HK$${r.rate.toFixed(r.rate<0.1?5:4)}` + (a>0 ? ` · 約 ${hkd(a*r.rate)}` : '') + (r.date ? `（${r.date} 匯率）` : '');
 }
@@ -677,7 +708,7 @@ function renderXferCats(prefix, state){
     state.xferCat = XFER_CAT_IDS.includes(last) ? last : XFER_CATS[0].id;
   }
   el.innerHTML = XFER_CATS.map(c =>
-    `<button type="button" class="chip${c.id===state.xferCat?' on':''}" data-xcat="${esc(c.id)}"><span class="e">${c.icon}</span>${esc(c.zh)}<small>${esc(c.en)}</small></button>`
+    `<button type="button" class="chip${c.id===state.xferCat?' on':''}" data-xcat="${esc(c.id)}">${esc(c.zh)}<small>${esc(c.en)}</small></button>`
   ).join('');
   const leg = $(prefix+'xferLegacy');
   if (leg) {
@@ -817,7 +848,7 @@ let addState = {};
 function xferListHTML(){
   const n = D.rows.filter(isXfer).length;
   return `<div class="xferlist" id="xferList"><p class="label">轉帳記錄</p>
-    <p class="bal-note">共 ${n} 筆 · 去「記錄 → 轉帳」睇完整列表／改刪。See Records → Transfers.</p></div>`;
+    <p class="bal-note">共 ${n} 筆</p></div>`;
 }
 function renderAdd(keepType){
   const lastCur = localStorage.getItem('lastCur');
@@ -951,7 +982,7 @@ function yearView(what){
     <div class="ylist">${v.map((x,i) => `<button type="button" class="${cls(i)}" data-m="${i+1}"><span>${i+1}月</span><b>${isFut(i) && !T.cnt[i] ? '—' : fmtWhat(what, x)}</b></button>`).join('')}</div>
     ${what==='net' && any ? `<div class="kv" style="margin-top:8px"><span>最好 Best · ${best+1}月</span><b style="color:${netColor(v[best])}">${signed(v[best])}</b></div>
       <div class="kv" style="margin-top:4px"><span>最差 Worst · ${worst+1}月</span><b style="color:${netColor(v[worst])}">${signed(v[worst])}</b></div>` : ''}
-    <p class="hint" style="margin:8px 2px 0">撳一個月睇嗰個月 Tap a month to view it · ${what==='exp'?'只計支出 expenses only':what==='inc'?'只計收入 income only':'收入 − 支出 income minus spending'}</p></div>`;
+    </div>`;
 }
 function monthView(what){
   const all = rowsOf(viewMonth).filter(r => !isXfer(r) && sumHas(r)), ex = all.filter(r => !isInc(r)), inc = all.filter(isInc);
@@ -1039,17 +1070,16 @@ function renderSumInvest(){
     if (sumView.per === 'year') periodLabel = ym + '年';
   }
   if (!inv) {
-    el.innerHTML = `<div class="card"><p class="label">投資 Personal-investment</p><p class="bal-note">未有 Trade Log 資料（第一次同步後會出現；離線會用上次快取）。</p></div>`;
+    el.innerHTML = `<div class="card"><p class="label">投資</p><p class="empty" style="padding:16px 0">未有投資資料</p></div>`;
     return;
   }
   const cov = (inv.coverage && inv.coverage.statementDate) || (inv.cumulative && inv.cumulative.asOfDate) || '';
   el.innerHTML = `<div class="card">
-    <p class="label">投資盈虧 ${investMode()==='mtm'?'（市值）Mark-to-market':'（已實現）Realized'} · Personal-investment</p>
-    <div class="ytop"><div class="big">${signedUsdHkd(pnlU, pnlH)}</div><small style="color:var(--sub)">累計 Cumulative · ${investMode()==='mtm'?'市值':'已實現'}</small></div>
+    <p class="label">投資盈虧 · ${investMode()==='mtm'?'市值':'已實現'}</p>
+    <div class="ytop"><div class="big">${signedUsdHkd(pnlU, pnlH)}</div><small style="color:var(--sub)">累計 · Personal-investment</small></div>
     <div class="kv" style="margin-top:8px"><span>今期 ${periodLabel}</span><span>${signedUsdHkd(periodU, periodH)}</span></div>
-    <div class="kv" style="margin-top:4px"><span>Personal-investment 今日</span><span>HK$ ${fmtBal(pi)}</span></div>
-    <div class="kv" style="margin-top:4px"><span>Retirement-investment（借出，唔計賺蝕）</span><span>HK$ ${fmtBal(ri)}</span></div>
-    <p class="inv-fx">賺蝕全部記入 Personal-investment（期初＋轉帳＋所選模式盈虧 HKD）。開關喺「投資」頁。Retirement-investment 維持轉帳餘額，當借俾 Personal-investment。設定期初同舊轉帳唔會改。結單至今 ${esc(cov) || '—'}。匯率：${esc((inv.fx && (inv.fx.source + ' ' + inv.fx.pair)) || 'Frankfurter USD→HKD')}。</p>
+    <div class="kv" style="margin-top:4px"><span>Personal-investment</span><span>${moneyTxt(pi, 'HKD', false)}</span></div>
+    <div class="kv" style="margin-top:4px"><span>Retirement-investment</span><span>${moneyTxt(ri, 'HKD', false)}</span></div>
   </div>`;
 }
 function renderSum(){
@@ -1083,8 +1113,8 @@ function editBudget(){
 /* ---------- 設定（即刻喺部機改，背景寫入 Sheet：「貨幣」「付款方式」「設定」分頁）---------- */
 function openSettings(){
   const st = D.settings || {}, s = V.status();
-  const pend = x => x.pending ? ' <span class="tag pend">⏳</span>' : '';
-  const curRows = (D.curInfo||[]).map(c => `<div class="setrow"><b>${esc(c.code)}${pend(c)}</b><span>${esc(c.name)} ${esc(c.sym)}<br><small>估計 1 ${esc(c.code)} ≈ HK$${c.est}${c.dec===0?' · 冇小數':''}</small></span>
+  const pend = x => x.pending ? ' <span class="tag pend">待</span>' : '';
+  const curRows = (D.curInfo||[]).map(c => `<div class="setrow"><b>${esc(c.code)}${pend(c)}</b><span>${esc(c.name)} ${esc(c.sym)}<br><small>估計 1 ${esc(c.code)} ≈ HK$ ${c.est}${c.dec===0?' · 冇小數':''}</small></span>
       ${c.code==='HKD' ? '<small>本位幣</small>' : `<button class="link del" data-delcur="${esc(c.code)}">刪 ✕</button>`}</div>`).join('');
   const payRows = (D.payInfo||[]).map(p => `<div class="setrow"><b>${esc(p.name)}${pend(p)}</b><span><small>${esc(p.en)}</small></span>
       <button class="link del" data-delpay="${esc(p.name)}">刪 ✕</button></div>`).join('');
@@ -1115,9 +1145,9 @@ function openSettings(){
       <div class="kv" style="margin-top:4px"><span>自動同步 Auto</span><span>開 App 時、有網時、返到 App 時、每 ${Math.round(SYNC_MS/60000) || '<1'} 分鐘</span></div>
       ${s.lastError ? `<div class="kv" style="margin-top:4px"><span>上次問題</span><span>${esc(s.lastError)}</span></div>` : ''}
       <div class="kv" style="margin-top:4px"><span>永久儲存 Persistent</span><span id="st_persist">…</span></div>
-      <button class="btn ghost" onclick="openConn()">🔗 連線設定 Server URL / token</button>
-      <button class="btn ghost" onclick="closeSheet();bgSync('manual')">🔄 而家同步 Sync now</button></div>
-    <p class="hint">舊記錄唔會受影響：刪咗嘅貨幣／付款方式照樣顯示。每月預算喺「總覽」改。類別喺「記帳」加，或者直接改「類別」分頁。設定改動即刻生效，有網先寫入 Sheet。</p>
+      <button class="btn ghost" onclick="openConn()">連線設定</button>
+      <button class="btn ghost" onclick="closeSheet();bgSync('manual')">而家同步</button></div>
+    
     <button class="btn ghost" onclick="closeSheet()">完成 Done</button>`);
   if (navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(p => { const el = $('st_persist'); if (el) el.textContent = p ? '✓ 開咗' : '未有（瀏覽器決定）'; }).catch(() => {});
   else $('st_persist').textContent = '唔支援';
@@ -1164,7 +1194,7 @@ function renderList(){
     const catCount = {}; XFER_CAT_IDS.forEach(id => catCount[id] = 0);
     allX.forEach(r => { const c = xferCatOf(r); catCount[c] = (catCount[c] || 0) + 1; });
     const xpills = [['全部', `全部 All <span class="en">${allX.length}</span>`],
-      ...XFER_CATS.map(c => [c.id, `${c.icon} ${esc(c.zh)} <span class="en">${catCount[c.id]||0}</span>`])];
+      ...XFER_CATS.map(c => [c.id, `${esc(c.zh)} <span class="en">${catCount[c.id]||0}</span>`])];
     if (listXferFilter !== '全部' && !XFER_CAT_IDS.includes(listXferFilter)) listXferFilter = '全部';
     $('filter').innerHTML = xpills.map(([k,l]) => `<button class="pill${k===listXferFilter?' on':''}" data-xf="${esc(k)}">${l}</button>`).join('');
     $('filter').onclick = ev => { const b = ev.target.closest('[data-xf]'); if(!b) return; listXferFilter = b.dataset.xf; listDays = 60; renderList(); };
@@ -1182,8 +1212,8 @@ function renderList(){
         const title = XFER_CAT_IDS.includes(raw) ? xc.zh : raw;
         return `
         <div class="item xfer${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
-          <div class="ic">${xc.icon}</div>
-          <div class="t"><b>${esc(title)}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+          <div class="ic">${({'每月收入供款':'供','投資轉帳':'投','Year End 支出':'年','其他':'他'})[xc.id]||'轉'}</div>
+          <div class="t"><b>${esc(title)}${r.pending?'<span class="tag pend">未同步</span>':''}</b>
             <small><span class="acctlbl">${esc(r.acct || '?')} → ${esc(r.toAcct || '?')}</span>${XFER_CAT_IDS.includes(raw)?'':' · '+esc(xc.zh)}${r.note ? ' · '+esc(r.note):''}</small></div>
           <div class="a">${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}</small>` : ''}</div>
         </div>`; }).join('')}</div>`).join('') +
@@ -1225,7 +1255,7 @@ function renderList(){
       return `
       <div class="item${r.pending?' pend':''}" data-row="${esc(String(r.row))}">
         <div class="ic" style="background:${m.color}22">${m.icon}</div>
-        <div class="t"><b>${esc(r.item)}${isC?'<span class="badge-c">↩️ C 待還</span>':''}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">⏳ 未同步</span>':''}</b>
+        <div class="t"><b>${esc(r.item)}${isC?'<span class="badge-c">C 待還</span>':''}${r.note==='示範'?'<span class="tag">示範</span>':''}${r.pending?'<span class="tag pend">未同步</span>':''}</b>
           <small><span class="acctlbl">(${ACCTS.includes(r.acct) ? r.acct : 'A'}帳)</span>${isInc(r)?'收入 · ':''}${esc(r.cat)}${m.en?' '+esc(m.en):''}${r.pay?' · '+esc(r.pay):''}${r.note && r.note!=='示範' ? ' · '+esc(r.note):''}</small></div>
         <div class="a${isInc(r)?' inc':''}">${isInc(r)?'+':''}${hkd(r.amount)}${r.cur && r.cur!=='HKD' ? `<small>${origTxt(r.cur, r.orig)}${r.est ? ` <span class="esttag">· ${r.pending ? '離線估計' : '估計'}</span>` : ''}</small>` : ''}</div>
       </div>`; }).join('')}</div>`; }).join('') +
@@ -1302,7 +1332,7 @@ function openFailed(){
     const desc = op.op === 'cfg' ? `${op.fn} ${esc(JSON.stringify(op.args || []))}` : `${esc(e.date || o.date || '')} ${esc(e.item || o.item || e.cat || '')} ${esc(e.cur || o.cur || '')} ${esc(String(e.amount ?? o.orig ?? ''))}`;
     return `<div class="setrow" style="grid-template-columns:44px 1fr"><b>${what}</b><span>${desc}<br><small>${esc(f.error || '')}</small></span></div>`; }).join('');
   openSheet(`<h3>同步失敗 Failed</h3><div class="card"><p class="label">呢啲改動伺服器做唔到（例如嗰行喺 Sheet 度改咗／刪咗）。請喺 App 或 Sheet 手動再做一次。</p>${rows || '<div class="empty">冇</div>'}</div>
-    <button class="btn ghost" onclick="V.clearFailed().then(()=>{closeSheet();recompute();renderAll(true)})">清除清單 Clear</button><button class="btn ghost" onclick="closeSheet();bgSync('manual')">🔄 而家同步 Sync now</button><button class="btn ghost" onclick="closeSheet()">關閉 Close</button>`);
+    <button class="btn ghost" onclick="V.clearFailed().then(()=>{closeSheet();recompute();renderAll(true)})">清除清單 Clear</button><button class="btn ghost" onclick="closeSheet();bgSync('manual')">而家同步</button><button class="btn ghost" onclick="closeSheet()">關閉 Close</button>`);
 }
 function openSheet(html){ $('sheet').innerHTML = html; $('sheet').classList.add('on'); $('mask').classList.add('on'); }
 function closeSheet(){ $('sheet').classList.remove('on'); $('mask').classList.remove('on'); editing = null; }
@@ -1375,12 +1405,13 @@ function investPnlAsOf(asOf, field){
   const v = hasCum && lastCum != null ? lastCum : sum;
   return Math.round(v * 100) / 100;
 }
-function signedUsdHkd(usd, hkd){
-  const su = Number(usd), sh = Number(hkd);
-  const usdTxt = (Number.isFinite(su) ? (su>0?'+':'') + su.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—') + ' USD';
-  const hkdTxt = Number.isFinite(sh) ? ('HK$ ' + (sh>0?'+':'') + fmtBal(sh)) : '';
-  const cls = !Number.isFinite(su) || Math.abs(su) < 0.005 ? '' : (su > 0 ? 'inv-pos' : 'inv-neg');
-  return `<span class="${cls} inv-amt">${usdTxt}${hkdTxt ? '<br>' + hkdTxt : ''}</span>`;
+function signedUsdHkd(usd, hkdAmt){
+  const su = Number(usd), sh = Number(hkdAmt);
+  const hasU = Number.isFinite(su), hasH = Number.isFinite(sh);
+  if (!hasU && !hasH) return '<span class="inv-amt" style="color:var(--sub)">—</span>';
+  const v = hasU ? su : sh;
+  const cls = !Number.isFinite(v) || Math.abs(v) < 0.005 ? '' : (v > 0 ? 'inv-pos' : 'inv-neg');
+  return `<span class="${cls} inv-amt">${hasU ? moneyTxt(su, 'USD') : ''}${hasU && hasH ? '<br>' : ''}${hasH ? moneyTxt(sh, 'HKD') : ''}</span>`;
 }
 function openingsOf(){
   const st = (D.settings && D.settings.openings) || {};
@@ -1484,6 +1515,99 @@ function chgHtml(n){
   const cls = n > 0 ? 'up' : 'dn';
   return `<span class="chg ${cls}">${n>0?'+':'−'}${fmtBal(Math.abs(n))}</span>`;
 }
+function balReadoutInner(label, pt){
+  const rows = BAL_ACCTS.map(a => [a, pt[a]]).concat([['C 待還', pt.C], ['D 未付', pt.D]]);
+  return `<div class="bal-ro-head"><span class="bal-ro-period">${esc(label)}</span><span class="bal-ro-total">${esc(moneyTxt(pt.total, 'HKD', false))}</span></div>
+    <div class="bal-ro-grid">${rows.map(([k,v]) => `<div><span>${esc(k)}</span><span>${esc(moneyTxt(v, 'HKD', false))}</span></div>`).join('')}</div>`;
+}
+function balInteractiveHTML(kind, labels, points, idx){
+  const n = labels.length;
+  const totals = points.map(p => p.total);
+  const min = Math.min.apply(null, totals.concat([0]));
+  const max = Math.max.apply(null, totals.concat([1]));
+  const span = (max - min) || 1;
+  const W = 320, H = 160, padL = 16, padR = 16, padT = 14, padB = 26;
+  const xAt = i => n <= 1 ? W/2 : padL + i * (W - padL - padR) / (n - 1);
+  const yAt = v => padT + (1 - (v - min) / span) * (H - padT - padB);
+  let d = '';
+  totals.forEach((v, i) => { d += (i ? ' L' : 'M') + xAt(i).toFixed(2) + ',' + yAt(v).toFixed(2); });
+  const area = d + ' L' + xAt(n-1).toFixed(2) + ',' + (H-padB) + ' L' + xAt(0).toFixed(2) + ',' + (H-padB) + ' Z';
+  const step = n > 14 ? 3 : (n > 8 ? 2 : 1);
+  const ticks = labels.map((lab, i) => {
+    if (i !== n-1 && i !== 0 && i % step) return '';
+    const short = kind === 'year' ? lab : (lab.slice(0,4) === labels[0].slice(0,4) && i !== 0 && labels[i-1] && labels[i-1].slice(0,4)===lab.slice(0,4) ? lab.slice(5) : lab.slice(2));
+    return `<text x="${xAt(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="8" fill="#64748B">${esc(short)}</text>`;
+  }).join('');
+  const i0 = Math.max(0, Math.min(n-1, idx));
+  const x0 = xAt(i0)/W*100, y0 = yAt(points[i0].total)/H*100;
+  window.__balChart = { kind, labels, points, idx: i0, min, span, W, H, padL, padR, padT, padB };
+  return `<div class="bal-ichart" id="balIChart">
+      <div class="bal-readout" id="balReadout">${balReadoutInner(labels[i0], points[i0])}</div>
+      <div class="bal-chart-touch" id="balChartHit">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+          <path d="${area}" fill="#1E3A5F" fill-opacity="0.12"></path>
+          <path d="${d}" fill="none" stroke="#1E3A5F" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+          ${ticks}
+        </svg>
+        <div class="bal-cross" id="balCross" style="left:${x0}%"></div>
+        <div class="bal-dot" id="balDot" style="left:${x0}%;top:${y0}%"></div>
+      </div>
+    </div>`;
+}
+function bindBalChart(){
+  const el = $('balChartHit');
+  if (!el || !window.__balChart) return;
+  const data = window.__balChart;
+  const xAt = i => data.labels.length <= 1 ? data.W/2 : data.padL + i * (data.W - data.padL - data.padR) / (data.labels.length - 1);
+  const yAt = v => data.padT + (1 - (v - data.min) / data.span) * (data.H - data.padT - data.padB);
+  const apply = (i, commit) => {
+    i = Math.max(0, Math.min(data.labels.length - 1, i));
+    const lab = data.labels[i], pt = data.points[i];
+    data.idx = i;
+    const ro = $('balReadout'); if (ro) ro.innerHTML = balReadoutInner(lab, pt);
+    const xpct = xAt(i) / data.W * 100, ypct = yAt(pt.total) / data.H * 100;
+    const c = $('balCross'), d = $('balDot');
+    if (c) c.style.left = xpct + '%';
+    if (d) { d.style.left = xpct + '%'; d.style.top = ypct + '%'; }
+    document.querySelectorAll('#balBody .bal-table tbody tr').forEach(tr => tr.classList.toggle('on', tr.getAttribute('data-balp') === lab));
+    if (commit) {
+      if (data.kind === 'month') balMonth = lab;
+      else balYear = lab;
+      if ($('balLabel')) $('balLabel').textContent = data.kind === 'month' ? monthLabel(lab) : (lab + '年');
+    }
+  };
+  const idxFromX = clientX => {
+    const rect = el.getBoundingClientRect();
+    const t = rect.width ? (clientX - rect.left) / rect.width : 0;
+    const x = Math.max(data.padL, Math.min(data.W - data.padR, t * data.W));
+    const n = data.labels.length;
+    if (n <= 1) return 0;
+    return Math.round((x - data.padL) / (data.W - data.padL - data.padR) * (n - 1));
+  };
+  let pid = null, sx = 0, sy = 0, armed = false, scrolling = false;
+  const down = ev => { pid = ev.pointerId; sx = ev.clientX; sy = ev.clientY; armed = false; scrolling = false; };
+  const move = ev => {
+    if (pid == null || ev.pointerId !== pid) return;
+    const dx = ev.clientX - sx, dy = ev.clientY - sy;
+    if (!armed && !scrolling) {
+      if (dx * dx + dy * dy < 64) return;
+      if (Math.abs(dy) > Math.abs(dx)) { scrolling = true; pid = null; return; }
+      armed = true;
+      try { el.setPointerCapture(ev.pointerId); } catch (e) {}
+    }
+    if (armed) { ev.preventDefault(); apply(idxFromX(ev.clientX), false); }
+  };
+  const end = ev => {
+    if (pid == null || (ev && ev.pointerId !== pid)) return;
+    if (!scrolling) apply(idxFromX((ev && ev.clientX) || sx), true);
+    pid = null; armed = false; scrolling = false;
+  };
+  el.addEventListener('pointerdown', down);
+  el.addEventListener('pointermove', move, { passive: false });
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', () => { pid = null; armed = false; scrolling = false; });
+}
+
 function sparkHTML(values, highlightIdx){
   const max = Math.max(...values.map(Math.abs), 1);
   return `<div class="bal-spark">${values.map((v,i) => {
@@ -1500,7 +1624,7 @@ function adjNotesHTML(b){
     const lab = a === 'Personal-investment' ? '未解釋調整 unexplained (+19,000 → 今日 34,000)' :
       a === 'Personal-bank' ? `結餘調整 to match today −1,322.24（A+B 淨流＋轉帳後仲差 ${fmtBal(ad.amount)}）` :
       (ad.label || '調整');
-    notes.push(`<div class="bal-adj">⚠️ ${esc(a)}：${esc(lab)} · ${fmtBal(ad.amount)} as of ${esc(ad.date||'?')}</div>`);
+    notes.push(`<div class="bal-adj">${esc(a)}：${esc(lab)} · ${moneyTxt(ad.amount, 'HKD')} · ${esc(ad.date||'?')}</div>`);
   });
   return notes.join('');
 }
@@ -1511,19 +1635,16 @@ function renderBalToday(){
   const pnlU = realizedPnlUsdAsOf(today);
   const cards = BAL_ACCTS.map(a => {
     let sub = '';
-    if (a === 'Personal-investment') sub = `<div class="bal-note">含${investMode()==='mtm'?'市值':'已實現'} ${pnlH>=0?'+':''}${fmtBal(pnlH)} HKD（${pnlU>=0?'+':''}${Number(pnlU).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} USD）</div>`;
-    if (a === 'Retirement-investment') sub = `<div class="bal-note">固定：當借俾 Personal-investment，唔計賺蝕</div>`;
-    return `<div class="bal-card"><div class="n">${a}</div><div class="v">${fmtBal(b[a])}</div>${sub}</div>`;
+    if (a === 'Personal-investment') sub = `<div class="bal-note">${investMode()==='mtm'?'市值':'已實現'} ${signedUsdHkd(pnlU, pnlH)}</div>`;
+    return `<div class="bal-card"><div class="n">${a}</div><div class="v">${moneyTxt(b[a], 'HKD', false)}</div>${sub}</div>`;
   }).join('');
   return `<div class="bal-cards">${cards}
-      <div class="bal-card total"><div class="n">總財富 Total wealth（五帳戶 + C − D）</div><div class="v">${fmtBal(b.totalWealth)} HKD</div></div>
+      <div class="bal-card total"><div class="n">總財富</div><div class="v">${moneyTxt(b.totalWealth, 'HKD', false)}</div></div>
     </div>
     <div class="cdrow">
-      <div class="bal-card"><div class="n">C 待還 Receivables</div><div class="v">${fmtBal(b.C)}</div></div>
-      <div class="bal-card"><div class="n">D 未付 Liabilities</div><div class="v">${fmtBal(b.D)}</div></div>
+      <div class="bal-card"><div class="n">C 待還</div><div class="v">${moneyTxt(b.C, 'HKD', false)}</div></div>
+      <div class="bal-card"><div class="n">D 未付</div><div class="v">${moneyTxt(b.D, 'HKD', false)}</div></div>
     </div>
-    <p class="bal-note">截至今日 ${today}（Europe/Helsinki）。期初 ${openingsOf().date}。</p>
-    <p class="bal-note">Personal-investment = 期初＋轉帳淨額＋設定調整（如有）＋「投資」頁所選模式嘅盈虧 HKD（已實現：成交 pnl_net＋股息淨預扣稅＋MMF 已實現贖回；市值：再加股票／ETF 未實現同 MMF 未實現；期權兩邊都只計已實現）。Retirement-investment 唔加賺蝕。設定期初同舊轉帳列唔會改。</p>
     ${adjNotesHTML(b)}`;
 }
 function renderBalMonth(){
@@ -1546,15 +1667,16 @@ function renderBalMonth(){
     BAL_ACCTS.forEach(a => { chg[a] = prev ? b[a] - prev[a] : b[a] - (openingsOf().amounts[a] || 0); });
     const twChg = prev ? b.totalWealth - prev.totalWealth : null;
     prev = b;
-    const hi = ym === balMonth ? ' style="background:#ecfdf5"' : '';
-    return `<tr${hi}><td>${monthLabel(ym)}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
+    const hi = ym === balMonth ? ' class="on"' : '';
+    return `<tr${hi} data-balp="${esc(ym)}"><td>${monthLabel(ym)}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
       <td>${fmtBal(b.C)}</td><td>${fmtBal(b.D)}</td><td>${fmtBal(b.totalWealth)}<br>${chgHtml(twChg)}</td></tr>`;
   }).join('');
-  const sparkBlock = (lab, vals) => `<p class="bal-note" style="margin:10px 0 0">${lab}</p>${sparkHTML(vals, idx)}`;
-  return `${sparkBlock('總財富月趨勢 Total wealth', series.total)}
-    ${BAL_ACCTS.map(a => sparkBlock(a, series[a])).join('')}
-    ${sparkBlock('C 待還', series.C)}${sparkBlock('D 未付', series.D)}
-    <p class="bal-note">撳左右切月 · 表內數字係月底結餘</p>
+  const points = months.map((ym, i) => {
+    const pt = { total: series.total[i], C: series.C[i], D: series.D[i] };
+    BAL_ACCTS.forEach(a => { pt[a] = series[a][i]; });
+    return pt;
+  });
+  return `${balInteractiveHTML('month', months, points, idx)}
     <div class="bal-scroll"><table class="bal-table"><thead><tr><th>月</th>${BAL_ACCTS.map(a=>`<th>${a.replace('Retirement','Ret.').replace('Personal','Pers.').replace('-investment','-inv').replace('-bank','-bk')}</th>`).join('')}<th>C</th><th>D</th><th>總財富</th></tr></thead><tbody>${rows}</tbody></table></div>
     ${adjNotesHTML(balancesAsOf(todayHel()))}`;
 }
@@ -1576,14 +1698,16 @@ function renderBalYear(){
     const chg = {};
     BAL_ACCTS.forEach(a => { chg[a] = prev ? b[a] - prev[a] : b[a] - (openingsOf().amounts[a] || 0); });
     prev = Object.assign({}, b);
-    const hi = y === balYear ? ' style="background:#ecfdf5"' : '';
-    return `<tr${hi}><td>${y}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
+    const hi = y === balYear ? ' class="on"' : '';
+    return `<tr${hi} data-balp="${esc(y)}"><td>${y}</td>${BAL_ACCTS.map(a => `<td>${fmtBal(b[a])}<br>${chgHtml(chg[a])}</td>`).join('')}
       <td>${fmtBal(b.C)}</td><td>${fmtBal(b.D)}</td><td>${fmtBal(b.totalWealth)}</td></tr>`;
   }).join('');
-  const sparkBlock = (lab, vals) => `<p class="bal-note" style="margin:10px 0 0">${lab}</p>${sparkHTML(vals, yIdx)}`;
-  return `${sparkBlock('總財富年趨勢 Total wealth', series.total)}
-    ${BAL_ACCTS.map(a => sparkBlock(a, series[a])).join('')}
-    ${sparkBlock('C 待還', series.C)}${sparkBlock('D 未付', series.D)}
+  const points = years.map((y, i) => {
+    const pt = { total: series.total[i], C: series.C[i], D: series.D[i] };
+    BAL_ACCTS.forEach(a => { pt[a] = series[a][i]; });
+    return pt;
+  });
+  return `${balInteractiveHTML('year', years, points, yIdx)}
     <div class="bal-scroll"><table class="bal-table"><thead><tr><th>年</th>${BAL_ACCTS.map(a=>`<th>${a.split('-')[0]}</th>`).join('')}<th>C</th><th>D</th><th>總</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function renderBal(){
@@ -1595,6 +1719,7 @@ function renderBal(){
   if (balMode === 'today') $('balBody').innerHTML = renderBalToday();
   else if (balMode === 'month') $('balBody').innerHTML = renderBalMonth();
   else $('balBody').innerHTML = renderBalYear();
+  if (balMode === 'month' || balMode === 'year') bindBalChart();
   $('balPrev').onclick = () => {
     if (balMode === 'month') {
       const ms = monthListFromOpen(); let i = ms.indexOf(balMonth); if (i > 0) { balMonth = ms[i-1]; dirty.bal = true; renderBal(); }
@@ -1611,7 +1736,7 @@ function renderBal(){
   };
 }
 
-/* ---------- V4.3 投資頁 ---------- */
+/* ---------- V4.4 投資頁 ---------- */
 const INV_EVENT_ZH = {
   deposit: '存入 出入金', withdrawal: '提取', fx: '貨幣兌換',
   stock_trade: '股票成交', option_trade: '期權成交',
@@ -1626,22 +1751,15 @@ function clockHel(iso){
   const m = s.match(/T(\d{2}:\d{2})/);
   return m ? m[1] : '';
 }
-function invMoney(n, ccy, signed){
-  const v = Number(n);
-  if (!Number.isFinite(v)) return '—';
-  const prefix = ccy === 'HKD' ? 'HK$' : 'US$';
-  const sign = signed === false ? (v < 0 ? '-' : '') : (v > 0 ? '+' : (v < 0 ? '-' : ''));
-  const abs = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return sign + prefix + ' ' + abs;
-}
+function invMoney(n, ccy, signed){ return moneyTxt(n, ccy === 'HKD' ? 'HKD' : 'USD', signed); }
 function invMoneyPair(usd, hkd, signed){
-  const su = Number(usd), sh = Number(hkd);
-  const hasU = Number.isFinite(su), hasH = Number.isFinite(sh);
-  if (!hasU && !hasH) return '<span class="inv-amt" style="color:var(--sub)">—</span>';
-  const v = hasU ? su : sh;
-  const cls = !Number.isFinite(v) || Math.abs(v) < 0.005 ? '' : (v > 0 ? 'inv-pos' : 'inv-neg');
-  const s = signed !== false;
-  return `<span class="${cls} inv-amt">${hasU ? invMoney(su, 'USD', s) : ''}${hasU && hasH ? '<br>' : ''}${hasH ? invMoney(sh, 'HKD', s) : ''}</span>`;
+  if (signed === false) {
+    const su = Number(usd), sh = Number(hkd);
+    const hasU = Number.isFinite(su), hasH = Number.isFinite(sh);
+    if (!hasU && !hasH) return '<span class="inv-amt" style="color:var(--sub)">—</span>';
+    return `<span class="inv-amt">${hasU ? moneyTxt(su, 'USD', false) : ''}${hasU && hasH ? '<br>' : ''}${hasH ? moneyTxt(sh, 'HKD', false) : ''}</span>`;
+  }
+  return signedUsdHkd(usd, hkd);
 }
 function invDetailOpen(){
   try { return localStorage.getItem('vault.invDetailOpen') === '1'; } catch (e) { return false; }
@@ -1993,7 +2111,7 @@ function show(v, keepScroll){
   const q = V ? V.status().pending : 0;
   const inv = investData();
   const stmt = inv && inv.coverage && inv.coverage.statementDate;
-  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '揀睇乜、睇幾耐 Pick what & period' : v==='bal' ? '五個資產帳戶 · Personal／Retire／Year End／Investment + C − D' : v==='inv' ? (`${investMode()==='mtm'?'市值':'已實現'} · 結單 ${stmt || '—'}`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''} · 撳一筆可以改或刪除 Tap to edit`;
+  $('subtitle').textContent = v==='add' ? `今日 ${Number(todayHel().slice(5,7))}月${Number(todayHel().slice(8))}日（${wk(todayHel())}）` : v==='sum' ? '' : v==='bal' ? '' : v==='inv' ? (`${investMode()==='mtm'?'市值':'已實現'} · 結單 ${stmt || '—'}`) : `共 ${D.rows.length} 筆${q ? ` · ${q} 筆未同步` : ''}`;
   if (!keepScroll) document.querySelector('main').scrollTop = 0;
   if (changed) perfMark('tab', t0);
 }
@@ -2002,7 +2120,7 @@ let noticeHidden = '';
 function renderNotice(){
   const n = D.fxNotice, el = $('notice');
   if (!n || noticeHidden === n.kind + n.est + n.budgetEst) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="notice ${n.kind==='perm'?'perm':''}"><b>${n.kind==='perm' ? '⚠️ 未授權攞匯率 Not authorised' : '⚠️ 用緊估計匯率 Estimated rates'}</b>${esc(n.msg)}${n.kind==='perm' && (n.est||n.budgetEst) ? '<br>（暫時用估計匯率計港幣，授權後會自動更正）' : ''}<button aria-label="close" onclick="noticeHidden='${n.kind}${n.est}${n.budgetEst}';renderNotice()">×</button></div>`;
+  el.innerHTML = `<div class="notice ${n.kind==='perm'?'perm':''}"><b>${n.kind==='perm' ? '未授權攞匯率' : '用緊估計匯率'}</b>${esc(n.msg)}${n.kind==='perm' && (n.est||n.budgetEst) ? '<br>（暫時用估計匯率計港幣，授權後會自動更正）' : ''}<button aria-label="close" onclick="noticeHidden='${n.kind}${n.est}${n.budgetEst}';renderNotice()">×</button></div>`;
 }
 function renderAll(keepScroll){
   renderPill(); renderNotice(); renderMini();
@@ -2063,7 +2181,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     try {
       const reg = await navigator.serviceWorker.register('sw.js');
       const prompt = w => {
-        $('updbar').innerHTML = `<div class="netbar"><span>🆕 有新版本 New version</span><button id="swUpd">更新 Update</button></div>`;
+        $('updbar').innerHTML = `<div class="netbar"><span>有新版本</span><button id="swUpd">更新</button></div>`;
         $('swUpd').onclick = () => w.postMessage({type:'SKIP_WAITING'});
       };
       if (reg.waiting && navigator.serviceWorker.controller) prompt(reg.waiting);

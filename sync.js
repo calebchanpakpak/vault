@@ -1,4 +1,4 @@
-/* Vault V4.3 — 離線優先資料層（V3.20：快取 getInvestData；V3.16：forcePull 升版重拉；V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
+/* Vault V4.4 — 離線優先資料層（V3.20：快取 getInvestData；V3.16：forcePull 升版重拉；V3.12：設定期初結餘 openings；V3.11：轉帳多 toAcct；V3.3：記錄多咗 acct 帳戶，fingerprint 唔包帳戶）（IndexedDB 係部機嘅真相來源）
  *  - 所有新增／修改／刪除／設定：先寫 IndexedDB（transaction complete）先回覆，畫面即刻更新，唔使等網絡
  *  - 背景同步：single-flight、按次序清隊、指數退避、拉 getData 合併（唔會蓋過未同步嘅改動）
  *  - 改緊「同步緊」嘅記錄：開新 op 串住（client id 或者預計嘅 fingerprint），唔會阻用戶
